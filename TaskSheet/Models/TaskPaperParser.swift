@@ -1,4 +1,5 @@
 import Foundation
+import RegexBuilder
 
 class TaskPaperParser {
     static func parse(_ content: String) -> [TaskPaperItem] {
@@ -19,7 +20,8 @@ class TaskPaperParser {
         let indentLevel = countLeadingTabs(line)
         let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let tags = extractTags(from: trimmedLine)
+        // Tags are now extracted on-demand from the raw text
+        _ = extractTags(from: trimmedLine) // Keep for validation during parsing
 
         let type: ItemType
         if trimmedLine.hasSuffix(":") {
@@ -32,9 +34,8 @@ class TaskPaperParser {
 
         return TaskPaperItem(
             type: type,
-            text: trimmedLine,
+            text: trimmedLine, // Keep original text with tags
             indentLevel: indentLevel,
-            tags: tags,
             lineNumber: lineNumber
         )
     }
@@ -42,7 +43,7 @@ class TaskPaperParser {
     private static func countLeadingTabs(_ line: String) -> Int {
         var count = 0
         for char in line {
-            if char == "\t" {
+           if char == .tab {
                 count += 1
             } else {
                 break
@@ -51,32 +52,35 @@ class TaskPaperParser {
         return count
     }
 
-    private static func extractTags(from text: String) -> [Tag] {
+    static func extractTags(from text: String) -> [Tag] {
         var tags: [Tag] = []
-        let pattern = "@(\\w+)(?:\\(([^)]+)\\))?"
 
-        do {
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
-            let matches = regex.matches(in: text, options: [], range: NSRange(location: 0, length: text.count))
+        // Swift regex literal with capture groups: @(tagname) and optional (value)
+        let tagRegex = /@(\w+)(?:\(([^)]+)\))?/
 
-            for match in matches {
-                let tagNameRange = match.range(at: 1)
-                let tagValueRange = match.range(at: 2)
-
-                if let tagNameSwiftRange = Range(tagNameRange, in: text) {
-                    let tagName = String(text[tagNameSwiftRange])
-
-                    var tagValue: String? = nil
-                    if tagValueRange.location != NSNotFound,
-                       let tagValueSwiftRange = Range(tagValueRange, in: text) {
-                        tagValue = String(text[tagValueSwiftRange])
-                    }
-
-                    tags.append(Tag(name: tagName, value: tagValue))
-                }
+        /* Regex builder version (kept for reference):
+        let tagRegex = Regex {
+            "@"
+            Capture {
+                OneOrMore(.word)
             }
-        } catch {
-            print("Regex error: \(error)")
+            Optionally {
+                "("
+                Capture {
+                    OneOrMore(.noneOf(")"))
+                }
+                ")"
+            }
+        }
+        */
+
+        let matches = text.matches(of: tagRegex)
+
+        for match in matches {
+            let tagName = String(match.1)
+            let tagValue = match.2.map(String.init)
+
+            tags.append(Tag(name: tagName, value: tagValue))
         }
 
         return tags

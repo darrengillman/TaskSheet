@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TaskPaperItemRow: View {
     let item: TaskPaperItem
+    let onToggleCompletion: ((TaskPaperItem) -> Void)?
 
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
@@ -14,13 +15,15 @@ struct TaskPaperItemRow: View {
                 }
             }
 
-            // Item icon
-            itemIcon
+           itemIcon
+              .onTapGesture {
+                 onToggleCompletion?(item)
+              }
 
             // Content
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.displayText)
-                    .font(item.type == .project ? .headline : .body)
+                  .font(font(for: item.type))
                     .fontWeight(item.type == .project ? .semibold : .regular)
                     .strikethrough(item.isCompleted)
                     .foregroundColor(item.isCompleted ? .secondary : .primary)
@@ -30,10 +33,34 @@ struct TaskPaperItemRow: View {
                 }
             }
 
-            Spacer()
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 4)
         .padding(.horizontal)
+        .contextMenu {
+           Button {
+              onToggleCompletion?(item)
+           } label: {
+              Label( item.isCompleted ? "Mark as Incomplete" : "Mark as Complete",
+                     systemImage: item.isCompleted ?  "circle" : "checkmark.circle.fill")
+           }
+           Button {
+              
+           } label: {
+              Label( "Edit...", systemImage: "text.page")
+           }
+           Button {
+              
+           } label: {
+              Label( "Add tag...", systemImage: "at.circle")
+           }
+           Divider()
+           Menu("Move...") {
+              Label("Task Actions", systemImage: "list.bullet")
+                 .foregroundColor(.secondary)
+                 .font(.caption)
+           }
+        }
     }
 
     @ViewBuilder
@@ -49,10 +76,21 @@ struct TaskPaperItemRow: View {
                 .font(.system(size: 16))
         case .note:
             Image(systemName: "doc.text")
-                .foregroundColor(.secondary)
+                 .foregroundColor(item.isCompleted ? .secondary: .gray)
                 .font(.system(size: 14))
         }
     }
+   
+   private func font(for itemType: ItemType) -> Font {
+      switch itemType {
+            case .project:
+            return .headline
+         case .task:
+            return .body
+         case .note:
+            return .body.scaled(by: 0.8)
+      }
+   }
 }
 
 struct TagsView: View {

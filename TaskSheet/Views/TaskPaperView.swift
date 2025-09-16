@@ -8,8 +8,10 @@ struct TaskPaperView: View {
             DocumentHeader(document: document)
 
             List(document.items) { item in
-                TaskPaperItemRow(item: item)
-                    .listRowInsets(EdgeInsets())
+                TaskPaperItemRow(item: item) { item in
+                    document.toggleTaskCompletion(item: item)
+                }
+                .listRowInsets(EdgeInsets())
             }
             .listStyle(.plain)
         }

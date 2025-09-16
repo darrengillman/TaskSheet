@@ -1,19 +1,23 @@
 import Foundation
 
 class TaskPaperDocument: ObservableObject {
-    @Published var content: String
     @Published var items: [TaskPaperItem] = []
     @Published var fileName: String
 
+    // Computed property - content is generated from items
+    var content: String {
+        return items.taskPaperContent
+    }
+
     init(content: String, fileName: String = "Untitled") {
-        self.content = content
         self.fileName = fileName
         self.items = TaskPaperParser.parse(content)
     }
 
-    func refresh() {
-        items = TaskPaperParser.parse(content)
-    }
+    // No longer needed - items are the source of truth
+    // func refresh() {
+    //     items = TaskPaperParser.parse(content)
+    // }
 
     var projectCount: Int {
         items.filter { $0.type == .project }.count
@@ -29,5 +33,17 @@ class TaskPaperDocument: ObservableObject {
 
     var noteCount: Int {
         items.filter { $0.type == .note }.count
+    }
+
+    // MARK: - Task Completion
+
+    func toggleTaskCompletion(item: TaskPaperItem) {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+        items[index].toggleCompletion()
+    }
+
+    func setTaskCompletion(item: TaskPaperItem, completed: Bool, date: Date = Date()) {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+        items[index].setCompletion(completed, date: date)
     }
 }
