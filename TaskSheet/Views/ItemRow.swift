@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TaskPaperItemRow: View {
+struct ItemRow: View {
     let item: TaskPaperItem
     let onToggleCompletion: ((TaskPaperItem) -> Void)?
 
@@ -49,14 +49,49 @@ struct TaskPaperItemRow: View {
            } label: {
               Label( "Edit...", systemImage: "text.page")
            }
+
            Button {
               
            } label: {
-              Label( "Add tag...", systemImage: "at.circle")
+              Label( "Expand", systemImage: "rectangle.expand.vertical")
+           }
+           
+           Button {
+              
+           } label: {
+              Label( "Fold", systemImage: "rectangle.compress.vertical")
+           }
+           
+           Button {
+              
+           } label: {
+              Label( "Focus", systemImage: "plus.magnifyingglass")
+           }
+
+           Menu {
+              Button{
+                 
+              } label: {
+                 Label( "Add item", systemImage: "plus.circle")
+              }
+              
+              Button{
+                 
+              } label: {
+                 Label( "Add child", systemImage: "circle.badge.plus")
+              }
+
+              Button{
+                 
+              } label: {
+                 Label( "Add tag", systemImage: "at.circle")
+              }
+           } label: {
+              Label("Add...", systemImage: "plus.circle")
            }
            Divider()
            Menu("Move...") {
-              Label("Task Actions", systemImage: "list.bullet")
+              Label("Move Actions", systemImage: "list.bullet")
                  .foregroundColor(.secondary)
                  .font(.caption)
            }

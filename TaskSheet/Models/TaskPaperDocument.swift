@@ -14,11 +14,6 @@ class TaskPaperDocument: ObservableObject {
         self.items = TaskPaperParser.parse(content)
     }
 
-    // No longer needed - items are the source of truth
-    // func refresh() {
-    //     items = TaskPaperParser.parse(content)
-    // }
-
     var projectCount: Int {
         items.filter { $0.type == .project }.count
     }

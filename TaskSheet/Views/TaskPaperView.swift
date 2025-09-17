@@ -1,62 +1,20 @@
 import SwiftUI
 
 struct TaskPaperView: View {
-    @ObservedObject var document: TaskPaperDocument
+   @ObservedObject var document: TaskPaperDocument
+   @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            DocumentHeader(document: document)
+   var body: some View {
+      VStack(alignment: .leading, spacing: 0) {
+         DocumentHeader(document: document, syncStatus: $syncStatus)
 
-            List(document.items) { item in
-                TaskPaperItemRow(item: item) { item in
-                    document.toggleTaskCompletion(item: item)
-                }
-                .listRowInsets(EdgeInsets())
+         List(document.items) { item in
+            ItemRow(item: item) { item in
+               document.toggleTaskCompletion(item: item)
             }
-            .listStyle(.plain)
-        }
-    }
-}
-
-struct DocumentHeader: View {
-    @ObservedObject var document: TaskPaperDocument
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(document.fileName)
-                .font(.title2)
-                .fontWeight(.semibold)
-
-            HStack(spacing: 16) {
-                StatItem(icon: "folder", count: document.projectCount, label: "Projects")
-                StatItem(icon: "checkmark.circle", count: document.completedTaskCount, label: "Done")
-                StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: "Tasks")
-                StatItem(icon: "doc.text", count: document.noteCount, label: "Notes")
-            }
-        }
-        .padding()
-        .background(Color(.systemGroupedBackground))
-    }
-}
-
-struct StatItem: View {
-    let icon: String
-    let count: Int
-    let label: String
-
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: icon)
-                .foregroundColor(.secondary)
-                .font(.caption)
-
-            Text("\(count)")
-                .fontWeight(.medium)
-                .font(.caption)
-
-            Text(label)
-                .foregroundColor(.secondary)
-                .font(.caption)
-        }
-    }
+            .listRowInsets(EdgeInsets())
+         }
+         .listStyle(.plain)
+      }
+   }
 }

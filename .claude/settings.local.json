@@ -4,7 +4,8 @@
       "WebFetch(domain:www.taskpaper.com)",
       "Bash(xcodebuild:*)",
       "Bash(open:*)",
-      "Bash(swift:*)"
+      "Bash(swift:*)",
+      "Bash(xcrun simctl install:*)"
     ],
     "deny": [],
     "ask": []
