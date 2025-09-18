@@ -17,6 +17,7 @@
 		1A0001161234567890123456 /* TaskPaperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001151234567890123456 /* TaskPaperView.swift */; };
 		1A0001181234567890123456 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001171234567890123456 /* ItemRow.swift */; };
 		1A00011A1234567890123456 /* TaskPaperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001191234567890123456 /* TaskPaperManager.swift */; };
+		DE0B7B402E7B87FA00C32575 /* SampleContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */; };
 		DE1C94A02E775AEA00353202 /* TaskSheetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94982E7757D800353202 /* TaskSheetTests.swift */; };
 		DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */; };
 		DEC18D7E2E79DC14000E2BAF /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7D2E79DC0F000E2BAF /* LoadingView.swift */; };
@@ -46,6 +47,7 @@
 		1A0001151234567890123456 /* TaskPaperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperView.swift; sourceTree = "<group>"; };
 		1A0001171234567890123456 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
 		1A0001191234567890123456 /* TaskPaperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperManager.swift; sourceTree = "<group>"; };
+		DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleContent.swift; sourceTree = "<group>"; };
 		DE1C94982E7757D800353202 /* TaskSheetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSheetTests.swift; sourceTree = "<group>"; };
 		DE1C949F2E775AEA00353202 /* TaskSheetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskSheetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 		1A00010E1234567890123456 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */,
 				DEE939C22E78511C002A976E /* String+extn.swift */,
 				1A00010F1234567890123456 /* TaskPaperModels.swift */,
 				1A0001111234567890123456 /* TaskPaperParser.swift */,
@@ -262,6 +265,7 @@
 				DEE93ABB2E79BD03002A976E /* DocumentHeader.swift in Sources */,
 				1A0001001234567890123456 /* TaskSheetApp.swift in Sources */,
 				1A0001141234567890123456 /* TaskPaperDocument.swift in Sources */,
+				DE0B7B402E7B87FA00C32575 /* SampleContent.swift in Sources */,
 				1A0001101234567890123456 /* TaskPaperModels.swift in Sources */,
 				DEE939C32E785122002A976E /* String+extn.swift in Sources */,
 				DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */,

@@ -11,25 +11,27 @@ struct DocumentHeader: View {
    @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
    
    var body: some View {
-         VStack(alignment: .leading, spacing: 8) {
-            HStack{
-               Text(document.fileName)
-                  .font(.title2)
-                  .fontWeight(.semibold)
-                  .padding(.trailing, 4)
-               syncStatusView
-            }
-            
-            HStack(spacing: 16) {
-               StatItem(icon: "folder", count: document.projectCount, label: "Projects")
-               StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: "Tasks")
-               StatItem(icon: "checkmark.circle", count: document.completedTaskCount, label: "Done")
-               StatItem(icon: "doc.text", count: document.noteCount, label: "Notes")
-            }
+      VStack(alignment: .leading, spacing: 8) {
+         HStack{
+            Text(document.fileName)
+               .font(.title2)
+               .fontWeight(.semibold)
+               .padding(.trailing, 4)
+            syncStatusView
          }
-         .padding()
-         .background(Color(.systemGroupedBackground))
+         
+         HStack(spacing: 16) {
+            StatItem(icon: "folder", count: document.projectCount, label: "Projects")
+            StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: "Tasks")
+            StatItem(icon: "checkmark.circle", count: document.completedTaskCount, label: "Done")
+            StatItem(icon: "doc.text", count: document.noteCount, label: "Notes")
+         }
       }
+      .padding(.horizontal)
+      .padding(.bottom)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .background(Color(.systemGroupedBackground))
+   }
    
    @ViewBuilder
    private var syncStatusView: some View {
@@ -85,4 +87,11 @@ struct StatItem: View {
             .font(.caption)
       }
    }
+}
+
+#Preview {
+   DocumentHeader(
+      document: SampleContent.sampleDocument,
+      syncStatus: .constant(.notInCloud)
+   )
 }

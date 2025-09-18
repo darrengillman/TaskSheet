@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ItemRow: View {
+   @State private var folded = false
     let item: TaskPaperItem
     let onToggleCompletion: ((TaskPaperItem) -> Void)?
 
@@ -23,6 +24,7 @@ struct ItemRow: View {
             // Content
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.displayText)
+                  .lineLimit(folded ? 1 : nil)
                   .font(font(for: item.type))
                     .fontWeight(item.type == .project ? .semibold : .regular)
                     .strikethrough(item.isCompleted)
@@ -50,16 +52,18 @@ struct ItemRow: View {
               Label( "Edit...", systemImage: "text.page")
            }
 
-           Button {
-              
-           } label: {
-              Label( "Expand", systemImage: "rectangle.expand.vertical")
-           }
-           
-           Button {
-              
-           } label: {
-              Label( "Fold", systemImage: "rectangle.compress.vertical")
+           if folded {
+              Button {
+                 folded = false
+              } label: {
+                 Label( "Expand", systemImage: "rectangle.expand.vertical")
+              }
+           } else {
+              Button {
+                 folded = true
+              } label: {
+                 Label( "Fold", systemImage: "rectangle.compress.vertical")
+              }
            }
            
            Button {
@@ -67,6 +71,8 @@ struct ItemRow: View {
            } label: {
               Label( "Focus", systemImage: "plus.magnifyingglass")
            }
+           
+           Divider()
 
            Menu {
               Button{
@@ -89,7 +95,6 @@ struct ItemRow: View {
            } label: {
               Label("Add...", systemImage: "plus.circle")
            }
-           Divider()
            Menu("Move...") {
               Label("Move Actions", systemImage: "list.bullet")
                  .foregroundColor(.secondary)

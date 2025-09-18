@@ -19,8 +19,10 @@ struct RootView: View {
          }
          .navigationTitle("TaskSheet")
          .toolbar {
-            Button("Open") {
-               showingFilePicker = true
+            if taskPaperManager.document !=  nil {
+               Button(role: .close) {
+                  taskPaperManager.document = nil
+               }
             }
          }
       }
@@ -64,4 +66,8 @@ struct RootView: View {
          .buttonStyle(.bordered)
       }
    }
+}
+
+#Preview {
+   RootView()
 }
