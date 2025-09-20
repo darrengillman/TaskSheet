@@ -1,30 +1,6 @@
 import Foundation
 import RegexBuilder
 
-enum ItemType: String, CaseIterable, Codable {
-    case project
-    case task
-    case note
-}
-
-struct Tag: Codable, Hashable {
-    let name: String
-    let value: String?
-
-    init(name: String, value: String? = nil) {
-        self.name = name
-        self.value = value
-    }
-
-    var displayText: String {
-        if let value = value {
-            return "@\(name)(\(value))"
-        } else {
-            return "@\(name)"
-        }
-    }
-}
-
 struct TaskPaperItem: Identifiable, Codable {
    static let projectSuffix = ":"
    static let taskPrefix = "- "
@@ -33,7 +9,7 @@ struct TaskPaperItem: Identifiable, Codable {
     var type: ItemType
     var text: String // Raw text including tags: "- Buy milk @urgent tomorrow @due(2025-12-25)"
     var indentLevel: Int
-    var lineNumber: Int
+    let originalLineNumber: Int
 
     // Cached parsed tags for performance
     private var cachedTags: [Tag]?
@@ -43,7 +19,7 @@ struct TaskPaperItem: Identifiable, Codable {
         self.type = type
         self.text = text
         self.indentLevel = indentLevel
-        self.lineNumber = lineNumber
+        self.originalLineNumber = lineNumber
         self.cachedTags = TaskPaperParser.extractTags(from: text)
     }
 
@@ -52,7 +28,7 @@ struct TaskPaperItem: Identifiable, Codable {
         self.id = UUID()
         self.type = type
         self.indentLevel = indentLevel
-        self.lineNumber = lineNumber
+        self.originalLineNumber = lineNumber
 
         // If tags are provided separately, reconstruct the text with tags
         if tags.isEmpty {
@@ -121,7 +97,12 @@ struct TaskPaperItem: Identifiable, Codable {
                 text += " " + tagText
                 return
              }
-             text.insert(contentsOf: tagText + " ", at: index)
+             let insertText  = if index == text.startIndex {
+                tagText + " "
+             } else {
+                (text[text.index(before: index)] == " " ? "" : " ") + tagText + (text[index] == " " ? "" : " ")
+             }
+             text.insert(contentsOf: insertText, at: index)
              
           case .after(let index):
              guard index < text.endIndex else {
@@ -129,7 +110,7 @@ struct TaskPaperItem: Identifiable, Codable {
                 return
              }
              let insertIndex = text.index(after: index)
-             text.insert(contentsOf: " " + tagText, at: insertIndex)
+             addTag(tag, at: .at(insertIndex))
        }
        reloadCache()
     }
