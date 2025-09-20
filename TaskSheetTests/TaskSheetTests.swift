@@ -366,14 +366,11 @@ final class TaskSheetTests: XCTestCase {
         // Insert after second occurrence of "review" using manual index calculation
         if let firstRange = item.text.range(of: "review"),
            let secondRange = item.text.range(of: "review", range: firstRange.upperBound..<item.text.endIndex) {
-           print("1", item.text)
             item.addTag(Tag(name: "today"), at: .after(secondRange.upperBound))
            XCTAssertEqual(item.text, "- review review @today document", "Should handle multiple occurrences correctly")
-           print("2", item.text)
 
             // Add another tag at the beginning
             item.addTag(Tag(name: "urgent"), at: .beginning)
-           print("3", item.text)
             XCTAssertEqual(item.text, "- @urgent review review @today document", "Should maintain both tags")
         } else {
             XCTFail("Should find both occurrences of 'review' in \(item.text)")
