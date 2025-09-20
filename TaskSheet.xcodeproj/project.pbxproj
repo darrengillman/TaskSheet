@@ -103,6 +103,7 @@
 				1A00010E1234567890123456 /* Models */,
 				1A00011B1234567890123456 /* Views */,
 				1A00011C1234567890123456 /* Managers */,
+				DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */,
 				1A0001031234567890123456 /* Assets.xcassets */,
 				1A0001051234567890123456 /* Preview Content */,
 			);
@@ -122,7 +123,6 @@
 			children = (
 				DE0B7B432E7DE95100C32575 /* ItemType.swift */,
 				DE0B7B412E7DE93D00C32575 /* Tag.swift */,
-				DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */,
 				DEE939C22E78511C002A976E /* String+extn.swift */,
 				1A00010F1234567890123456 /* TaskPaperItem.swift */,
 				1A0001111234567890123456 /* TaskPaperParser.swift */,
