@@ -14,13 +14,13 @@ class TaskPaperManager: ObservableObject {
    private var fileCoordinator = NSFileCoordinator()
    private let bookmarkKey = "TaskPaperFileBookmark"
    
-   enum iCloudSyncStatus {
-      case unknown
-      case notInCloud
-      case downloading
-      case uploading
-      case current
-      case conflict
+   enum iCloudSyncStatus: String {
+      case unknown = "Unknown"
+      case notInCloud = "Not in iCloud"
+      case downloading = "Downloading"
+      case uploading = "Uploading"
+      case current = "Current"
+      case conflict = "File conflict"
    }
    
    func loadFile(result: Result<[URL], Error>) {

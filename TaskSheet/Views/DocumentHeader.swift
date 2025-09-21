@@ -7,28 +7,45 @@
 import SwiftUI
 
 struct DocumentHeader: View {
+   struct PopOverContent: Identifiable, ExpressibleByStringLiteral {
+      var id: String {text}
+      var text: String
+      
+      init(stringLiteral value: String) {
+         self.text = value
+      }
+   }
+   
    @ObservedObject var document: TaskPaperDocument
    @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
+   @State var popOverText: PopOverContent? = nil
    
    var body: some View {
-      VStack(alignment: .leading, spacing: 8) {
-         HStack{
-            Text(document.fileName)
-               .font(.title2)
-               .fontWeight(.semibold)
-               .padding(.trailing, 4)
-            syncStatusView
-         }
-         
-         HStack(spacing: 16) {
+      HStack {
+         syncStatusView
+            .padding(.trailing, 12)
+            .popover(item: $popOverText, attachmentAnchor: .point(.topTrailing)) { item in
+               Text(item.text)
+                  .padding(.horizontal, 12)
+                  .padding(.vertical, 8)
+//                  .background(Color(.systemBackground))
+                  .cornerRadius(8)
+                  .presentationCompactAdaptation(.popover)
+            }
+            .onTapGesture {
+               popOverText = PopOverContent(stringLiteral: syncStatus.rawValue)
+            }
+
+         HStack(spacing: 12) {
             StatItem(icon: "folder", count: document.projectCount, label: "Projects")
             StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: "Tasks")
             StatItem(icon: "checkmark.circle", count: document.completedTaskCount, label: "Done")
             StatItem(icon: "doc.text", count: document.noteCount, label: "Notes")
          }
+         .frame(maxWidth: .infinity, alignment: .leading)
+         
       }
-      .padding(.horizontal)
-      .padding(.bottom)
+      .padding()
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(Color(.systemGroupedBackground))
    }

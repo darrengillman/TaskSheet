@@ -7,7 +7,6 @@ class TaskPaperDocument: ObservableObject {
       }
    }
    @Published var fileName: String
-   @Published var cachedTags: [Tag] = []
    
       // Computed property - content is generated from items
    var content: String {
@@ -35,16 +34,18 @@ class TaskPaperDocument: ObservableObject {
       items.filter { $0.type == .note }.count
    }
    
+   var tags: [Tag] {
+      items
+         .reduce(Set<Tag>()) { set, item in
+            set.union(item.tags)
+         }
+         .sorted(using: SortDescriptor(\.displayText))
+   }
+   
       // MARK: - Task Completion
    
    func toggleTaskCompletion(item: TaskPaperItem) {
       guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
       items[index].toggleCompletion()
    }
-   /*
-    func setTaskCompletion(item: TaskPaperItem, completed: Bool, date: Date = Date()) {
-    guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
-    items[index].setCompletion(completed, date: date)
-    }
-    */
 }

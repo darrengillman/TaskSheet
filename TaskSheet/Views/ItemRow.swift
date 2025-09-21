@@ -2,7 +2,14 @@ import SwiftUI
 
 struct ItemRow: View {
    @State private var folded = false
-    let item: TaskPaperItem
+   @State private var isShowingAddTabSheet = false
+   @State private var alertMessage: String? = nil
+   @State private var isShowingAlert = false
+   @State private var alertTitle: String = "Not Implemented"
+
+   var tags: [Tag]
+
+    @Binding var item: TaskPaperItem
     let onToggleCompletion: ((TaskPaperItem) -> Void)?
 
     var body: some View {
@@ -46,11 +53,6 @@ struct ItemRow: View {
               Label( item.isCompleted ? "Mark as Incomplete" : "Mark as Complete",
                      systemImage: item.isCompleted ?  "circle" : "checkmark.circle.fill")
            }
-           Button {
-              
-           } label: {
-              Label( "Edit...", systemImage: "text.page")
-           }
 
            if folded {
               Button {
@@ -66,42 +68,69 @@ struct ItemRow: View {
               }
            }
            
+           if !item.isCompleted {
+           
            Button {
-              
+              alertMessage = "Focus not implemented"
+              isShowingAlert = true
            } label: {
               Label( "Focus", systemImage: "plus.magnifyingglass")
            }
            
            Divider()
-
-           Menu {
-              Button{
+              Menu {
+                 Button{
+                    alertMessage = "Add Item not implemented"
+                    isShowingAlert = true
+                 } label: {
+                    Label( "Add item", systemImage: "plus.circle")
+                 }
                  
+                 Button{
+                    alertMessage = "Add Item not implemented"
+                    isShowingAlert = true
+                 } label: {
+                    Label( "Add child", systemImage: "circle.badge.plus")
+                 }
+                 Menu{
+                    ForEach(tags.filter{$0.name  != "done"}, id: \.displayText) { tag in
+                       Button{ item.addTag(tag, at: .end) } label: { Text(tag.name) }
+                    }
+                 } label: {
+                    Label( "Add tag", systemImage: "at.circle")
+                 }
               } label: {
-                 Label( "Add item", systemImage: "plus.circle")
+                 Label("Add...", systemImage: "plus.circle")
               }
-              
-              Button{
-                 
-              } label: {
-                 Label( "Add child", systemImage: "circle.badge.plus")
-              }
-
-              Button{
-                 
-              } label: {
-                 Label( "Add tag", systemImage: "at.circle")
-              }
-           } label: {
-              Label("Add...", systemImage: "plus.circle")
            }
+
            Menu("Move...") {
               Label("Move Actions", systemImage: "list.bullet")
                  .foregroundColor(.secondary)
                  .font(.caption)
            }
         }
+        .sheet(isPresented: $isShowingAddTabSheet) {
+           AddTabsSheet
+        }
+        .alert(
+         alertTitle,
+         isPresented: $isShowingAlert,
+         actions: {
+            Button(role: .confirm, action: {alertMessage = nil})
+         },
+         message: {alertMessage == nil ? nil : Text(alertMessage!)} )
+
     }
+   
+   private var AddTabsSheet: some View {
+      Menu("Tags") {
+         ForEach(tags, id: \.displayText) { tag in
+            Text(tag.name)
+         }
+      }
+   }
+   
 
     @ViewBuilder
     private var itemIcon: some View {

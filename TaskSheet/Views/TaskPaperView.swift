@@ -8,8 +8,8 @@ struct TaskPaperView: View {
       VStack(alignment: .leading, spacing: 0) {
          DocumentHeader(document: document, syncStatus: $syncStatus)
 
-         List(document.items) { item in
-            ItemRow(item: item) { item in
+         List($document.items) { item in
+            ItemRow(tags: document.tags, item: item) { item in
                document.toggleTaskCompletion(item: item)
             }
             .listRowInsets(EdgeInsets())
@@ -18,3 +18,8 @@ struct TaskPaperView: View {
       }
    }
 }
+
+#Preview {
+   TaskPaperView(document: SampleContent.sampleDocument, syncStatus: .constant(.current))
+}
+

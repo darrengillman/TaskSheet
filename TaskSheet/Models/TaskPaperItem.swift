@@ -12,7 +12,7 @@ struct TaskPaperItem: Identifiable, Codable {
     let originalLineNumber: Int
 
     // Cached parsed tags for performance
-    private var cachedTags: [Tag]?
+    var cachedTags: [Tag]?
 
     init(type: ItemType, text: String, indentLevel: Int = 0, lineNumber: Int) {
         self.id = UUID()

@@ -17,11 +17,14 @@ struct RootView: View {
                TaskPaperView(document: taskPaperManager.document!, syncStatus: $taskPaperManager.syncStatus)
             }
          }
-         .navigationTitle("TaskSheet")
+         .navigationTitle(taskPaperManager.document?.fileName ?? "TaskSheet")
          .toolbar {
             if taskPaperManager.document !=  nil {
                Button(role: .close) {
+                  taskPaperManager.saveDocument()
                   taskPaperManager.document = nil
+               } label: {
+                  Image(systemName: "xmark.circle.fill")
                }
             }
          }
