@@ -1,6 +1,8 @@
 import Foundation
 
 class TaskPaperManager: ObservableObject {
+   static let bookmarkKey = "TaskPaperFileBookmark"
+
    @Published var document: TaskPaperDocument?
    @Published var isLoading = false
    @Published var errorMessage: String?
@@ -12,7 +14,6 @@ class TaskPaperManager: ObservableObject {
    private var currentFileURL: URL?
    private var isSampleDataLoaded: Bool = false
    private var fileCoordinator = NSFileCoordinator()
-   private let bookmarkKey = "TaskPaperFileBookmark"
    
    enum iCloudSyncStatus: String {
       case unknown = "Unknown"
@@ -102,15 +103,13 @@ class TaskPaperManager: ObservableObject {
       do {
          let bookmarkData = try url.bookmarkData(options: .suitableForBookmarkFile, includingResourceValuesForKeys: nil, relativeTo: nil)
          fileBookmark = bookmarkData
-         UserDefaults.standard.set(bookmarkData, forKey: bookmarkKey)
+         UserDefaults.standard.set(bookmarkData, forKey: Self.bookmarkKey)
       } catch {
          print("Failed to create bookmark: \(error)")
       }
    }
    
-   func restoreFileAccess() {
-      guard let bookmarkData = UserDefaults.standard.data(forKey: bookmarkKey) else { return }
-      
+   func restoreFileAccess(from bookmarkData: Data) {
       var isStale = false
       do {
          let url = try URL(resolvingBookmarkData: bookmarkData, options: .withoutUI, relativeTo: nil, bookmarkDataIsStale: &isStale)
@@ -123,7 +122,7 @@ class TaskPaperManager: ObservableObject {
          loadFile(from: url)
       } catch {
          print("Failed to restore file access: \(error)")
-         UserDefaults.standard.removeObject(forKey: bookmarkKey)
+         UserDefaults.standard.removeObject(forKey: Self.bookmarkKey)
       }
    }
    

@@ -64,7 +64,7 @@ struct TaskPaperItem: Identifiable, Codable {
         }
     }
    
-   private mutating func reloadCache() {
+   private mutating func refreshTagCache() {
       cachedTags = TaskPaperParser.extractTags(from: text)
    }
 
@@ -112,8 +112,12 @@ struct TaskPaperItem: Identifiable, Codable {
              let insertIndex = text.index(after: index)
              addTag(tag, at: .at(insertIndex))
        }
-       reloadCache()
-    }
+       refreshTagCache()    }
+   
+   mutating func removeTag(_ tag: Tag) {
+      text = text.removingTag(tag.name)
+      refreshTagCache()
+   }
    
    private func getTypePrefixEndIndex() -> Int {
       switch type {
@@ -134,7 +138,7 @@ struct TaskPaperItem: Identifiable, Codable {
            let dateString = dateFormatter.string(from: .now)
             addTag(Tag(name: "done", value: dateString))
         }
-       reloadCache()
+       refreshTagCache()
     }
    
    mutating func setCompletion(_ completed: Bool, date: Date = .now) {
@@ -146,7 +150,7 @@ struct TaskPaperItem: Identifiable, Codable {
       } else {
          text = text.removingTag("done")
       }
-      reloadCache()
+      refreshTagCache()
    }
 }
 

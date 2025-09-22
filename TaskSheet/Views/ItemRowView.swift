@@ -195,15 +195,18 @@ struct TagView: View {
                   showingTagActions = true
                }
             }
-            .confirmationDialog("Delete Tag", isPresented: $showingTagActions) {
-//               List {
-                  Button{
-                     deleteAction(tag)
-                  } label: {
-                     Label("Delete", systemImage: "trash")
-                  }
+            .confirmationDialog("Tag", isPresented: $showingTagActions) {
+               Button{
+                  deleteAction(tag)
+               } label: {
+                  Label("Delete", systemImage: "trash")
                }
-//            }
+               Button{
+                  
+               } label: {
+                  Label("Tag Colour", systemImage: "paintbrush.pointed.fill")
+               }
+            }
     }
 
     private var tagColor: Color {

@@ -4,7 +4,7 @@ struct RootView: View {
    @Environment(\.scenePhase) private var scenePhase
    @StateObject private var taskPaperManager = TaskPaperManager()
    @State private var showingFilePicker = false
-   @State private var loading = true
+   @State private var loading = false
    
    var body: some View {
       NavigationStack {
@@ -14,7 +14,7 @@ struct RootView: View {
             } else if taskPaperManager.document == nil {
                noFileSelectedView
             } else {
-               TaskPaperView(document: taskPaperManager.document!, syncStatus: $taskPaperManager.syncStatus)
+               TaskListView(document: taskPaperManager.document!, syncStatus: $taskPaperManager.syncStatus)
             }
          }
          .navigationTitle(taskPaperManager.document?.fileName ?? "TaskSheet")
@@ -31,7 +31,9 @@ struct RootView: View {
       }
       .onAppear {
             // Restore previous file access if available
-         taskPaperManager.restoreFileAccess()
+         guard let bookmarkData = UserDefaults.standard.data(forKey: TaskPaperManager.bookmarkKey) else { return }
+         loading = true
+         taskPaperManager.restoreFileAccess(from: bookmarkData)
          loading = false
       }
       .onChange(of: scenePhase) { _, new in

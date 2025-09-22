@@ -14,8 +14,8 @@
 		1A0001101234567890123456 /* TaskPaperItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00010F1234567890123456 /* TaskPaperItem.swift */; };
 		1A0001121234567890123456 /* TaskPaperParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001111234567890123456 /* TaskPaperParser.swift */; };
 		1A0001141234567890123456 /* TaskPaperDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001131234567890123456 /* TaskPaperDocument.swift */; };
-		1A0001161234567890123456 /* TaskPaperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001151234567890123456 /* TaskPaperView.swift */; };
-		1A0001181234567890123456 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001171234567890123456 /* ItemRow.swift */; };
+		1A0001161234567890123456 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001151234567890123456 /* TaskListView.swift */; };
+		1A0001181234567890123456 /* ItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001171234567890123456 /* ItemRowView.swift */; };
 		1A00011A1234567890123456 /* TaskPaperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001191234567890123456 /* TaskPaperManager.swift */; };
 		DE0B7B402E7B87FA00C32575 /* SampleContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */; };
 		DE0B7B422E7DE93D00C32575 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B412E7DE93D00C32575 /* Tag.swift */; };
@@ -46,8 +46,8 @@
 		1A00010F1234567890123456 /* TaskPaperItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperItem.swift; sourceTree = "<group>"; };
 		1A0001111234567890123456 /* TaskPaperParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperParser.swift; sourceTree = "<group>"; };
 		1A0001131234567890123456 /* TaskPaperDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDocument.swift; sourceTree = "<group>"; };
-		1A0001151234567890123456 /* TaskPaperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperView.swift; sourceTree = "<group>"; };
-		1A0001171234567890123456 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
+		1A0001151234567890123456 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
+		1A0001171234567890123456 /* ItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRowView.swift; sourceTree = "<group>"; };
 		1A0001191234567890123456 /* TaskPaperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperManager.swift; sourceTree = "<group>"; };
 		DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleContent.swift; sourceTree = "<group>"; };
 		DE0B7B412E7DE93D00C32575 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
@@ -138,8 +138,8 @@
 				DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */,
 				1A0001011234567890123456 /* RootView.swift */,
 				DEE93ABA2E79BD03002A976E /* DocumentHeader.swift */,
-				1A0001151234567890123456 /* TaskPaperView.swift */,
-				1A0001171234567890123456 /* ItemRow.swift */,
+				1A0001151234567890123456 /* TaskListView.swift */,
+				1A0001171234567890123456 /* ItemRowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -263,9 +263,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A0001021234567890123456 /* RootView.swift in Sources */,
-				1A0001161234567890123456 /* TaskPaperView.swift in Sources */,
+				1A0001161234567890123456 /* TaskListView.swift in Sources */,
 				DE0B7B442E7DE95100C32575 /* ItemType.swift in Sources */,
-				1A0001181234567890123456 /* ItemRow.swift in Sources */,
+				1A0001181234567890123456 /* ItemRowView.swift in Sources */,
 				1A0001121234567890123456 /* TaskPaperParser.swift in Sources */,
 				1A00011A1234567890123456 /* TaskPaperManager.swift in Sources */,
 				DEC18D7E2E79DC14000E2BAF /* LoadingView.swift in Sources */,

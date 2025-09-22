@@ -1,14 +1,9 @@
 import Foundation
 
 class TaskPaperDocument: ObservableObject {
-   @Published var items: [TaskPaperItem] = [] {
-      didSet {
-         print("could rebuild tab cache")
-      }
-   }
+   @Published var items: [TaskPaperItem] = []
    @Published var fileName: String
    
-      // Computed property - content is generated from items
    var content: String {
       return items.taskPaperContent
    }

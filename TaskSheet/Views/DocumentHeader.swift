@@ -28,8 +28,6 @@ struct DocumentHeader: View {
                Text(item.text)
                   .padding(.horizontal, 12)
                   .padding(.vertical, 8)
-//                  .background(Color(.systemBackground))
-                  .cornerRadius(8)
                   .presentationCompactAdaptation(.popover)
             }
             .onTapGesture {
@@ -48,6 +46,7 @@ struct DocumentHeader: View {
       .padding()
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(Color(.systemGroupedBackground))
+      .scrollEdgeEffectStyle(.soft, for: .bottom)
    }
    
    @ViewBuilder
