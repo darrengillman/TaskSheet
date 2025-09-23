@@ -72,7 +72,7 @@ class TagSchemaManager: ObservableObject {
                self.setColor(for: tag, option: colorOption)
                presenting.wrappedValue = false
             } label: {
-               Text(colorOption.name)
+               Label(colorOption.name, systemImage: "square.fill").tint(colorOption.color)
             }
          }
       } label: {
