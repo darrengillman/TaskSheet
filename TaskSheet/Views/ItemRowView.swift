@@ -185,8 +185,6 @@ struct TagView: View {
    @State var tag: Tag
    @ObservedObject var schema: TagSchemaManager
    let deleteAction: (Tag) -> Void
-   @State var colorRefreshID = UUID()
-   
 
    var body: some View {
       Text(tag.displayText)
@@ -195,7 +193,6 @@ struct TagView: View {
          .padding(.vertical, 2)
          .background(schema.getColor(for: tag).opacity(0.2))
          .foregroundColor(schema.getColor(for: tag))
-         .id(colorRefreshID)
          .cornerRadius(4)
          .contentShape(Rectangle())
          .onTapGesture {
@@ -214,40 +211,11 @@ struct TagView: View {
                      .frame(maxWidth: .infinity, alignment: .leading)
                      .padding()
                }
-               colorMenu
+               schema.colorMenu(for: tag, presenting: $showingTagActions)
             }
             .frame(width: 160)
             .background(Color(.systemBackground))
             .presentationCompactAdaptation(.popover)
          }
-   }
-   
-   private var colorMenu: some View {
-      Menu{
-         Button("Black") { recolor(.black) }
-         Button("Blue") { recolor(.blue) }
-         Button("Brown") { recolor(.brown) }
-         Button("Cyan") { recolor(.cyan) }
-         Button("Gray") { recolor(.gray) }
-         Button("Green") { recolor(.green) }
-         Button("Indigo") { recolor(.indigo) }
-         Button("Mint") { recolor(.mint) }
-         Button("Orange") { recolor(.orange) }
-         Button("Pink") { recolor(.pink) }
-         Button("Purple") { recolor(.purple) }
-         Button("Red") { recolor(.red) }
-         Button("Teal") { recolor(.teal) }
-         Button("Yellow") { recolor(.yellow) }
-      } label: {
-         Label("Set Colour", systemImage: "paintbrush.pointed.fill")
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-      }
-   }
-
-   
-   func recolor(_ color: Color) {
-      schema.setColor(for: tag, color: color)
-      showingTagActions = false
    }
 }
