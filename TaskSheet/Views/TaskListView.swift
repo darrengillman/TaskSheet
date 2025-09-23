@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TaskListView: View {
+   @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
    @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
 
@@ -9,7 +10,7 @@ struct TaskListView: View {
          DocumentHeader(document: document, syncStatus: $syncStatus)
 
          List($document.items) { item in
-            ItemRowView(tags: document.tags, item: item) { item in
+            ItemRowView(tags: document.tags, item: item, tagSchemaManager: tagSchemeManager) { item in
                document.toggleTaskCompletion(item: item)
             }
             .listRowInsets(EdgeInsets())
