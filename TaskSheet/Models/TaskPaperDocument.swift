@@ -43,4 +43,80 @@ class TaskPaperDocument: ObservableObject {
       guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
       items[index].toggleCompletion()
    }
+   
+   func indent(_ item: TaskPaperItem ) {
+      guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+      let originalIndent = items[index].indentLevel
+      items[index].indentLevel += 1
+      var childIndex = index + 1
+      while childIndex < items.endIndex && items[childIndex].indentLevel > originalIndent {
+         items[childIndex].indentLevel += 1
+         childIndex += 1
+      }
+   }
+   
+   func outdent(_ item: TaskPaperItem ) {
+      guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+      let originalIndent = items[index].indentLevel
+      guard originalIndent > 0 else { return }
+      items[index].indentLevel -= 1
+      var childIndex = index + 1
+      while childIndex < items.endIndex && items[childIndex].indentLevel > originalIndent {
+         items[childIndex].indentLevel -= 1
+         childIndex += 1
+      }
+   }
+   
+   func isAtTop(_ item: TaskPaperItem) -> Bool {
+      items.firstIndex(of: item) == items.startIndex
+   }
+   
+   func isAtBottom(_ item: TaskPaperItem) -> Bool {
+      let destination = moveDownDestination(for: item)
+      return destination == nil
+   }
+   
+   private func moveDownDestination(for item: TaskPaperItem) -> (moving: IndexSet, after: Int)? {
+      guard !items.isEmpty,  let itemIndex = items.firstIndex(of: item) else {return nil}
+      let enumerated = items.enumerated()
+      let firstMatchingIndent = enumerated.first(where: {$0 > itemIndex && $1.indentLevel <= item.indentLevel})?.offset
+      let secondMatchingIndent = firstMatchingIndent == nil ? nil  : enumerated.first(where: {$0 > firstMatchingIndent! && $1.indentLevel <= item.indentLevel})?.offset
+      
+      switch (firstMatchingIndent, secondMatchingIndent) {
+         case (nil, _):
+            return nil
+         case (.some(let first), nil):
+            return (IndexSet(itemIndex..<first), enumerated.last!.offset)
+         case let (.some(first), .some(second)):
+            return (IndexSet(itemIndex..<first), second - 1)
+      }
+   }
+
+   func moveDown(_ item: TaskPaperItem) {
+      guard let moveDef = moveDownDestination(for: item) else { return }
+      items.move(fromOffsets: IndexSet(moveDef.moving), toOffset: moveDef.after + 1)
+   }
+   
+   func moveUpDestination(for item: TaskPaperItem) -> (moving: IndexSet, after: Int)? {
+      guard let itemIndex = items.firstIndex(of: item) else {return nil}
+      let enumerated = items.enumerated()
+      let blockToMoveEndIndex = (enumerated.first(where: {$0 > itemIndex && $1.indentLevel <= item.indentLevel})?.offset)?.advanced(by: -1)
+      let insertionIndex = enumerated.last(where:{$0 < itemIndex && $1.indentLevel <= item.indentLevel})?.offset
+      
+      switch(blockToMoveEndIndex, insertionIndex) {
+         case (.none, .none):
+            return (IndexSet(integer: itemIndex), items.startIndex)
+         case let (.none, .some(insertion)):
+            return (IndexSet(integer: itemIndex), insertion)
+         case let (.some(blockEnd), .none):
+            return (IndexSet(itemIndex...blockEnd), items.startIndex )
+         case let (.some(blockEnd), .some(insertion)):
+            return (IndexSet(itemIndex...blockEnd), insertion)
+      }
+   }
+
+   func moveUp(_ item: TaskPaperItem) {
+      guard let moveDef = moveUpDestination(for: item) else {return}
+      items.move(fromOffsets: moveDef.moving, toOffset: moveDef.after)
+   }
 }

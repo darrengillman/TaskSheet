@@ -1,18 +1,16 @@
 import SwiftUI
 
 struct ItemRowView: View {
-   var tags: [Tag]
    @Binding var item: TaskPaperItem
    @ObservedObject var tagSchemaManager: TagSchemaManager
-   let onToggleCompletion: ((TaskPaperItem) -> Void)?
+   @ObservedObject var document: TaskPaperDocument
+   //let onToggleCompletion: ((TaskPaperItem) -> Void)?
    
    @State private var folded = false
    @State private var isShowingAddTabSheet = false
    @State private var alertMessage: String? = nil
    @State private var isShowingAlert = false
    @State private var alertTitle: String = "Not Implemented"
-   
-
    
    var body: some View {
       HStack(alignment: .top, spacing: 8) {
@@ -27,7 +25,7 @@ struct ItemRowView: View {
          
          itemIcon
             .onTapGesture {
-               onToggleCompletion?(item)
+               document.toggleTaskCompletion(item: item)
             }
          
             // Content
@@ -38,6 +36,10 @@ struct ItemRowView: View {
                .fontWeight(item.type == .project ? .semibold : .regular)
                .strikethrough(item.isCompleted)
                .foregroundColor(item.isCompleted ? .secondary : .primary)
+               .onTapGesture {
+                  alertMessage = "Editing not implemented"
+                  isShowingAlert = true
+               }
                .contextMenu {
                   MainContextMenu
                }
@@ -66,7 +68,7 @@ struct ItemRowView: View {
    
    private var AddTabsSheet: some View {
       Menu("Tags") {
-         ForEach(tags, id: \.displayText) { tag in
+         ForEach(document.tags, id: \.displayText) { tag in
             Text(tag.name)
          }
       }
@@ -75,26 +77,36 @@ struct ItemRowView: View {
    @ViewBuilder
    private var MainContextMenu: some View {
       Button {
-         onToggleCompletion?(item)
+         document.toggleTaskCompletion(item: item)
       } label: {
          Label( item.isCompleted ? "Mark as Incomplete" : "Mark as Complete",
                 systemImage: item.isCompleted ?  "circle" : "checkmark.circle.fill")
       }
-      
-      if folded {
-         Button {
-            folded = false
-         } label: {
-            Label( "Expand", systemImage: "rectangle.expand.vertical")
-         }
-      } else {
-         Button {
-            folded = true
-         } label: {
-            Label( "Fold", systemImage: "rectangle.compress.vertical")
-         }
+      foldingMenu
+      ifCompletedMenu
+      moveMenu
+   }
+   
+   @ViewBuilder
+   private var itemIcon: some View {
+      switch item.type {
+         case .project:
+            Image(systemName: "folder")
+               .foregroundColor(.blue)
+               .font(.system(size: 16, weight: .medium))
+         case .task:
+            Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+               .foregroundColor(item.isCompleted ? .green : .secondary)
+               .font(.system(size: 16))
+         case .note:
+            Image(systemName: "doc.text")
+               .foregroundColor(item.isCompleted ? .secondary: .gray)
+               .font(.system(size: 14))
       }
-      
+   }
+   
+   @ViewBuilder
+   private var ifCompletedMenu: some View {
       if !item.isCompleted {
          Button {
             alertMessage = "Focus not implemented"
@@ -118,7 +130,7 @@ struct ItemRowView: View {
                Label( "Add child", systemImage: "circle.badge.plus")
             }
             Menu{
-               ForEach(tags.filter{$0.name  != "done"}, id: \.displayText) { tag in
+               ForEach(document.tags.filter{$0.name  != "done"}, id: \.displayText) { tag in
                   Button{ item.addTag(tag, at: .end) } label: { Text(tag.name) }
                }
             } label: {
@@ -128,8 +140,30 @@ struct ItemRowView: View {
             Label("Add...", systemImage: "plus.circle")
          }
       }
-      
-      Menu("Move...") {
+   }
+
+   @ViewBuilder
+   private var foldingMenu: some View {
+      if folded {
+         Button {
+            folded = false
+         } label: {
+            Label( "Expand", systemImage: "rectangle.expand.vertical")
+         }
+      } else {
+         Button {
+            folded = true
+         } label: {
+            Label( "Fold", systemImage: "rectangle.compress.vertical")
+         }
+      }
+   }
+   
+   @ViewBuilder
+   private var moveMenu: some View {
+      Menu {
+         moveActions
+      } label: {
          Label("Move Actions", systemImage: "list.bullet")
             .foregroundColor(.secondary)
             .font(.caption)
@@ -137,22 +171,46 @@ struct ItemRowView: View {
    }
    
    @ViewBuilder
-   private var itemIcon: some View {
-      switch item.type {
-         case .project:
-            Image(systemName: "folder")
-               .foregroundColor(.blue)
-               .font(.system(size: 16, weight: .medium))
-         case .task:
-            Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-               .foregroundColor(item.isCompleted ? .green : .secondary)
-               .font(.system(size: 16))
-         case .note:
-            Image(systemName: "doc.text")
-               .foregroundColor(item.isCompleted ? .secondary: .gray)
-               .font(.system(size: 14))
+   private var moveActions: some View {
+      if !document.isAtTop(item) {
+         Button {
+            withAnimation{
+               document.moveUp(item)
+            }
+         } label: {
+            Label("Up", systemImage: "arrowtriangle.up")
+         }
+      }
+
+      Button {
+         withAnimation {
+            document.indent(item)
+         }
+      } label: {
+         Label("Indent", systemImage: "arrowtriangle.forward")
+      }
+      
+      if item.indentLevel > 0 {
+         Button {
+            withAnimation{
+               document.outdent(item)
+            }
+         } label: {
+            Label("Outdent", systemImage: "arrowtriangle.backward")
+         }
+      }
+      
+      if !document.isAtBottom(item) {
+         Button {
+            withAnimation{
+               document.moveDown(item)
+            }
+         } label: {
+            Label("Down", systemImage: "arrowtriangle.down")
+         }
       }
    }
+
    
    private func font(for itemType: ItemType) -> Font {
       switch itemType {

@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-struct TaskPaperItem: Identifiable, Codable {
+struct TaskPaperItem: Identifiable, Codable, Equatable {
    static let projectSuffix = ":"
    static let taskPrefix = "- "
    static let completedTagText = "done"

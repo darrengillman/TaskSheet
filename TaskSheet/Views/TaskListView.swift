@@ -10,9 +10,9 @@ struct TaskListView: View {
          DocumentHeader(document: document, syncStatus: $syncStatus)
 
          List($document.items) { item in
-            ItemRowView(tags: document.tags, item: item, tagSchemaManager: tagSchemeManager) { item in
-               document.toggleTaskCompletion(item: item)
-            }
+            ItemRowView(item: item,
+                        tagSchemaManager: tagSchemeManager,
+                        document: document)
             .listRowInsets(EdgeInsets())
          }
          .listStyle(.plain)
