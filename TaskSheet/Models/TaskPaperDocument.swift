@@ -76,7 +76,7 @@ class TaskPaperDocument: ObservableObject {
       return destination == nil
    }
    
-   private func moveDownDestination(for item: TaskPaperItem) -> (moving: IndexSet, after: Int)? {
+   func moveDownDestination(for item: TaskPaperItem) -> (moving: IndexSet, after: Int)? {
       guard !items.isEmpty,  let itemIndex = items.firstIndex(of: item) else {return nil}
       let enumerated = items.enumerated()
       let firstMatchingIndent = enumerated.first(where: {$0 > itemIndex && $1.indentLevel <= item.indentLevel})?.offset
@@ -97,7 +97,7 @@ class TaskPaperDocument: ObservableObject {
       items.move(fromOffsets: IndexSet(moveDef.moving), toOffset: moveDef.after + 1)
    }
    
-   func moveUpDestination(for item: TaskPaperItem) -> (moving: IndexSet, after: Int)? {
+   func moveUpDestination(for item: TaskPaperItem) -> (moving: IndexSet, insertAt: Int)? {
       guard let itemIndex = items.firstIndex(of: item) else {return nil}
       let enumerated = items.enumerated()
       let blockToMoveEndIndex = (enumerated.first(where: {$0 > itemIndex && $1.indentLevel <= item.indentLevel})?.offset)?.advanced(by: -1)
@@ -117,6 +117,6 @@ class TaskPaperDocument: ObservableObject {
 
    func moveUp(_ item: TaskPaperItem) {
       guard let moveDef = moveUpDestination(for: item) else {return}
-      items.move(fromOffsets: moveDef.moving, toOffset: moveDef.after)
+      items.move(fromOffsets: moveDef.moving, toOffset: moveDef.insertAt)
    }
 }

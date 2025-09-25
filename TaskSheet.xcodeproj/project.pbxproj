@@ -23,7 +23,8 @@
 		DE0B7B482E828C0C00C32575 /* TagSchemaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B472E828C0C00C32575 /* TagSchemaManager.swift */; };
 		DE0B7B4A2E82A03100C32575 /* TagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B492E82A03100C32575 /* TagsView.swift */; };
 		DE0B7B4C2E82A04B00C32575 /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B4B2E82A04B00C32575 /* TagView.swift */; };
-		DE1C94A02E775AEA00353202 /* TaskSheetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94982E7757D800353202 /* TaskSheetTests.swift */; };
+		DE1C94A02E775AEA00353202 /* TaskSheetTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */; };
+		DE1C94B02E82A12300353202 /* TaskPaperDocumentMovementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */; };
 		DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */; };
 		DEC18D7E2E79DC14000E2BAF /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7D2E79DC0F000E2BAF /* LoadingView.swift */; };
 		DEE939C32E785122002A976E /* String+extn.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE939C22E78511C002A976E /* String+extn.swift */; };
@@ -58,8 +59,9 @@
 		DE0B7B472E828C0C00C32575 /* TagSchemaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSchemaManager.swift; sourceTree = "<group>"; };
 		DE0B7B492E82A03100C32575 /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
 		DE0B7B4B2E82A04B00C32575 /* TagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagView.swift; sourceTree = "<group>"; };
-		DE1C94982E7757D800353202 /* TaskSheetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSheetTests.swift; sourceTree = "<group>"; };
+		DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSheetTagTests.swift; sourceTree = "<group>"; };
 		DE1C949F2E775AEA00353202 /* TaskSheetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskSheetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDocumentMovementTests.swift; sourceTree = "<group>"; };
 		DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		DEC18D7D2E79DC0F000E2BAF /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		DEE939C22E78511C002A976E /* String+extn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extn.swift"; sourceTree = "<group>"; };
@@ -164,7 +166,8 @@
 		DE1C94992E7757D800353202 /* TaskSheetTests */ = {
 			isa = PBXGroup;
 			children = (
-				DE1C94982E7757D800353202 /* TaskSheetTests.swift */,
+				DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */,
+				DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */,
 			);
 			path = TaskSheetTests;
 			sourceTree = "<group>";
@@ -296,7 +299,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE1C94A02E775AEA00353202 /* TaskSheetTests.swift in Sources */,
+				DE1C94A02E775AEA00353202 /* TaskSheetTagTests.swift in Sources */,
+				DE1C94B02E82A12300353202 /* TaskPaperDocumentMovementTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,12 +521,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TaskSheet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TaskSheet";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
@@ -543,12 +548,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TaskSheet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TaskSheet";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
