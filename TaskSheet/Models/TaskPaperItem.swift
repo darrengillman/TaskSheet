@@ -77,46 +77,47 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
         case after(String.Index)                 // Insert after specific index
     }
 
-    mutating func addTag(_ tag: Tag, at position: TagInsertionPosition = .end) {
-       guard !tags.contains(tag) else {
-          removeTag(tag)
-          return
-       }
-
-       text = text.removingTag(tag.name)
-       let tagText = tag.displayText
-
-       switch position {
-          case .beginning:
-                // Insert after type prefix (-, project:, etc.)
-             let prefixEnd = getTypePrefixEndIndex()
-             let insertIndex = text.index(text.startIndex, offsetBy: prefixEnd)
-             text.insert(contentsOf: tagText + " ", at: insertIndex)
-             
-          case .end:
-             text += " " + tagText
-             
-          case .at(let index):
-             guard index <= text.endIndex else {
-                text += " " + tagText
-                return
-             }
-             let insertText  = if index == text.startIndex {
-                tagText + " "
-             } else {
-                (text[text.index(before: index)] == " " ? "" : " ") + tagText + (text[index] == " " ? "" : " ")
-             }
-             text.insert(contentsOf: insertText, at: index)
-             
-          case .after(let index):
-             guard index < text.endIndex else {
-                text += " " + tagText
-                return
-             }
-             let insertIndex = text.index(after: index)
-             addTag(tag, at: .at(insertIndex))
-       }
-       refreshTagCache()    }
+   mutating func addTag(_ tag: Tag, at position: TagInsertionPosition = .end) {
+      guard !tags.contains(tag) else {
+         removeTag(tag)
+         return
+      }
+      
+      text = text.removingTag(tag.name)
+      let tagText = tag.displayText
+      
+      switch position {
+         case .beginning:
+               // Insert after type prefix (-, project:, etc.)
+            let prefixEnd = getTypePrefixEndIndex()
+            let insertIndex = text.index(text.startIndex, offsetBy: prefixEnd)
+            text.insert(contentsOf: tagText + " ", at: insertIndex)
+            
+         case .end:
+            text += " " + tagText
+            
+         case .at(let index):
+            guard index <= text.endIndex else {
+               text += " " + tagText
+               return
+            }
+            let insertText  = if index == text.startIndex {
+               tagText + " "
+            } else {
+               (text[text.index(before: index)] == " " ? "" : " ") + tagText + (text[index] == " " ? "" : " ")
+            }
+            text.insert(contentsOf: insertText, at: index)
+            
+         case .after(let index):
+            guard index < text.endIndex else {
+               text += " " + tagText
+               return
+            }
+            let insertIndex = text.index(after: index)
+            addTag(tag, at: .at(insertIndex))
+      }
+      refreshTagCache()
+   }
    
    mutating func removeTag(_ tag: Tag) {
       text = text.removingTag(tag.name)

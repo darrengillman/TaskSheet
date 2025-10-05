@@ -6,9 +6,10 @@ struct ItemRowView: View {
    @ObservedObject var document: TaskPaperDocument
    
    @State private var folded = false
-   @State private var isShowingAddTabSheet = false
-   @State private var alertMessage: String? = nil
+   @State private var isShowingAddTagSheet = false
    @State private var isShowingAlert = false
+   
+   @State private var alertMessage: String? = nil
    @State private var alertTitle: String = "Not Implemented"
    
    var body: some View {
@@ -55,8 +56,11 @@ struct ItemRowView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.vertical, 4)
       .padding(.horizontal)
-      .sheet(isPresented: $isShowingAddTabSheet) {
-         AddTabsSheet
+      .popover(isPresented: $isShowingAddTagSheet) {
+         AddTagSheet() { text in
+            item.addTag(.init(name: text), at: .end)
+         }
+         .presentationCompactAdaptation(.popover)
       }
       .alert(alertTitle,
              isPresented: $isShowingAlert,
@@ -65,24 +69,19 @@ struct ItemRowView: View {
       )
    }
    
-   private var AddTabsSheet: some View {
-      Menu("Tags") {
-         ForEach(document.tags, id: \.displayText) { tag in
-            Text(tag.name)
-         }
-      }
-   }
-   
    @ViewBuilder
    private var MainContextMenu: some View {
       completionMenu
-      foldingMenu
       if !item.isCompleted {
+         foldingMenu
          focusMenu
          Divider()
          addMenu
+         moveMenu
+      } else {
+         foldingMenu
+         moveMenu
       }
-      moveMenu
    }
    
    @ViewBuilder
@@ -139,7 +138,14 @@ struct ItemRowView: View {
             } label: {
                Label( "Add child", systemImage: "circle.badge.plus")
             }
+            
             Menu{
+               Button {
+                  isShowingAddTagSheet = true
+               } label: {
+                  Label("New...", systemImage: "at.badge.plus")
+               }
+               Divider()
                ForEach(document.tags.filter{$0.name  != "done"}, id: \.displayText) { tag in
                   Button{
                      item.addTag(tag, at: .end)
@@ -226,7 +232,6 @@ struct ItemRowView: View {
          }
       }
    }
-
    
    private func font(for itemType: ItemType) -> Font {
       switch itemType {
