@@ -4,7 +4,6 @@ struct ItemRowView: View {
    @Binding var item: TaskPaperItem
    @ObservedObject var tagSchemaManager: TagSchemaManager
    @ObservedObject var document: TaskPaperDocument
-   //let onToggleCompletion: ((TaskPaperItem) -> Void)?
    
    @State private var folded = false
    @State private var isShowingAddTabSheet = false
@@ -76,15 +75,24 @@ struct ItemRowView: View {
    
    @ViewBuilder
    private var MainContextMenu: some View {
+      completionMenu
+      foldingMenu
+      if !item.isCompleted {
+         focusMenu
+         Divider()
+         addMenu
+      }
+      moveMenu
+   }
+   
+   @ViewBuilder
+   private var completionMenu: some View {
       Button {
          document.toggleTaskCompletion(item: item)
       } label: {
          Label( item.isCompleted ? "Mark as Incomplete" : "Mark as Complete",
                 systemImage: item.isCompleted ?  "circle" : "checkmark.circle.fill")
       }
-      foldingMenu
-      ifCompletedMenu
-      moveMenu
    }
    
    @ViewBuilder
@@ -106,15 +114,17 @@ struct ItemRowView: View {
    }
    
    @ViewBuilder
-   private var ifCompletedMenu: some View {
-      if !item.isCompleted {
-         Button {
-            alertMessage = "Focus not implemented"
-            isShowingAlert = true
-         } label: {
-            Label( "Focus", systemImage: "plus.magnifyingglass")
-         }
-         Divider()
+   private var focusMenu: some View {
+      Button {
+         alertMessage = "Focus not implemented"
+         isShowingAlert = true
+      } label: {
+         Label( "Focus", systemImage: "plus.magnifyingglass")
+      }
+   }
+   
+   @ViewBuilder
+   private var addMenu: some View {
          Menu {
             Button{
                alertMessage = "Add Item not implemented"
@@ -131,7 +141,14 @@ struct ItemRowView: View {
             }
             Menu{
                ForEach(document.tags.filter{$0.name  != "done"}, id: \.displayText) { tag in
-                  Button{ item.addTag(tag, at: .end) } label: { Text(tag.name) }
+                  Button{
+                     item.addTag(tag, at: .end)
+                  } label: {
+                     HStack {
+                        item.tags.contains(tag) ? Image(systemName: "checkmark.circle") : Image(systemName: "circle")
+                        Text(tag.name)
+                     }
+                  }
                }
             } label: {
                Label( "Add tag", systemImage: "at.circle")
@@ -139,7 +156,6 @@ struct ItemRowView: View {
          } label: {
             Label("Add...", systemImage: "plus.circle")
          }
-      }
    }
 
    @ViewBuilder

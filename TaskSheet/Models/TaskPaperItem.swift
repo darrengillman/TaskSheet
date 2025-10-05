@@ -78,7 +78,11 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
     }
 
     mutating func addTag(_ tag: Tag, at position: TagInsertionPosition = .end) {
-        // Remove existing tag with same name first
+       guard !tags.contains(tag) else {
+          removeTag(tag)
+          return
+       }
+
        text = text.removingTag(tag.name)
        let tagText = tag.displayText
 
