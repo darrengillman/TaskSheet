@@ -37,6 +37,20 @@ class TaskPaperDocument: ObservableObject {
          .sorted(using: SortDescriptor(\.displayText))
    }
    
+   func insert(_ newTask: TaskPaperItem, after task: TaskPaperItem) {
+      guard let currentIndex = items.firstIndex(of: task) else {
+         items.append(newTask)
+         return
+      }
+      let nextIndex = items.index(after: currentIndex)
+      items.insert(newTask, at: nextIndex)
+   }
+   
+   func delete(_ item: TaskPaperItem) {
+      guard let index = items.firstIndex(of: item) else { return }
+      items.remove(at: index)
+   }
+   
       // MARK: - Task Completion
    
    func toggleTaskCompletion(item: TaskPaperItem) {

@@ -6,8 +6,10 @@ struct ItemRowView: View {
    @ObservedObject var document: TaskPaperDocument
    
    @State private var folded = false
-   @State private var isShowingAddTagSheet = false
+   @State private var isShowingAddTagPopover = false
+   @State private var isShowingAddItemPopover = false
    @State private var isShowingAlert = false
+   @State private var newItemIndent: Int? = nil
    
    @State private var alertMessage: String? = nil
    @State private var alertTitle: String = "Not Implemented"
@@ -56,9 +58,22 @@ struct ItemRowView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.vertical, 4)
       .padding(.horizontal)
-      .popover(isPresented: $isShowingAddTagSheet) {
-         AddTagSheet() { text in
+      .popover(isPresented: $isShowingAddTagPopover) {
+         AddTagPopOver() { text in
             item.addTag(.init(name: text), at: .end)
+         }
+         .presentationCompactAdaptation(.popover)
+      }
+      .popover(isPresented: $isShowingAddItemPopover) {
+         AddItemPopOver { text, type in
+            let newItem = TaskPaperItem(type: type, text: text, indentLevel: item.indentLevel, lineNumber: 0)
+            document.insert(newItem, after: item)
+         }
+      }
+      .popover(item: $newItemIndent) { indent in
+         AddItemPopOver { text, type in
+            let newItem = TaskPaperItem(type: type, text: text, indentLevel: indent, lineNumber: 0)
+            document.insert(newItem, after: item)
          }
          .presentationCompactAdaptation(.popover)
       }
@@ -72,6 +87,7 @@ struct ItemRowView: View {
    @ViewBuilder
    private var MainContextMenu: some View {
       completionMenu
+      deleteMenu
       if !item.isCompleted {
          foldingMenu
          focusMenu
@@ -91,6 +107,14 @@ struct ItemRowView: View {
       } label: {
          Label( item.isCompleted ? "Mark as Incomplete" : "Mark as Complete",
                 systemImage: item.isCompleted ?  "circle" : "checkmark.circle.fill")
+      }
+   }
+   
+   private var deleteMenu: some View {
+      Button {
+         document.delete(item)
+      } label: {
+         Label( "Delete", systemImage: "minus.circle")
       }
    }
    
@@ -126,22 +150,20 @@ struct ItemRowView: View {
    private var addMenu: some View {
          Menu {
             Button{
-               alertMessage = "Add Item not implemented"
-               isShowingAlert = true
+               newItemIndent = item.indentLevel
             } label: {
                Label( "Add item", systemImage: "plus.circle")
             }
             
             Button{
-               alertMessage = "Add Item not implemented"
-               isShowingAlert = true
+               newItemIndent = item.indentLevel + 1
             } label: {
                Label( "Add child", systemImage: "circle.badge.plus")
             }
             
             Menu{
                Button {
-                  isShowingAddTagSheet = true
+                  isShowingAddTagPopover = true
                } label: {
                   Label("New...", systemImage: "at.badge.plus")
                }
@@ -243,5 +265,9 @@ struct ItemRowView: View {
             return .body.scaled(by: 0.8)
       }
    }
+}
+
+extension Int: @retroactive Identifiable {
+   public var id: Int {self}
 }
 

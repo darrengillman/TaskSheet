@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct AddTagSheet: View {
+struct AddTagPopOver: View {
    @Environment(\.dismiss) private var dismiss
    @State private var tagName: String = ""
    @FocusState private var isTextFieldFocused: Bool
@@ -59,5 +59,5 @@ struct AddTagSheet: View {
 }
 
 #Preview {
-   AddTagSheet(onSave: { _ in })
+   AddTagPopOver(onSave: { _ in })
 }
