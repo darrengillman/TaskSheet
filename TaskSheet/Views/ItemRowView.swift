@@ -5,6 +5,8 @@ struct ItemRowView: View {
    @ObservedObject var tagSchemaManager: TagSchemaManager
    @ObservedObject var document: TaskPaperDocument
    
+   @Binding var isEditing: Bool
+   
    @State private var folded = false
    @State private var isShowingAddTagPopover = false
    @State private var isShowingAlert = false
@@ -60,6 +62,7 @@ struct ItemRowView: View {
       .popover(isPresented: $isShowingAddTagPopover) {
          AddTagPopOver() { text in
             item.addTag(.init(name: text), at: .end)
+            isEditing = false
          }
          .presentationCompactAdaptation(.popover)
       }
@@ -67,6 +70,7 @@ struct ItemRowView: View {
          AddItemPopOver { text, type in
             let newItem = TaskPaperItem(type: type, text: text, indentLevel: indent)
             document.insert(newItem, after: item)
+            isEditing = false
          }
          .presentationCompactAdaptation(.popover)
       }
@@ -76,6 +80,9 @@ struct ItemRowView: View {
              message: {alertMessage == nil ? nil : Text(alertMessage!)}
       )
    }
+   
+   
+   //MARK: - Context Menu Builders
    
    @ViewBuilder
    private var MainContextMenu: some View {
@@ -108,7 +115,6 @@ struct ItemRowView: View {
       }
    }
    
-   @ViewBuilder
    private var itemIcon: some View {
       switch item.type {
          case .project:
@@ -160,7 +166,10 @@ struct ItemRowView: View {
             
             Menu{
                Button {
-                  isShowingAddTagPopover = true
+                  withAnimation {
+                     isEditing = true
+                     isShowingAddTagPopover = true
+                  }
                } label: {
                   Label("New...", systemImage: "at.badge.plus")
                }

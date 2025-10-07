@@ -20,11 +20,11 @@ struct RootView: View {
          .navigationTitle(taskPaperManager.document?.fileName ?? "TaskSheet")
          .toolbar {
             if taskPaperManager.document !=  nil {
-               Button(role: .close) {
-                  taskPaperManager.saveDocument()
-                  taskPaperManager.document = nil
-               } label: {
-                  Image(systemName: "xmark.circle.fill")
+               ToolbarItem(placement: .cancellationAction) {
+                  Button(role: .close) {
+                     taskPaperManager.saveDocument()
+                     taskPaperManager.document = nil
+                  }
                }
             }
          }

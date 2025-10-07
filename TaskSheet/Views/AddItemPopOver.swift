@@ -39,7 +39,6 @@ struct AddItemPopOver: View {
          }
          
          TextField("Description...", text: $text/*, axis: .vertical*/)
-//            .lineLimit(3, reservesSpace: true)
             .textFieldStyle(.roundedBorder)
             .focused($isTextFieldFocused)
             .submitLabel(.done)

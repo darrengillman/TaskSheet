@@ -28,6 +28,7 @@ struct AddTagPopOver: View {
 
          TextField("Tag name", text: $tagName)
             .textFieldStyle(.roundedBorder)
+            .textInputAutocapitalization(.never)
             .focused($isTextFieldFocused)
             .submitLabel(.done)
             .onSubmit {

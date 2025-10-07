@@ -4,7 +4,12 @@ struct TaskListView: View {
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
    @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
-   @State private var isShowingQuickAdd: Bool = false
+   @State private var isShowingQuickAddPopover: Bool = false
+   @State var subViewIsEditing: Bool = false
+   
+   private var showQuickAddButton: Bool {
+      !subViewIsEditing && !isShowingQuickAddPopover
+   }
 
    var body: some View {
       VStack(alignment: .leading, spacing: 0) {
@@ -13,24 +18,36 @@ struct TaskListView: View {
          List($document.items) { item in
             ItemRowView(item: item,
                         tagSchemaManager: tagSchemeManager,
-                        document: document)
+                        document: document,
+                        isEditing: $subViewIsEditing)
             .listRowInsets(EdgeInsets())
          }
          .listStyle(.plain)
+      }.toolbar{
+         ToolbarItem(placement: .confirmationAction) {
+            Button(role: .close) {
+            } label:{
+               Image(systemName: "ellipsis")
+            }
+         }
       }
       .overlay(alignment: .bottomTrailing) {
-         Button {
-            isShowingQuickAdd = true
-         } label: {
-            Image(systemName: "plus.circle.fill")
-               .font(.largeTitle)
-               .scaleEffect(2)
-               .shadow(color: .primary.opacity(0.3), radius: 10, x: 0, y: 5)
+         if showQuickAddButton {
+            Button {
+               withAnimation {
+                  isShowingQuickAddPopover = true
+               }
+            } label: {
+               Image(systemName: "square.and.pencil")
+                  .font(.title)
+                  .padding(6)
+                  .shadow(color: .primary.opacity(0.3), radius: 10, x: 0, y: 5)
+            }
+            .offset(x: -20, y: 0)
+            .buttonStyle(.glass)
          }
-         .buttonStyle(.glassProminent)
-         .offset(x: -30, y: -30)
       }
-      .popover(isPresented: $isShowingQuickAdd, attachmentAnchor: .point(.init(x: -30, y: -30))) {
+      .popover(isPresented: $isShowingQuickAddPopover, attachmentAnchor: .point(.init(x: -30, y: -30))) {
          AddItemPopOver { text, type in
             document.quickAdd( text, type: type)
          }

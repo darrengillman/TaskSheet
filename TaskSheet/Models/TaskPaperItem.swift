@@ -19,7 +19,6 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
           case .project: text.hasSuffix(Self.projectSuffix) ? text : text + Self.projectSuffix
           case .task: text.hasPrefix(Self.taskPrefix) ? text : Self.taskPrefix + text
        }
-
         self.id = UUID()
         self.type = type
         self.text = rawText
