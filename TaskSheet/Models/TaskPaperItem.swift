@@ -9,26 +9,29 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
     var type: ItemType
     var text: String // Raw text including tags: "- Buy milk @urgent tomorrow @due(2025-12-25)"
     var indentLevel: Int
-    let originalLineNumber: Int
 
     // Cached parsed tags for performance
     var cachedTags: [Tag]?
 
-    init(type: ItemType, text: String, indentLevel: Int = 0, lineNumber: Int) {
+    init(type: ItemType, text: String, indentLevel: Int) {
+       let rawText = switch type {
+          case .note: text
+          case .project: text.hasSuffix(Self.projectSuffix) ? text : text + Self.projectSuffix
+          case .task: text.hasPrefix(Self.taskPrefix) ? text : Self.taskPrefix + text
+       }
+
         self.id = UUID()
         self.type = type
-        self.text = text
+        self.text = rawText
         self.indentLevel = indentLevel
-        self.originalLineNumber = lineNumber
         self.cachedTags = TaskPaperParser.extractTags(from: text)
     }
 
     // Legacy initializer for backward compatibility during transition
-    init(type: ItemType, text: String, indentLevel: Int = 0, tags: [Tag] = [], lineNumber: Int) {
+    init(type: ItemType, text: String, indentLevel: Int = 0, tags: [Tag] = []) {
         self.id = UUID()
         self.type = type
         self.indentLevel = indentLevel
-        self.originalLineNumber = lineNumber
 
         // If tags are provided separately, reconstruct the text with tags
         if tags.isEmpty {
@@ -51,8 +54,9 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
     }
 
     var displayText: String {
-       let textWithoutTags = text.removingTagNames()
-        let cleanText = textWithoutTags.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanText = text
+          .removingTagNames()
+          .trimmingCharacters(in: .whitespacesAndNewlines)
 
         switch type {
         case .project:

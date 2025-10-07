@@ -21,12 +21,12 @@ class TaskPaperParser {
         let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
         // Tags are now extracted on-demand from the raw text
-        _ = extractTags(from: trimmedLine) // Keep for validation during parsing
+        // _ = extractTags(from: trimmedLine) // Keep for validation during parsing
 
         let type: ItemType
-        if trimmedLine.hasSuffix(":") {
+       if trimmedLine.hasSuffix(TaskPaperItem.projectSuffix) {
             type = .project
-        } else if trimmedLine.hasPrefix("-") {
+       } else if trimmedLine.hasPrefix(TaskPaperItem.taskPrefix) {
             type = .task
         } else {
             type = .note
@@ -36,7 +36,6 @@ class TaskPaperParser {
             type: type,
             text: trimmedLine, // Keep original text with tags
             indentLevel: indentLevel,
-            lineNumber: lineNumber
         )
     }
 

@@ -7,9 +7,8 @@ struct ItemRowView: View {
    
    @State private var folded = false
    @State private var isShowingAddTagPopover = false
-   @State private var isShowingAddItemPopover = false
    @State private var isShowingAlert = false
-   @State private var newItemIndent: Int? = nil
+   @State private var showNewItemPopoverWithIndent: Int? = nil
    
    @State private var alertMessage: String? = nil
    @State private var alertTitle: String = "Not Implemented"
@@ -64,15 +63,9 @@ struct ItemRowView: View {
          }
          .presentationCompactAdaptation(.popover)
       }
-      .popover(isPresented: $isShowingAddItemPopover) {
+      .popover(item: $showNewItemPopoverWithIndent) { indent in
          AddItemPopOver { text, type in
-            let newItem = TaskPaperItem(type: type, text: text, indentLevel: item.indentLevel, lineNumber: 0)
-            document.insert(newItem, after: item)
-         }
-      }
-      .popover(item: $newItemIndent) { indent in
-         AddItemPopOver { text, type in
-            let newItem = TaskPaperItem(type: type, text: text, indentLevel: indent, lineNumber: 0)
+            let newItem = TaskPaperItem(type: type, text: text, indentLevel: indent)
             document.insert(newItem, after: item)
          }
          .presentationCompactAdaptation(.popover)
@@ -88,16 +81,13 @@ struct ItemRowView: View {
    private var MainContextMenu: some View {
       completionMenu
       deleteMenu
+      foldingMenu
       if !item.isCompleted {
-         foldingMenu
          focusMenu
          Divider()
-         addMenu
-         moveMenu
-      } else {
-         foldingMenu
-         moveMenu
       }
+      addMenu
+      moveMenu
    }
    
    @ViewBuilder
@@ -148,15 +138,22 @@ struct ItemRowView: View {
    
    @ViewBuilder
    private var addMenu: some View {
+      if item.isCompleted {
+         Button{
+            showNewItemPopoverWithIndent = item.indentLevel
+         } label: {
+            Label( "Add item", systemImage: "plus.circle")
+         }
+      } else {
          Menu {
             Button{
-               newItemIndent = item.indentLevel
+               showNewItemPopoverWithIndent = item.indentLevel
             } label: {
                Label( "Add item", systemImage: "plus.circle")
             }
             
             Button{
-               newItemIndent = item.indentLevel + 1
+               showNewItemPopoverWithIndent = item.indentLevel + 1
             } label: {
                Label( "Add child", systemImage: "circle.badge.plus")
             }
@@ -184,6 +181,7 @@ struct ItemRowView: View {
          } label: {
             Label("Add...", systemImage: "plus.circle")
          }
+      }
    }
 
    @ViewBuilder

@@ -37,13 +37,27 @@ class TaskPaperDocument: ObservableObject {
          .sorted(using: SortDescriptor(\.displayText))
    }
    
-   func insert(_ newTask: TaskPaperItem, after task: TaskPaperItem) {
+   func quickAdd(_ text: String, type: ItemType) {
+      let newItem = TaskPaperItem(type: type, text: text, indentLevel: 1)
+      if let inboxIndex = items.firstIndex(where: {$0.text.prefix(6) == "Inbox:" && $0.type == .project && $0.indentLevel == 0}) {
+         
+         
+         let insertIndex = items[(inboxIndex+1)...].firstIndex(where: {$0.indentLevel == 0}) ?? inboxIndex + 1
+         
+         items.insert(newItem, at: insertIndex)
+      } else {
+         let inboxProject = TaskPaperItem(type: .project, text: "Inbox", indentLevel: 0)
+         items.insert(contentsOf: [inboxProject, newItem], at: 0)
+      }
+   }
+   
+   func insert(_ newItem: TaskPaperItem, after task: TaskPaperItem) {
       guard let currentIndex = items.firstIndex(of: task) else {
-         items.append(newTask)
+         items.append(newItem)
          return
       }
       let nextIndex = items.index(after: currentIndex)
-      items.insert(newTask, at: nextIndex)
+      items.insert(newItem, at: nextIndex)
    }
    
    func delete(_ item: TaskPaperItem) {
