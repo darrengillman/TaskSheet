@@ -6,6 +6,8 @@ struct TaskListView: View {
    @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
    @State private var isShowingQuickAddPopover: Bool = false
    @State var subViewIsEditing: Bool = false
+   @State fileprivate var filterState  = FilterState()
+   @State var searchText: String = ""
    
    private var showQuickAddButton: Bool {
       !subViewIsEditing && !isShowingQuickAddPopover
@@ -25,6 +27,8 @@ struct TaskListView: View {
          }
       }
       .listStyle(.plain)
+      .searchable(text: $searchText)
+      .searchToolbarBehavior(.minimize)
       .toolbar{
          ToolbarItem(placement: .confirmationAction) {
             Button(role: .close) {
@@ -32,23 +36,21 @@ struct TaskListView: View {
                Image(systemName: "ellipsis")
             }
          }
-      }
-      .overlay(alignment: .bottomTrailing) {
-         if showQuickAddButton {
-            Button {
-               withAnimation {
-                  isShowingQuickAddPopover = true
-               }
-            } label: {
-               Image(systemName: "square.and.pencil")
-                  .font(.title)
-                  .padding(6)
-                  .shadow(color: .primary.opacity(0.3), radius: 10, x: 0, y: 5)
+            ToolbarItem(placement: .bottomBar) {
+               FilterButton(filterState: $filterState)
             }
-            .offset(x: -20, y: 0)
-            .buttonStyle(.glass)
-         }
+            ToolbarSpacer(.flexible, placement: .bottomBar)
+            DefaultToolbarItem(kind: .search, placement: .bottomBar)
+            ToolbarSpacer( .fixed, placement: .bottomBar)
+            ToolbarItem(placement: .bottomBar) {
+               Button {
+                     isShowingQuickAddPopover = true
+               } label: {
+                  Image(systemName: "square.and.pencil")
+               }
+            }
       }
+      .toolbarVisibility( showQuickAddButton ? .visible : .hidden, for: .bottomBar)
       .popover(isPresented: $isShowingQuickAddPopover, attachmentAnchor: .point(.init(x: -30, y: -30))) {
          AddItemPopOver { text, type in
             document.quickAdd( text, type: type)

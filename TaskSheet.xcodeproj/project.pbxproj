@@ -25,7 +25,8 @@
 		DE0B7B4C2E82A04B00C32575 /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B4B2E82A04B00C32575 /* TagView.swift */; };
 		DE1C94A02E775AEA00353202 /* TaskSheetTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */; };
 		DE1C94B02E82A12300353202 /* TaskPaperDocumentMovementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */; };
-		DE45C3DC2E95E5F0000DFF7E /* Untitled.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3DB2E95E5EE000DFF7E /* Untitled.swift */; };
+		DE45C3DE2E967B05000DFF7E /* FilterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3DD2E967B05000DFF7E /* FilterButton.swift */; };
+		DE45C3E02E967B64000DFF7E /* FilterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3DF2E967B64000DFF7E /* FilterState.swift */; };
 		DE9C1D2B2E92FC6400D660AA /* AddTagPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */; };
 		DE9C1D2D2E934AE600D660AA /* AddItemPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */; };
 		DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */; };
@@ -65,7 +66,8 @@
 		DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSheetTagTests.swift; sourceTree = "<group>"; };
 		DE1C949F2E775AEA00353202 /* TaskSheetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskSheetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDocumentMovementTests.swift; sourceTree = "<group>"; };
-		DE45C3DB2E95E5EE000DFF7E /* Untitled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Untitled.swift; sourceTree = "<group>"; };
+		DE45C3DD2E967B05000DFF7E /* FilterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButton.swift; sourceTree = "<group>"; };
+		DE45C3DF2E967B64000DFF7E /* FilterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterState.swift; sourceTree = "<group>"; };
 		DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagPopOver.swift; sourceTree = "<group>"; };
 		DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemPopOver.swift; sourceTree = "<group>"; };
 		DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 		1A00010E1234567890123456 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DE45C3DF2E967B64000DFF7E /* FilterState.swift */,
 				DE0B7B432E7DE95100C32575 /* ItemType.swift */,
 				DE0B7B412E7DE93D00C32575 /* Tag.swift */,
 				DEE939C22E78511C002A976E /* String+extn.swift */,
@@ -148,13 +151,13 @@
 		1A00011B1234567890123456 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DE45C3DB2E95E5EE000DFF7E /* Untitled.swift */,
 				DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */,
 				DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */,
 				DE0B7B4B2E82A04B00C32575 /* TagView.swift */,
 				DE0B7B492E82A03100C32575 /* TagsView.swift */,
 				DEC18D7D2E79DC0F000E2BAF /* LoadingView.swift */,
 				DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */,
+				DE45C3DD2E967B05000DFF7E /* FilterButton.swift */,
 				1A0001011234567890123456 /* RootView.swift */,
 				DEE93ABA2E79BD03002A976E /* DocumentHeader.swift */,
 				1A0001151234567890123456 /* TaskListView.swift */,
@@ -292,7 +295,6 @@
 				DE9C1D2D2E934AE600D660AA /* AddItemPopOver.swift in Sources */,
 				DE0B7B4A2E82A03100C32575 /* TagsView.swift in Sources */,
 				DEC18D7E2E79DC14000E2BAF /* LoadingView.swift in Sources */,
-				DE45C3DC2E95E5F0000DFF7E /* Untitled.swift in Sources */,
 				DEE93ABB2E79BD03002A976E /* DocumentHeader.swift in Sources */,
 				1A0001001234567890123456 /* TaskSheetApp.swift in Sources */,
 				1A0001141234567890123456 /* TaskPaperDocument.swift in Sources */,
@@ -302,6 +304,8 @@
 				1A0001101234567890123456 /* TaskPaperItem.swift in Sources */,
 				DEE939C32E785122002A976E /* String+extn.swift in Sources */,
 				DE0B7B482E828C0C00C32575 /* TagSchemaManager.swift in Sources */,
+				DE45C3DE2E967B05000DFF7E /* FilterButton.swift in Sources */,
+				DE45C3E02E967B64000DFF7E /* FilterState.swift in Sources */,
 				DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */,
 				DE0B7B4C2E82A04B00C32575 /* TagView.swift in Sources */,
 			);
