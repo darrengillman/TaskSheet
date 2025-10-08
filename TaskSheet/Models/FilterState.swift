@@ -8,7 +8,11 @@
 
 struct FilterState {
    var isFiltering: Bool = false
-   var text: String = ""
+   var text: String = "" {
+      didSet {
+         text = text.trimmingCharacters(in: .whitespaces)
+      }
+   }
    var isShowingFilterBuilder: Bool = false
    var isNegated: Bool = false
    

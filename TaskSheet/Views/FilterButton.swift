@@ -9,6 +9,7 @@ import SwiftUI
 struct FilterButton: View {
    @Binding var filterState: FilterState
    @Namespace var namespace
+   @FocusState private var isTextFieldFocused: Bool
    var body: some View {
       Button{
          filterState.isFiltering.toggle()
@@ -47,6 +48,7 @@ struct FilterButton: View {
                            .lineLimit(1)
                            .multilineTextAlignment(.leading)
                            .textFieldStyle(.plain)
+                           .focused($isTextFieldFocused)
                            .textInputAutocapitalization(.never)
                            .font(.caption)
                            .foregroundStyle(.blue)
@@ -55,6 +57,10 @@ struct FilterButton: View {
                      }
                   }
                }
+               .onAppear {
+                  if filterState.text.isEmpty {isTextFieldFocused = true}
+               }
+
                .matchedTransitionSource(id: IDs.filterButton, in: namespace)
             }
          }
