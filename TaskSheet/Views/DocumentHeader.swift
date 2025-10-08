@@ -43,10 +43,10 @@ struct DocumentHeader: View {
          .frame(maxWidth: .infinity, alignment: .leading)
          
       }
-      .padding()
+      .padding(.vertical)
+      .padding(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(Color(.systemGroupedBackground))
-      .scrollEdgeEffectStyle(.soft, for: .bottom)
+      .border(Color(.separator), width: 1)
    }
    
    @ViewBuilder
@@ -89,19 +89,19 @@ struct StatItem: View {
    let label: String
    
    var body: some View {
-      HStack(spacing: 4) {
-         Image(systemName: icon)
-            .foregroundColor(.secondary)
-            .font(.caption)
-         
-         Text("\(count)")
-            .fontWeight(.medium)
-            .font(.caption)
-         
-         Text(label)
-            .foregroundColor(.secondary)
-            .font(.caption)
-      }
+         HStack(spacing: 4) {
+            Image(systemName: icon)
+               .foregroundColor(.secondary)
+               .font(.caption)
+            
+            Text("\(count)")
+               .fontWeight(.medium)
+               .font(.caption)
+            
+            Text(label)
+               .foregroundColor(.secondary)
+               .font(.caption)
+         }
    }
 }
 
@@ -110,4 +110,23 @@ struct StatItem: View {
       document: SampleContent.sampleDocument,
       syncStatus: .constant(.notInCloud)
    )
+}
+
+
+struct TopBottomBorder: Shape {
+   var lineWidth: CGFloat = 1
+   
+   func path(in rect: CGRect) -> Path {
+      var path = Path()
+      
+         // Top border
+      path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+      path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+      
+         // Bottom border
+      path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+      path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+      
+      return path
+   }
 }

@@ -12,18 +12,20 @@ struct TaskListView: View {
    }
 
    var body: some View {
-      VStack(alignment: .leading, spacing: 0) {
+      List {
          DocumentHeader(document: document, syncStatus: $syncStatus)
-
-         List($document.items) { item in
+            .listRowInsets(.init())
+            .listRowSeparator(.hidden)
+         ForEach($document.items) { item in
             ItemRowView(item: item,
                         tagSchemaManager: tagSchemeManager,
                         document: document,
                         isEditing: $subViewIsEditing)
             .listRowInsets(EdgeInsets())
          }
-         .listStyle(.plain)
-      }.toolbar{
+      }
+      .listStyle(.plain)
+      .toolbar{
          ToolbarItem(placement: .confirmationAction) {
             Button(role: .close) {
             } label:{
