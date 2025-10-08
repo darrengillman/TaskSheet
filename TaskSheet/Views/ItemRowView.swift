@@ -174,7 +174,7 @@ struct ItemRowView: View {
                   Label("New...", systemImage: "at.badge.plus")
                }
                Divider()
-               ForEach(document.tags.filter{$0.name  != "done"}, id: \.displayText) { tag in
+               ForEach(document.allTags.filter{$0.name  != "done"}, id: \.displayText) { tag in
                   Button{
                      item.addTag(tag, at: .end)
                   } label: {

@@ -7,9 +7,9 @@
 
 
 struct FilterState {
-   var isOn: Bool = false
-   var text: String = "Tap to set"
+   var isFiltering: Bool = false
+   var text: String = ""
    var isShowingFilterBuilder: Bool = false
-   var negated: Bool = false
+   var isNegated: Bool = false
    
 }

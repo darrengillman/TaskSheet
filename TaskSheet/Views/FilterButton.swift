@@ -8,11 +8,12 @@ import SwiftUI
 
 struct FilterButton: View {
    @Binding var filterState: FilterState
+   @Namespace var namespace
    var body: some View {
       Button{
-         filterState.isOn.toggle()
+         filterState.isFiltering.toggle()
       } label: {
-         if filterState.isOn == false {
+         if filterState.isFiltering == false {
             Image(systemName: "line.3.horizontal.decrease")
          } else {
             HStack(alignment: .center, spacing: 0) {
@@ -33,24 +34,35 @@ struct FilterButton: View {
                      HStack(spacing: 4) {
                         Text("Not")
                            .font(.caption)
-                           .fontWeight(filterState.negated ? .bold : .light)
+                           .fontWeight(filterState.isNegated ? .bold : .light)
                            .foregroundStyle(.white)
-                           .padding(.horizontal, 4)
-                           .padding(.vertical, 2)
-                           .background(filterState.negated ? .blue : .gray.opacity(0.4))
+                           .padding( 2)
+                           .background(filterState.isNegated ? .blue : .gray.opacity(0.4))
                            .clipShape(RoundedRectangle(cornerRadius: 4))
                            .onTapGesture {
-                              filterState.negated.toggle()
+                              filterState.isNegated.toggle()
                            }
-                        Text(filterState.text)
+                        
+                        TextField("Filter", text: $filterState.text, prompt: Text("Tag name"), axis: .horizontal)
+                           .lineLimit(1)
+                           .multilineTextAlignment(.leading)
+                           .textFieldStyle(.plain)
+                           .textInputAutocapitalization(.never)
                            .font(.caption)
                            .foregroundStyle(.blue)
                            .fontWeight(.semibold)
+                           .frame(minWidth: 80, maxWidth: 140)
                      }
                   }
                }
+               .matchedTransitionSource(id: IDs.filterButton, in: namespace)
             }
          }
       }
    }
+}
+
+#Preview {
+   @Previewable @State var  state = FilterState(isFiltering: true)
+   FilterButton(filterState: $state)
 }

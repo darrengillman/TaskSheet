@@ -13,12 +13,32 @@ struct TaskListView: View {
       !subViewIsEditing && !isShowingQuickAddPopover
    }
 
+   var filteredItemsBinding: [Binding<TaskPaperItem>] {
+      document.items.compactMap { item in
+         if filterState.isFiltering == false
+               || filterState.text.isEmpty
+               || (item.cachedTags ?? []).contains(where: {$0.name == filterState.text}) == (filterState.isNegated ? false : true)
+         {
+            Binding(
+               get: {item},
+               set: {
+                  let index = document.items.firstIndex(of: item)
+                  document.items[index!] = $0
+               }
+            )
+         } else {
+            nil
+         }
+      }
+   }
+   
    var body: some View {
       List {
          DocumentHeader(document: document, syncStatus: $syncStatus)
             .listRowInsets(.init())
             .listRowSeparator(.hidden)
-         ForEach($document.items) { item in
+         Text("filter: \(filterState.isFiltering ? "on" : "off") by: \(filterState.text) neg \(filterState.isNegated.description)")
+         ForEach(filteredItemsBinding) { item in
             ItemRowView(item: item,
                         tagSchemaManager: tagSchemeManager,
                         document: document,

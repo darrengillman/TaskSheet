@@ -29,13 +29,21 @@ class TaskPaperDocument: ObservableObject {
       items.filter { $0.type == .note }.count
    }
    
-   var tags: [Tag] {
+   var allTags: [Tag] {
       items
          .reduce(Set<Tag>()) { set, item in
             set.union(item.tags)
          }
          .sorted(using: SortDescriptor(\.displayText))
    }
+   
+   func filteredItems(_ filtered: Bool, by match: String, negated: Bool = false) -> [TaskPaperItem] {
+      guard filtered else {return items}
+      return items.filter { item in
+         (item.cachedTags ?? []).contains(Tag(name: match)) == (negated ? false : true)
+      }
+   }
+   
    
    func quickAdd(_ text: String, type: ItemType) {
       let newItem = TaskPaperItem(type: type, text: text, indentLevel: 1)
