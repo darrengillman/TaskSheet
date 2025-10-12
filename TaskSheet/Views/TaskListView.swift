@@ -5,9 +5,11 @@ struct TaskListView: View {
    @ObservedObject var document: TaskPaperDocument
    @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
    @State private var isShowingQuickAddPopover: Bool = false
+   @State private var isShowingEditSheet: Bool = false
    @State var subViewIsEditing: Bool = false
    @State fileprivate var filterState  = FilterState()
    @State var searchText: String = ""
+   @State private var editTextBuffer: String = ""
    
    private var showQuickAddButton: Bool {
       !subViewIsEditing && !isShowingQuickAddPopover
@@ -56,26 +58,36 @@ struct TaskListView: View {
                Image(systemName: "ellipsis")
             }
          }
-            ToolbarItem(placement: .bottomBar) {
-               FilterButton(filterState: $filterState)
+         ToolbarItem(placement: .bottomBar) {
+            FilterButton(filterState: $filterState)
+         }
+         ToolbarSpacer(.flexible, placement: .bottomBar)
+         DefaultToolbarItem(kind: .search, placement: .bottomBar)
+         ToolbarSpacer( .fixed, placement: .bottomBar)
+         ToolbarItem(placement: .bottomBar) {
+            Button {
+               isShowingQuickAddPopover = true
+            } label: {
+               Image(systemName: "square.and.pencil")
             }
-            ToolbarSpacer(.flexible, placement: .bottomBar)
-            DefaultToolbarItem(kind: .search, placement: .bottomBar)
-            ToolbarSpacer( .fixed, placement: .bottomBar)
-            ToolbarItem(placement: .bottomBar) {
-               Button {
-                     isShowingQuickAddPopover = true
-               } label: {
-                  Image(systemName: "square.and.pencil")
-               }
-            }
+         }
       }
       .toolbarVisibility( showQuickAddButton ? .visible : .hidden, for: .bottomBar)
       .popover(isPresented: $isShowingQuickAddPopover, attachmentAnchor: .point(.init(x: -30, y: -30))) {
-         AddItemPopOver { text, type in
-            document.quickAdd( text, type: type)
+         AddItemPopOver(showPopover: $isShowingQuickAddPopover, showSheet: $isShowingEditSheet, text: $editTextBuffer) { text, type in
+            document.quickAdd(text, type: type)
+            editTextBuffer = ""
          }
          .presentationCompactAdaptation(.popover)
+      }
+      .sheet(isPresented: $isShowingEditSheet) {
+         VStack {
+            ItemEditorView(text: $editTextBuffer) { text, type in
+               document.quickAdd(text, type: type)
+               editTextBuffer = ""
+            }
+         }
+         .presentationDetents([.fraction(0.35), .medium, .large])
       }
       .navigationTitle(document.fileName)
    }

@@ -15,5 +15,5 @@ struct FilterState {
    }
    var isShowingFilterBuilder: Bool = false
    var isNegated: Bool = false
-   
 }
+

@@ -76,7 +76,7 @@ class TagSchemaManager: ObservableObject {
             }
          }
       } label: {
-         Label("Set Colour", systemImage: "paintbrush.pointed.fill")
+         Label("Colour", systemImage: "paintbrush.pointed.fill")
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
       }

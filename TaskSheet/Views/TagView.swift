@@ -29,16 +29,16 @@ struct TagView: View {
          }
          .popover(isPresented: $showingTagActions) {
             VStack(spacing: 0) {
+               schema.colorMenu(for: tag, presenting: $showingTagActions)
                Button {
                   deleteAction(tag)
                   showingTagActions = false
                } label: {
-                  Label("Delete Tag", systemImage: "trash")
+                  Label("Delete", systemImage: "trash")
                      .foregroundColor(.red)
                      .frame(maxWidth: .infinity, alignment: .leading)
                      .padding()
                }
-               schema.colorMenu(for: tag, presenting: $showingTagActions)
             }
             .frame(width: 160)
             .background(Color(.systemBackground))

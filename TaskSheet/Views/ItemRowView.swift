@@ -11,6 +11,8 @@ struct ItemRowView: View {
    @State private var isShowingAddTagPopover = false
    @State private var isShowingAlert = false
    @State private var showNewItemPopoverWithIndent: Int? = nil
+   @State private var isShowingEditSheet: Bool = false
+   
    
    @State private var alertMessage: String? = nil
    @State private var alertTitle: String = "Not Implemented"
@@ -66,14 +68,14 @@ struct ItemRowView: View {
          }
          .presentationCompactAdaptation(.popover)
       }
-      .popover(item: $showNewItemPopoverWithIndent) { indent in
-         AddItemPopOver { text, type in
-            let newItem = TaskPaperItem(type: type, text: text, indentLevel: indent)
-            document.insert(newItem, after: item)
-            isEditing = false
-         }
-         .presentationCompactAdaptation(.popover)
-      }
+//      .popover(item: $showNewItemPopoverWithIndent) { indent in
+//         AddItemPopOver(showSheetInstead: $isShowingEditSheet) { text, type in
+//            let newItem = TaskPaperItem(type: type, text: text, indentLevel: indent)
+//            document.insert(newItem, after: item)
+//            isEditing = false
+//         }
+//         .presentationCompactAdaptation(.popover)
+//      }
       .alert(alertTitle,
              isPresented: $isShowingAlert,
              actions: {Button(role: .confirm, action: {alertMessage = nil})},
@@ -81,9 +83,9 @@ struct ItemRowView: View {
       )
    }
    
-   
-   //MARK: - Context Menu Builders
-   
+}
+//MARK: - Context Menu Builders
+extension ItemRowView {
    @ViewBuilder
    private var MainContextMenu: some View {
       completionMenu
@@ -192,7 +194,7 @@ struct ItemRowView: View {
          }
       }
    }
-
+   
    @ViewBuilder
    private var foldingMenu: some View {
       if folded {
@@ -232,7 +234,7 @@ struct ItemRowView: View {
             Label("Up", systemImage: "arrowtriangle.up")
          }
       }
-
+      
       Button {
          withAnimation {
             document.indent(item)
@@ -277,3 +279,4 @@ struct ItemRowView: View {
 extension Int: @retroactive Identifiable {
    public var id: Int {self}
 }
+

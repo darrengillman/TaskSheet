@@ -7,5 +7,5 @@
 
 
 enum IDs {
-   static let filterButton = "filterButton"
+   static let filterButton = "filterButton"  //not yet used!
 }

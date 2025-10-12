@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 class TaskPaperManager: ObservableObject {
    static let bookmarkKey = "TaskPaperFileBookmark"
@@ -9,11 +10,14 @@ class TaskPaperManager: ObservableObject {
    @Published var isSyncing = false
    @Published var downloadProgress: Double = 0.0
    @Published var syncStatus: iCloudSyncStatus = .unknown
-   
+
    private var fileBookmark: Data?
    private var currentFileURL: URL?
    private var isSampleDataLoaded: Bool = false
    private var fileCoordinator = NSFileCoordinator()
+
+   // MARK: - OSLog
+   private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TaskSheet", category: "TaskPaperManager")
    
    enum iCloudSyncStatus: String {
       case unknown = "Unknown"

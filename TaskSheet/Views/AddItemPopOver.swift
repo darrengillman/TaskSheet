@@ -10,9 +10,11 @@ import SwiftUI
 
 struct AddItemPopOver: View {
    @Environment(\.dismiss) private var dismiss
-   @State private var text: String = ""
-   @State private var itemType: ItemType = .task
    @FocusState private var isTextFieldFocused: Bool
+   @Binding var showPopover: Bool
+   @Binding var showSheet: Bool
+   @Binding var text: String
+   @State private var itemType: ItemType = .task
    var onSave: (String, ItemType) -> Void
 
    var body: some View {
@@ -30,10 +32,26 @@ struct AddItemPopOver: View {
                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(alignment: .leading)
+            Button{
+               withAnimation {
+                  showPopover = false
+                  Task {
+                     try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+                     showSheet = true
+                  }
+               }
+            } label: {
+               Image(systemName: "chevron.down")
+                  .padding(.horizontal, 6)
+            }
+            .foregroundColor(.secondary)
+
             Button {
                cancel()
             } label: {
-               Image(systemName: "xmark.circle")
+               Image(systemName: "xmark")
+                  .padding(.horizontal, 6)
+
             }
             .foregroundColor(.secondary)
          }
@@ -71,5 +89,15 @@ struct AddItemPopOver: View {
 }
 
 #Preview {
-   AddItemPopOver(onSave: { _ , _ in })
+   @Previewable @State var showPopover = false
+   @Previewable @State var showSheet = false
+   @Previewable @State var text = ""
+   AddItemPopOver(showPopover: $showPopover, showSheet: $showSheet, text: $text) { text, type in
+       }
+}
+
+private struct EditView: View {
+   var body: some View {
+      Text("")
+   }
 }

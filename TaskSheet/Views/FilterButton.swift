@@ -60,8 +60,6 @@ struct FilterButton: View {
                .onAppear {
                   if filterState.text.isEmpty {isTextFieldFocused = true}
                }
-
-               .matchedTransitionSource(id: IDs.filterButton, in: namespace)
             }
          }
       }
