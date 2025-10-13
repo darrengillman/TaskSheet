@@ -39,7 +39,6 @@ struct TaskListView: View {
          DocumentHeader(document: document, syncStatus: $syncStatus)
             .listRowInsets(.init())
             .listRowSeparator(.hidden)
-         Text("filter: \(filterState.isFiltering ? "on" : "off") by: \(filterState.text) neg \(filterState.isNegated.description)")
          ForEach(filteredItemsBinding) { item in
             ItemRowView(item: item,
                         tagSchemaManager: tagSchemeManager,
@@ -77,20 +76,29 @@ struct TaskListView: View {
          AddItemPopOver(showPopover: $isShowingQuickAddPopover, showSheet: $isShowingEditSheet, text: $editTextBuffer) { text, type in
             document.quickAdd(text, type: type)
             editTextBuffer = ""
+         } onCancel: {
+            resetInput()
          }
          .presentationCompactAdaptation(.popover)
       }
       .sheet(isPresented: $isShowingEditSheet) {
-         VStack {
-            ItemEditorView(text: $editTextBuffer) { text, type in
-               document.quickAdd(text, type: type)
-               editTextBuffer = ""
-            }
+         ItemEditorView(text: $editTextBuffer) { text, type in
+            document.quickAdd(text, type: type)
+            editTextBuffer = ""
+         } onCancel: {
+            resetInput()
          }
          .presentationDetents([.fraction(0.35), .medium, .large])
       }
       .navigationTitle(document.fileName)
    }
+   
+   func resetInput() {
+      editTextBuffer = ""
+      isShowingEditSheet = false
+      isShowingQuickAddPopover = false
+   }
+   
 }
 
 #Preview {

@@ -9,11 +9,12 @@ struct ItemRowView: View {
    
    @State private var folded = false
    @State private var isShowingAddTagPopover = false
-   @State private var isShowingAlert = false
-   @State private var showNewItemPopoverWithIndent: Int? = nil
    @State private var isShowingEditSheet: Bool = false
+   @State private var isShowingNewItemPopover: Bool = false
+   @State private var editTextBuffer: String = ""
+   @State private var newItemIndent: Int = 0
    
-   
+   @State private var isShowingAlert = false
    @State private var alertMessage: String? = nil
    @State private var alertTitle: String = "Not Implemented"
    
@@ -28,7 +29,7 @@ struct ItemRowView: View {
             }
          }
          
-         itemIcon
+         item.icon
             .onTapGesture {
                document.toggleTaskCompletion(item: item)
             }
@@ -42,8 +43,7 @@ struct ItemRowView: View {
                .strikethrough(item.isCompleted)
                .foregroundColor(item.isCompleted ? .secondary : .primary)
                .onTapGesture {
-                  alertMessage = "Editing not implemented"
-                  isShowingAlert = true
+                  edit(item)
                }
                .contextMenu {
                   MainContextMenu
@@ -68,19 +68,47 @@ struct ItemRowView: View {
          }
          .presentationCompactAdaptation(.popover)
       }
-//      .popover(item: $showNewItemPopoverWithIndent) { indent in
-//         AddItemPopOver(showSheetInstead: $isShowingEditSheet) { text, type in
-//            let newItem = TaskPaperItem(type: type, text: text, indentLevel: indent)
-//            document.insert(newItem, after: item)
-//            isEditing = false
-//         }
-//         .presentationCompactAdaptation(.popover)
-//      }
+      .popover(isPresented: $isShowingNewItemPopover) {
+         AddItemPopOver(showPopover: $isShowingNewItemPopover, showSheet: $isShowingEditSheet, text: $editTextBuffer) { text, type in
+            let newItem = TaskPaperItem(type: type, text: text, indentLevel: newItemIndent)
+            document.insert(newItem, after: item)
+            resetInput()
+         } onCancel: {
+            resetInput()
+         }
+         .presentationCompactAdaptation(.popover)
+      }
+      .sheet(isPresented: $isShowingEditSheet) {
+         ItemEditorView(text: $editTextBuffer) { text, type in
+            let newItem = TaskPaperItem(type: type, text: text, indentLevel: newItemIndent)
+            document.insert(newItem, after: item)
+            resetInput()
+         } onCancel: {
+            resetInput()
+         }
+         .presentationDetents([.fraction(0.35), .medium, .large])
+      }
       .alert(alertTitle,
              isPresented: $isShowingAlert,
              actions: {Button(role: .confirm, action: {alertMessage = nil})},
              message: {alertMessage == nil ? nil : Text(alertMessage!)}
       )
+   }
+   
+   private func edit(_ item: TaskPaperItem) {
+      editTextBuffer = item.text
+      newItemIndent = item.indentLevel
+      isEditing = true
+      isShowingNewItemPopover = true
+   }
+   
+   
+   func resetInput() {
+      isEditing = false
+      isShowingNewItemPopover = false
+      isShowingEditSheet = false
+      editTextBuffer = ""
+      newItemIndent = 0
    }
    
 }
@@ -117,23 +145,6 @@ extension ItemRowView {
       }
    }
    
-   private var itemIcon: some View {
-      switch item.type {
-         case .project:
-            Image(systemName: "folder")
-               .foregroundColor(.blue)
-               .font(.system(size: 16, weight: .medium))
-         case .task:
-            Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-               .foregroundColor(item.isCompleted ? .green : .secondary)
-               .font(.system(size: 16))
-         case .note:
-            Image(systemName: "doc.text")
-               .foregroundColor(item.isCompleted ? .secondary: .gray)
-               .font(.system(size: 14))
-      }
-   }
-   
    @ViewBuilder
    private var focusMenu: some View {
       Button {
@@ -147,26 +158,31 @@ extension ItemRowView {
    @ViewBuilder
    private var addMenu: some View {
       if item.isCompleted {
-         Button{
-            showNewItemPopoverWithIndent = item.indentLevel
+         Button {
+            newItemIndent = item.indentLevel
+            isShowingNewItemPopover = true
          } label: {
             Label( "Add item", systemImage: "plus.circle")
          }
       } else {
          Menu {
-            Button{
-               showNewItemPopoverWithIndent = item.indentLevel
+            Button {
+               newItemIndent = item.indentLevel
+               isEditing = true
+               isShowingNewItemPopover = true
             } label: {
                Label( "Add item", systemImage: "plus.circle")
             }
             
-            Button{
-               showNewItemPopoverWithIndent = item.indentLevel + 1
+            Button {
+               newItemIndent = item.indentLevel + 1
+               isEditing = true
+               isShowingNewItemPopover = true
             } label: {
                Label( "Add child", systemImage: "circle.badge.plus")
             }
             
-            Menu{
+            Menu {
                Button {
                   withAnimation {
                      isEditing = true

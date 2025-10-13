@@ -16,12 +16,13 @@ struct AddItemPopOver: View {
    @Binding var text: String
    @State private var itemType: ItemType = .task
    var onSave: (String, ItemType) -> Void
+   var onCancel: (() -> Void )?
 
    var body: some View {
       VStack(spacing: 16) {
          HStack {
             HStack {
-               Text("Add")
+               Text("Quick Add")
                   .font(.headline)
                Picker("Type", selection: $itemType) {
                   ForEach(ItemType.allCases, id: \.self) {
@@ -54,6 +55,7 @@ struct AddItemPopOver: View {
 
             }
             .foregroundColor(.secondary)
+            .accessibilityLabel(Text("Edit in larger edit window"))
          }
          
          TextField("Description...", text: $text/*, axis: .vertical*/)
@@ -84,7 +86,7 @@ struct AddItemPopOver: View {
    }
 
    private func cancel() {
-      dismiss()
+      onCancel?() ?? dismiss()
    }
 }
 

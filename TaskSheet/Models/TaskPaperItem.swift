@@ -5,10 +5,19 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
    static let projectSuffix = ":"
    static let taskPrefix = "- "
    static let completedTagText = "done"
-    var id = UUID()
-    var type: ItemType
-    var text: String // Raw text including tags: "- Buy milk @urgent tomorrow @due(2025-12-25)"
-    var indentLevel: Int
+   var id = UUID()
+   var type: ItemType
+   var text: String // Raw text including tags: "- Buy milk @urgent tomorrow @due(2025-12-25)"
+   var isFolded: Bool = false
+   var indentLevel: Int
+   
+   var iconName: String {
+      switch type {
+         case .note: "note"
+         case .project: "folder"
+         case .task: "checkmark"
+      }
+   }
 
     // Cached parsed tags for performance
     var cachedTags: [Tag]?
@@ -57,14 +66,18 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
           .removingTagNames()
           .trimmingCharacters(in: .whitespacesAndNewlines)
 
-        switch type {
-        case .project:
-              return cleanText.hasSuffix(Self.projectSuffix) ? String(cleanText.dropLast()).trimmingCharacters(in: .whitespaces) : cleanText
-        case .task:
-              return cleanText.hasPrefix(Self.taskPrefix) ? String(cleanText.dropFirst(2)).trimmingCharacters(in: .whitespaces) : cleanText
-        case .note:
-            return cleanText
-        }
+       return switch type {
+          case .project:
+             cleanText.hasSuffix(Self.projectSuffix)
+             ? String(cleanText.dropLast()).trimmingCharacters(in: .whitespaces)
+             : cleanText
+          case .task:
+             cleanText.hasPrefix(Self.taskPrefix)
+             ? String(cleanText.dropFirst(2)).trimmingCharacters(in: .whitespaces)
+             : cleanText
+          case .note:
+             cleanText
+       }
     }
    
    private mutating func refreshTagCache() {

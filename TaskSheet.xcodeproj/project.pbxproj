@@ -29,6 +29,8 @@
 		DE45C3E02E967B64000DFF7E /* FilterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3DF2E967B64000DFF7E /* FilterState.swift */; };
 		DE45C3E22E96CB09000DFF7E /* IDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E12E96CB09000DFF7E /* IDs.swift */; };
 		DE45C3E42E99DA14000DFF7E /* ItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E32E99DA0B000DFF7E /* ItemEditorView.swift */; };
+		DE45C3E62E9D0E54000DFF7E /* TaskPaperItem.Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */; };
+		DE45C3E82E9DC907000DFF7E /* EditState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E72E9DC8FF000DFF7E /* EditState.swift */; };
 		DE9C1D2B2E92FC6400D660AA /* AddTagPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */; };
 		DE9C1D2D2E934AE600D660AA /* AddItemPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */; };
 		DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */; };
@@ -72,6 +74,8 @@
 		DE45C3DF2E967B64000DFF7E /* FilterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterState.swift; sourceTree = "<group>"; };
 		DE45C3E12E96CB09000DFF7E /* IDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDs.swift; sourceTree = "<group>"; };
 		DE45C3E32E99DA0B000DFF7E /* ItemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemEditorView.swift; sourceTree = "<group>"; };
+		DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperItem.Icon.swift; sourceTree = "<group>"; };
+		DE45C3E72E9DC8FF000DFF7E /* EditState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditState.swift; sourceTree = "<group>"; };
 		DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagPopOver.swift; sourceTree = "<group>"; };
 		DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemPopOver.swift; sourceTree = "<group>"; };
 		DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
@@ -141,12 +145,14 @@
 		1A00010E1234567890123456 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DE45C3E72E9DC8FF000DFF7E /* EditState.swift */,
 				DE45C3E12E96CB09000DFF7E /* IDs.swift */,
 				DE45C3DF2E967B64000DFF7E /* FilterState.swift */,
 				DE0B7B432E7DE95100C32575 /* ItemType.swift */,
 				DE0B7B412E7DE93D00C32575 /* Tag.swift */,
 				DEE939C22E78511C002A976E /* String+extn.swift */,
 				1A00010F1234567890123456 /* TaskPaperItem.swift */,
+				DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */,
 				1A0001111234567890123456 /* TaskPaperParser.swift */,
 				1A0001131234567890123456 /* TaskPaperDocument.swift */,
 			);
@@ -311,10 +317,12 @@
 				DE45C3E22E96CB09000DFF7E /* IDs.swift in Sources */,
 				1A0001101234567890123456 /* TaskPaperItem.swift in Sources */,
 				DEE939C32E785122002A976E /* String+extn.swift in Sources */,
+				DE45C3E82E9DC907000DFF7E /* EditState.swift in Sources */,
 				DE0B7B482E828C0C00C32575 /* TagSchemaManager.swift in Sources */,
 				DE45C3DE2E967B05000DFF7E /* FilterButton.swift in Sources */,
 				DE45C3E02E967B64000DFF7E /* FilterState.swift in Sources */,
 				DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */,
+				DE45C3E62E9D0E54000DFF7E /* TaskPaperItem.Icon.swift in Sources */,
 				DE0B7B4C2E82A04B00C32575 /* TagView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
