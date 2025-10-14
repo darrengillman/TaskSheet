@@ -229,7 +229,7 @@ extension ItemRowView {
          Button {
             folded = true
          } label: {
-            Label( "Fold", systemImage: "rectangle.compress.vertical")
+            Label( "Compress", systemImage: "rectangle.compress.vertical")
          }
       }
    }
