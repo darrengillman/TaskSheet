@@ -7,25 +7,28 @@
 
 import SwiftUI
 
-struct ItemEditorView: View {
+struct ItemEditorSheet: View {
    @Environment(\.dismiss) private var dismiss
    @FocusState private var isTextEditorFocused: Bool
    @Binding var text: String
    @State private var itemType: ItemType = .task
-
+   
+   var role: InputRole
    var onSave: (String, ItemType) -> Void
    var onCancel: ( () -> Void )?
 
    var body: some View {
       NavigationView {
          VStack(spacing: 0) {
-            Picker("Type", selection: $itemType) {
-               ForEach(ItemType.allCases, id: \.self) { type in
-                  Label(type.rawValue.capitalized, systemImage: type.baseIcon)
+            if case .add(_) = role {
+               Picker("Type", selection: $itemType) {
+                  ForEach(ItemType.allCases, id: \.self) { type in
+                     Label(type.rawValue.capitalized, systemImage: type.baseIcon)
+                  }
                }
+               .pickerStyle(.segmented)
+               .padding(.horizontal)
             }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
 
             TextEditor(text: $text)
                .frame(minHeight: 120)
@@ -54,10 +57,10 @@ struct ItemEditorView: View {
                }
             }
             ToolbarItem(placement: .principal) {
-               Text("Quick Add \(itemType.rawValue.capitalized)")
+               Text("\(role.titleString) \(role.itemType?.rawValue.capitalized ?? itemType.rawValue.capitalized)")
             }
             ToolbarItem(placement: .confirmationAction) {
-               Button("Add") {
+               Button(role.commitString) {
                   onSave(text, itemType)
                   dismiss()
                }
@@ -76,5 +79,6 @@ struct ItemEditorView: View {
 
 #Preview {
    @Previewable @State var text = ""
-   ItemEditorView(text: $text) {_, _ in }
+   @Previewable @State var role: InputRole  = .edit(type: .task, indent: 1)
+   ItemEditorSheet(text: $text, role: role) {_, _ in }
 }

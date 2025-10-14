@@ -4,15 +4,15 @@ struct TaskListView: View {
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
    @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
-   @State private var isShowingQuickAddPopover: Bool = false
-   @State private var isShowingEditSheet: Bool = false
+   @State private var isShowingQuickAddPopover: InputRole? = nil
+   @State private var isShowingEditSheet: InputRole? = nil
    @State var subViewIsEditing: Bool = false
    @State fileprivate var filterState  = FilterState()
    @State var searchText: String = ""
    @State private var editTextBuffer: String = ""
    
    private var showQuickAddButton: Bool {
-      !subViewIsEditing && !isShowingQuickAddPopover
+      !subViewIsEditing && isShowingQuickAddPopover == nil
    }
 
    var filteredItemsBinding: [Binding<TaskPaperItem>] {
@@ -24,7 +24,7 @@ struct TaskListView: View {
             Binding(
                get: {item},
                set: {
-                  let index = document.items.firstIndex(of: item)
+                  let index = document.items.firstIndex{$0.id == item.id}
                   document.items[index!] = $0
                }
             )
@@ -65,26 +65,31 @@ struct TaskListView: View {
          ToolbarSpacer( .fixed, placement: .bottomBar)
          ToolbarItem(placement: .bottomBar) {
             Button {
-               isShowingQuickAddPopover = true
+               isShowingQuickAddPopover = .add(indent: 0)
             } label: {
                Image(systemName: "square.and.pencil")
             }
          }
       }
       .toolbarVisibility( showQuickAddButton ? .visible : .hidden, for: .bottomBar)
-      .popover(isPresented: $isShowingQuickAddPopover, attachmentAnchor: .point(.init(x: -30, y: -30))) {
-         AddItemPopOver(showPopover: $isShowingQuickAddPopover, showSheet: $isShowingEditSheet, text: $editTextBuffer) { text, type in
+      .popover(item: $isShowingQuickAddPopover, attachmentAnchor: .point(.init(x: -30, y: -30))) { role in
+         AddItemPopOver(
+            showPopover: $isShowingQuickAddPopover,
+            showSheet: $isShowingEditSheet,
+            text: $editTextBuffer,
+            role: role
+         ) { text, type in
             document.quickAdd(text, type: type)
-            editTextBuffer = ""
+            resetInput()
          } onCancel: {
             resetInput()
          }
          .presentationCompactAdaptation(.popover)
       }
-      .sheet(isPresented: $isShowingEditSheet) {
-         ItemEditorView(text: $editTextBuffer) { text, type in
+      .sheet(item: $isShowingEditSheet) { role in
+         ItemEditorSheet(text: $editTextBuffer, role: role) { text, type in
             document.quickAdd(text, type: type)
-            editTextBuffer = ""
+            resetInput()
          } onCancel: {
             resetInput()
          }
@@ -95,10 +100,10 @@ struct TaskListView: View {
    
    func resetInput() {
       editTextBuffer = ""
-      isShowingEditSheet = false
-      isShowingQuickAddPopover = false
+      subViewIsEditing = false
+      isShowingEditSheet = nil
+      isShowingQuickAddPopover = nil
    }
-   
 }
 
 #Preview {

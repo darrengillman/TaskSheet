@@ -11,34 +11,41 @@ import SwiftUI
 struct AddItemPopOver: View {
    @Environment(\.dismiss) private var dismiss
    @FocusState private var isTextFieldFocused: Bool
-   @Binding var showPopover: Bool
-   @Binding var showSheet: Bool
+   @Binding var showPopover: InputRole?
+   @Binding var showSheet: InputRole?
    @Binding var text: String
    @State private var itemType: ItemType = .task
+   var role: InputRole
    var onSave: (String, ItemType) -> Void
    var onCancel: (() -> Void )?
 
    var body: some View {
       VStack(spacing: 16) {
          HStack {
-            HStack {
-               Text("Quick Add")
-                  .font(.headline)
-               Picker("Type", selection: $itemType) {
-                  ForEach(ItemType.allCases, id: \.self) {
-                     Text($0.rawValue.capitalized)
+            if case .add = role {
+               HStack {
+                  Text(role.titleString)
+                     .font(.headline)
+                  Picker("Type", selection: $itemType) {
+                     ForEach(ItemType.allCases, id: \.self) {
+                        Text($0.rawValue.capitalized)
+                     }
                   }
+                  .pickerStyle(.menu)
                }
-               .pickerStyle(.menu)
                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+               Text("\(role.titleString) \(role.itemType?.rawValue.capitalized ?? "")")
+                  .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(alignment: .leading)
+//               .frame(alignment: .leading)
             Button{
                withAnimation {
-                  showPopover = false
+                  let role = showPopover
+                  showPopover = nil
                   Task {
                      try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
-                     showSheet = true
+                     showSheet = role
                   }
                }
             } label: {
@@ -46,13 +53,13 @@ struct AddItemPopOver: View {
                   .padding(.horizontal, 6)
             }
             .foregroundColor(.secondary)
-
+            
             Button {
                cancel()
             } label: {
                Image(systemName: "xmark")
                   .padding(.horizontal, 6)
-
+               
             }
             .foregroundColor(.secondary)
             .accessibilityLabel(Text("Edit in larger edit window"))
@@ -91,10 +98,11 @@ struct AddItemPopOver: View {
 }
 
 #Preview {
-   @Previewable @State var showPopover = false
-   @Previewable @State var showSheet = false
+   @Previewable @State var showPopover: InputRole? = nil
+   @Previewable @State var showSheet: InputRole? = nil
    @Previewable @State var text = ""
-   AddItemPopOver(showPopover: $showPopover, showSheet: $showSheet, text: $text) { text, type in
+   @Previewable @State var role = InputRole.edit(type: .task, indent: 0)
+   AddItemPopOver(showPopover: $showPopover, showSheet: $showSheet, text: $text, role: role) { text, type in
        }
 }
 

@@ -80,7 +80,7 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
        }
     }
    
-   private mutating func refreshTagCache() {
+   mutating func refreshTagCache() {
       cachedTags = TaskPaperParser.extractTags(from: text)
    }
 
