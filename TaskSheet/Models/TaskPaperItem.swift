@@ -206,9 +206,12 @@ private extension String {
 
    func removingTagNames() -> String {
          // Swift regex: matches @tagname or @tagname(value)
+      let tagRegexWithWhiteSpace = /\s@\w+(?:\([^)]+\))?\s/
       let tagRegex = /@\w+(?:\([^)]+\))?/
       
-      return self.replacing(tagRegex, with: "")
+      return self
+         .replacing(tagRegexWithWhiteSpace, with: " ")
+         .replacing(tagRegex, with: "")
          .trimmingCharacters(in: .whitespaces)
    }
 }
