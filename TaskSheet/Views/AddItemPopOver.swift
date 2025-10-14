@@ -11,11 +11,11 @@ import SwiftUI
 struct AddItemPopOver: View {
    @Environment(\.dismiss) private var dismiss
    @FocusState private var isTextFieldFocused: Bool
-   @Binding var showPopover: InputRole?
-   @Binding var showSheet: InputRole?
+   @Binding var showPopover: TextEntryRole?
+   @Binding var showSheet: TextEntryRole?
    @Binding var text: String
    @State private var itemType: ItemType = .task
-   var role: InputRole
+   var role: TextEntryRole
    var onSave: (String, ItemType) -> Void
    var onCancel: (() -> Void )?
 
@@ -38,7 +38,7 @@ struct AddItemPopOver: View {
                Text("\(role.titleString) \(role.itemType?.rawValue.capitalized ?? "")")
                   .frame(maxWidth: .infinity, alignment: .leading)
             }
-//               .frame(alignment: .leading)
+            
             Button{
                withAnimation {
                   let role = showPopover
@@ -59,7 +59,6 @@ struct AddItemPopOver: View {
             } label: {
                Image(systemName: "xmark")
                   .padding(.horizontal, 6)
-               
             }
             .foregroundColor(.secondary)
             .accessibilityLabel(Text("Edit in larger edit window"))
@@ -98,10 +97,10 @@ struct AddItemPopOver: View {
 }
 
 #Preview {
-   @Previewable @State var showPopover: InputRole? = nil
-   @Previewable @State var showSheet: InputRole? = nil
+   @Previewable @State var showPopover: TextEntryRole? = nil
+   @Previewable @State var showSheet: TextEntryRole? = nil
    @Previewable @State var text = ""
-   @Previewable @State var role = InputRole.edit(type: .task, indent: 0)
+   @Previewable @State var role = TextEntryRole.edit(type: .task, indent: 0)
    AddItemPopOver(showPopover: $showPopover, showSheet: $showSheet, text: $text, role: role) { text, type in
        }
 }

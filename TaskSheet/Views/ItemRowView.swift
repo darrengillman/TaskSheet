@@ -9,8 +9,8 @@ struct ItemRowView: View {
    
    @State private var folded = false
    @State private var isShowingAddTagPopover = false
-   @State private var isShowingNewItemPopover: InputRole? = nil
-   @State private var isShowingEditSheet: InputRole? = nil
+   @State private var isShowingNewItemPopover: TextEntryRole? = nil
+   @State private var isShowingEditSheet: TextEntryRole? = nil
    @State private var editTextBuffer: String = ""
    
    @State private var isShowingAlert = false
@@ -77,7 +77,6 @@ struct ItemRowView: View {
          ) { text, type in
             if case .edit = role {
                item.text = text
-               item.refreshTagCache()
             } else {
                let newItem = TaskPaperItem(type: type, text: text, indentLevel: role.indent)
                document.insert(newItem, after: item)
@@ -114,7 +113,6 @@ struct ItemRowView: View {
       isEditing = true
       isShowingNewItemPopover = .edit(type: item.type, indent: item.indentLevel)
    }
-   
    
    func resetInput() {
       isEditing = false

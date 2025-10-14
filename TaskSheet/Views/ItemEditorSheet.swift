@@ -13,7 +13,7 @@ struct ItemEditorSheet: View {
    @Binding var text: String
    @State private var itemType: ItemType = .task
    
-   var role: InputRole
+   var role: TextEntryRole
    var onSave: (String, ItemType) -> Void
    var onCancel: ( () -> Void )?
 
@@ -79,6 +79,6 @@ struct ItemEditorSheet: View {
 
 #Preview {
    @Previewable @State var text = ""
-   @Previewable @State var role: InputRole  = .edit(type: .task, indent: 1)
+   @Previewable @State var role: TextEntryRole  = .edit(type: .task, indent: 1)
    ItemEditorSheet(text: $text, role: role) {_, _ in }
 }

@@ -5,7 +5,7 @@
 //  Created by Darren Gillman on 14/10/2025.
 //
 
-enum InputRole: Identifiable {
+enum TextEntryRole: Identifiable {
    var id: String {
       switch self {
          case .add:
