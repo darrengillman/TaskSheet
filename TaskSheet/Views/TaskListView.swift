@@ -16,23 +16,28 @@ struct TaskListView: View {
    }
 
    var filteredItemsBinding: [Binding<TaskPaperItem>] {
-      document.items.compactMap { item in
-         if filterState.isFiltering == false
-               || filterState.text.isEmpty
-               || (item.cachedTags ?? []).contains(where: {$0.name == filterState.text}) == (filterState.isNegated ? false : true)
-         {
-            Binding(
-               get: {item},
-               set: { newValue in
-                  let index = document.items.firstIndex{$0.id == newValue.id}
-                  document.items[index!] = newValue
-                  document.items[index!].refreshTagCache()
-               }
-            )
-         } else {
-            nil
+      let filter = filterState.text.prefix(1) == "@" ? filterState.text.dropFirst().asString : filterState.text
+      return document
+         .items
+         .compactMap { item in
+            if (filterState.isFiltering == false
+                || filterState.text.isEmpty
+                || (item.cachedTags ?? []).contains(where: {$0.name == filter}) == (filterState.isNegated ? false : true)
+            ) && (
+               searchText.isEmpty || item.text.localizedCaseInsensitiveContains(searchText)
+            ) {
+               Binding(
+                  get: {item},
+                  set: { newValue in
+                     let index = document.items.firstIndex{$0.id == newValue.id}
+                     document.items[index!] = newValue
+                     document.items[index!].refreshTagCache()
+                  }
+               )
+            } else {
+               nil
+            }
          }
-      }
    }
    
    var body: some View {

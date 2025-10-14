@@ -31,6 +31,7 @@
 		DE45C3E42E99DA14000DFF7E /* ItemEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E32E99DA0B000DFF7E /* ItemEditorSheet.swift */; };
 		DE45C3E62E9D0E54000DFF7E /* TaskPaperItem.Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */; };
 		DE45C3E82E9DC907000DFF7E /* TextEntryRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E72E9DC8FF000DFF7E /* TextEntryRole.swift */; };
+		DE45C3EA2E9ECB13000DFF7E /* StringProtocol+extn.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E92E9ECAF5000DFF7E /* StringProtocol+extn.swift */; };
 		DE9C1D2B2E92FC6400D660AA /* AddTagPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */; };
 		DE9C1D2D2E934AE600D660AA /* AddItemPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */; };
 		DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */; };
@@ -76,6 +77,7 @@
 		DE45C3E32E99DA0B000DFF7E /* ItemEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemEditorSheet.swift; sourceTree = "<group>"; };
 		DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperItem.Icon.swift; sourceTree = "<group>"; };
 		DE45C3E72E9DC8FF000DFF7E /* TextEntryRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryRole.swift; sourceTree = "<group>"; };
+		DE45C3E92E9ECAF5000DFF7E /* StringProtocol+extn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringProtocol+extn.swift"; sourceTree = "<group>"; };
 		DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagPopOver.swift; sourceTree = "<group>"; };
 		DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemPopOver.swift; sourceTree = "<group>"; };
 		DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				1A00011B1234567890123456 /* Views */,
 				1A00011C1234567890123456 /* Managers */,
 				DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */,
+				DE45C3E92E9ECAF5000DFF7E /* StringProtocol+extn.swift */,
 				1A0001031234567890123456 /* Assets.xcassets */,
 				1A0001051234567890123456 /* Preview Content */,
 			);
@@ -324,6 +327,7 @@
 				DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */,
 				DE45C3E62E9D0E54000DFF7E /* TaskPaperItem.Icon.swift in Sources */,
 				DE0B7B4C2E82A04B00C32575 /* TagView.swift in Sources */,
+				DE45C3EA2E9ECB13000DFF7E /* StringProtocol+extn.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

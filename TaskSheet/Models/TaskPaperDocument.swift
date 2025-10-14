@@ -37,14 +37,6 @@ class TaskPaperDocument: ObservableObject {
          .sorted(using: SortDescriptor(\.displayText))
    }
    
-   func filteredItems(_ filtered: Bool, by match: String, negated: Bool = false) -> [TaskPaperItem] {
-      guard filtered else {return items}
-      return items.filter { item in
-         (item.cachedTags ?? []).contains(Tag(name: match)) == (negated ? false : true)
-      }
-   }
-   
-   
    func quickAdd(_ text: String, type: ItemType) {
       let newItem = TaskPaperItem(type: type, text: text, indentLevel: 1)
       if let inboxIndex = items.firstIndex(where: {$0.text.prefix(6) == "Inbox:" && $0.type == .project && $0.indentLevel == 0}) {
