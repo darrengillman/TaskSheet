@@ -4,18 +4,18 @@ struct ItemRowView: View {
    @Binding var item: TaskPaperItem
    @ObservedObject var tagSchemaManager: TagSchemaManager
    @ObservedObject var document: TaskPaperDocument
-   
+   // Editing
    @Binding var isEditing: Bool
-   
-   @State private var folded = false
    @State private var isShowingAddTagPopover = false
    @State private var isShowingNewItemPopover: TextEntryRole? = nil
    @State private var isShowingEditSheet: TextEntryRole? = nil
    @State private var editTextBuffer: String = ""
-   
+   //Alerts
    @State private var isShowingAlert = false
    @State private var alertMessage: String? = nil
    @State private var alertTitle: String = "Not Implemented"
+   //Basic State
+   @State private var folded = false
    
    var body: some View {
       HStack(alignment: .top, spacing: 8) {
@@ -30,7 +30,7 @@ struct ItemRowView: View {
          
          item.icon
             .onTapGesture {
-               document.toggleTaskCompletion(item: item)
+               item.toggleCompletion()
             }
          
          VStack(alignment: .leading, spacing: 4) {
