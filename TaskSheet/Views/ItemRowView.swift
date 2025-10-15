@@ -76,7 +76,7 @@ struct ItemRowView: View {
             role: role
          ) { text, type in
             if case .edit = role {
-               item.text = text
+               item.update(with: text)
             } else {
                let newItem = TaskPaperItem(type: type, text: text, indentLevel: role.indent)
                document.insert(newItem, after: item)
@@ -90,7 +90,7 @@ struct ItemRowView: View {
       .sheet(item: $isShowingEditSheet) { role in
          ItemEditorSheet(text: $editTextBuffer, role: role) { text, type in
             if case .edit = role {
-               item.text = text
+               item.update(with: text)
             } else {
                let newItem = TaskPaperItem(type: type, text: text, indentLevel: role.indent)
                document.insert(newItem, after: item)
@@ -298,7 +298,4 @@ extension ItemRowView {
    }
 }
 
-extension Int: @retroactive Identifiable {
-   public var id: Int {self}
-}
 

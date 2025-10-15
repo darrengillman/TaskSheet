@@ -80,6 +80,15 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
        }
     }
    
+   mutating func update( with text: String) {
+      self.text =  switch type {
+         case .note: text
+         case .project: text.hasSuffix(Self.projectSuffix) ? text : text + Self.projectSuffix
+         case .task: text.hasPrefix(Self.taskPrefix) ? text : Self.taskPrefix + text
+      }
+   }
+
+   
    mutating func refreshTagCache() {
       cachedTags = TaskPaperParser.extractTags(from: text)
    }
@@ -150,7 +159,7 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
 
     // MARK: - Task Completion Methods
 
-    mutating func toggleCompletion() {
+   mutating func toggleCompletion() {
         if isCompleted {
            text = text.removingTag("done")
         } else {

@@ -13,7 +13,7 @@ struct TagsView: View {
    let deleteAction: (Tag) -> Void
    
    var body: some View {
-      HStack(spacing: 6) {
+      FlowLayout(alignment: .leading, spacing: 6) {
          ForEach(tags, id: \.self) { tag in
             TagView(tag: tag, schema: schema, deleteAction: deleteAction)
          }
