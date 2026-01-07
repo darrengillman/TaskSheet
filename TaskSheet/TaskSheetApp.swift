@@ -3,8 +3,8 @@ import SwiftUI
 @main
 struct TaskSheetApp: App {
     var body: some Scene {
-        WindowGroup {
-            RootView()
+        DocumentGroup(newDocument: { TaskPaperDocument(content: "", fileName: "Untitled") }) { file in
+            TaskDocumentView(document: file.document)
         }
     }
 }
