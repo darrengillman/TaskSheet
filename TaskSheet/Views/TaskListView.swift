@@ -4,7 +4,6 @@ import SwiftUI
 struct TaskListView: View {
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
-   @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
    @State private var isShowingTextEntrySheet: TextEntryRole? = nil
    @State var subViewIsEditing: Bool = false
@@ -47,7 +46,7 @@ struct TaskListView: View {
    
    var body: some View {
       List {
-         DocumentHeader(document: document, syncStatus: $syncStatus)
+         DocumentHeader(document: document)
             .listRowInsets(.init())
             .listRowSeparator(.hidden)
          ForEach(filteredItemsBinding) { item in
@@ -107,7 +106,6 @@ struct TaskListView: View {
          }
          .presentationDetents([.fraction(0.35), .medium, .large])
       }
-      .navigationTitle(document.fileName)
 //      .onChange(of: searchText){ _,text in
 //         searchTask?.cancel()
 //         searchTask = Task {
@@ -141,6 +139,6 @@ struct TaskListView: View {
 }
 
 #Preview {
-   TaskListView(document: SampleContent.sampleDocument, syncStatus: .constant(.current))
+   TaskListView(document: SampleContent.sampleDocument)
 }
 

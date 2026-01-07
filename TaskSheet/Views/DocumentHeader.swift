@@ -7,33 +7,10 @@
 import SwiftUI
 
 struct DocumentHeader: View {
-   struct PopOverContent: Identifiable, ExpressibleByStringLiteral {
-      var id: String {text}
-      var text: String
-      
-      init(stringLiteral value: String) {
-         self.text = value
-      }
-   }
-   
    @ObservedObject var document: TaskPaperDocument
-   @Binding var syncStatus: TaskPaperManager.iCloudSyncStatus
-   @State var popOverText: PopOverContent? = nil
-   
+
    var body: some View {
       HStack {
-         syncStatusView
-            .padding(.trailing, 12)
-            .popover(item: $popOverText, attachmentAnchor: .point(.topTrailing)) { item in
-               Text(item.text)
-                  .padding(.horizontal, 12)
-                  .padding(.vertical, 8)
-                  .presentationCompactAdaptation(.popover)
-            }
-            .onTapGesture {
-               popOverText = PopOverContent(stringLiteral: syncStatus.rawValue)
-            }
-
          HStack(spacing: 12) {
             StatItem(icon: "folder", count: document.projectCount, label: "Projects")
             StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: "Tasks")
@@ -47,38 +24,6 @@ struct DocumentHeader: View {
       .padding(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
       .border(Color(.separator), width: 1)
-   }
-   
-   @ViewBuilder
-   private var syncStatusView: some View {
-      switch syncStatus {
-         case .downloading:
-            HStack(spacing: 4) {
-               ProgressView()
-                  .scaleEffect(0.7)
-               Image(systemName: "icloud.and.arrow.down")
-                  .foregroundColor(.blue)
-            }
-         case .uploading:
-            HStack(spacing: 4) {
-               ProgressView()
-                  .scaleEffect(0.7)
-               Image(systemName: "icloud.and.arrow.up")
-                  .foregroundColor(.blue)
-            }
-         case .current:
-            Image(systemName: "icloud")
-               .foregroundColor(.green)
-         case .conflict:
-            Image(systemName: "exclamationmark.icloud")
-               .foregroundColor(.orange)
-         case .notInCloud:
-            Image(systemName: "doc")
-               .foregroundColor(.secondary)
-         case .unknown:
-            Image(systemName: "questionmark.circle")
-               .foregroundColor(.secondary)
-      }
    }
 }
 
@@ -106,10 +51,7 @@ struct StatItem: View {
 }
 
 #Preview {
-   DocumentHeader(
-      document: SampleContent.sampleDocument,
-      syncStatus: .constant(.notInCloud)
-   )
+   DocumentHeader(document: SampleContent.sampleDocument)
 }
 
 
