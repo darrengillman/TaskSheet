@@ -8,24 +8,29 @@ TaskSheet is an iOS SwiftUI application that provides a viewer and parser for Ta
 
 ## Architecture
 
-The app follows a standard SwiftUI MVVM architecture:
+The app uses SwiftUI's **DocumentGroup** architecture for native document management with automatic iCloud sync:
+
+### Document Model
+- **TaskPaperDocument** (`TaskSheet/Models/TaskPaperDocument.swift`): ReferenceFileDocument-conforming class that manages TaskPaper documents
+  - Conforms to ReferenceFileDocument protocol for automatic file loading/saving
+  - Uses @Published properties to trigger autosave when items change
+  - Provides snapshot() method for serialization to disk
+  - Contains 14 mutation methods (quickAdd, insert, delete, toggle, indent, outdent, move operations)
+  - Computed statistics: projectCount, taskCount, completedTaskCount, noteCount, allTags
 
 ### Core Models
 - **TaskPaperItem** (`TaskSheet/Models/TaskPaperModels.swift`): Represents individual items (projects, tasks, notes) with support for indentation levels and tags
 - **Tag** (`TaskSheet/Models/TaskPaperModels.swift`): Represents TaskPaper tags with optional values
-- **TaskPaperDocument** (`TaskSheet/Models/TaskPaperDocument.swift`): Observable document model that manages parsed items and provides statistics
 
 ### Parser
 - **TaskPaperParser** (`TaskSheet/Models/TaskPaperParser.swift`): Static parser that converts TaskPaper text format into structured data. Handles tab-based indentation, item type detection, and tag extraction using regex
 
-### Manager
-- **TaskPaperManager** (`TaskSheet/Managers/TaskPaperManager.swift`): Handles file loading, error states, and provides sample data. Features comprehensive iCloud Drive integration with security-scoped file access, bookmark persistence, sync status monitoring, and file coordination
-- **Task Completion** (`TaskSheet/Models/TaskPaperDocument.swift`): Methods for toggling task completion by adding/removing @done tags with dates
-
-### Views
-- **ContentView**: Main entry point with file picker integration and iCloud sync status indicators
-- **TaskPaperView**: Document display with header statistics
-- **TaskPaperItemRow**: Individual item rendering with indentation, icons, and tag display. Supports task completion via circle icon tap and context menu
+### App Structure
+- **TaskSheetApp**: Uses DocumentGroup scene for multi-document support
+- **TaskDocumentView**: Main view for individual documents, provides NavigationStack wrapper
+- **TaskListView**: Displays and edits document items with filtering, search, and quick-add
+- **ItemRowView**: Individual item rendering with indentation, icons, and tag display. Supports task completion via circle icon tap and context menu
+- **DocumentHeader**: Shows document statistics (projects, tasks, notes counts)
 - **TagView**: Colored tag rendering with predefined color schemes for common tags (done=green, next/today=orange, bug=red, etc.)
 
 ## Development Commands
@@ -59,52 +64,48 @@ The parser uses regex pattern `@(\\w+)(?:\\(([^)]+)\\))?` to extract tags from t
 ### Indentation Handling
 TaskPaper uses tabs for indentation levels. The parser counts leading tabs to determine hierarchy, which is visually represented in the UI with spacing.
 
-### File Security
-Uses `startAccessingSecurityScopedResource()` and `stopAccessingSecurityScopedResource()` for proper sandboxed file access when loading TaskPaper files.
+### ReferenceFileDocument Pattern
+TaskPaperDocument is a class (reference type) conforming to ReferenceFileDocument. Views use @ObservedObject to observe the same document instance, and @Published properties trigger automatic saves. This differs from FileDocument (value types) which use Binding<Document> for modifications.
 
 ### State Management
-Uses SwiftUI's @StateObject and @ObservableObject for reactive state management between the manager, document, and views.
+Uses SwiftUI's @ObservedObject for document observation across views. DocumentGroup manages file coordination, security-scoped resources, and persistence automatically. No manual bookmark or file access management needed.
 
 ## iCloud Drive Integration
 
+DocumentGroup provides native iCloud integration with automatic sync, conflict resolution, and version management.
+
 ### Capabilities & Entitlements
 The app includes full iCloud Drive integration with:
-- **iCloud Documents capability** (`TaskSheet.entitlements`): Enables iCloud Drive document access
+- **iCloud Documents capability** (`TaskSheet.entitlements`): Enables iCloud Drive document access via CloudDocuments service
 - **Document Type Declaration** (`Info.plist`): Registers TaskPaper file type (.taskpaper) with custom UTI `uk.co.hotpuffin.taskpaper`
 - **Document Browser Support**: Enables "Open with TaskSheet" from Files app and other document browsers
 
-### Security-Scoped Resources
-- **Bookmark Persistence**: Creates security bookmarks that survive app restarts
-- **File Coordination**: Uses NSFileCoordinator for safe concurrent access during iCloud sync
-- **Resource Management**: Proper cleanup with automatic resource release in deinit
-
-### Sync Status Monitoring
-The app provides real-time iCloud sync status:
-- **Downloading** (blue cloud with down arrow + progress): File downloading from iCloud
-- **Uploading** (blue cloud with up arrow + progress): Changes uploading to iCloud
-- **Current** (green cloud): File is up-to-date and synced
-- **Conflict** (orange exclamation cloud): Merge conflicts need resolution
-- **Not in Cloud** (document icon): Local file not stored in iCloud
-- **Unknown** (question mark): Sync status unavailable
-
-### File Operations
-- **Automatic Download**: Triggers download of iCloud files that aren't locally available
-- **Progress Monitoring**: Real-time download progress with 0.5s polling intervals
-- **Safe Writing**: File coordination prevents corruption during simultaneous sync operations
-- **Error Recovery**: Comprehensive error handling for common iCloud scenarios
+### Automatic Features via DocumentGroup
+DocumentGroup handles these automatically:
+- **File Coordination**: NSFileCoordinator managed by system for safe concurrent access
+- **Security-Scoped Resources**: Automatic bookmark persistence and access management
+- **Sync Status**: System displays sync indicators in document browser
+- **Conflict Resolution**: Native UI for resolving iCloud conflicts
+- **Version Management**: Built-in version browsing and restoration
+- **Autosave**: Changes save automatically when @Published properties change
+- **Multiple Windows**: Support for multiple open documents (iPad/Mac)
 
 ### User Experience
-- Files appear in a "TaskSheet" folder in iCloud Drive
+- Native document browser shows iCloud and local files
+- Files appear in "TaskSheet" folder in iCloud Drive
 - Documents sync automatically across all user devices
-- Users can organize TaskPaper files in the Files app alongside other documents
+- System shows sync status indicators (downloading, uploading, current, conflict)
+- Users can organize TaskPaper files in Files app alongside other documents
 - TaskSheet appears in "Open with..." menus for .taskpaper files
+- Offline changes queue and sync when connection returns
 
 ## File Structure
 - `TaskSheet/` - Main application code
-  - `Models/` - Data models and parsing logic
-  - `Views/` - SwiftUI view components
-  - `Managers/` - Business logic, file handling, and iCloud integration
+  - `Models/` - Data models (TaskPaperDocument, TaskPaperItem, Tag) and parsing logic
+  - `Views/` - SwiftUI view components (TaskDocumentView, TaskListView, ItemRowView, etc.)
+  - `Extensions/` - Swift extensions (UTType, String, Int)
   - `TaskSheet.entitlements` - iCloud capabilities and container identifiers
   - `Info.plist` - Document types, UTI declarations, and iCloud container configuration
+  - `TaskSheetApp.swift` - App entry point with DocumentGroup scene
 - `TaskSheetTests/` - Unit tests
 - `TaskSheet.xcodeproj` - Xcode project configuration
