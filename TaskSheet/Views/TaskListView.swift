@@ -62,12 +62,6 @@ struct TaskListView: View {
       .searchable(text: $searchText)
       .searchToolbarBehavior(.minimize)
       .toolbar{
-         ToolbarItem(placement: .confirmationAction) {
-            Button(role: .close) {
-            } label:{
-               Image(systemName: "ellipsis")
-            }
-         }
          ToolbarItem(placement: .bottomBar) {
             FilterButton(filterState: $filterState)
          }
@@ -79,6 +73,13 @@ struct TaskListView: View {
                isShowingTextEntryPopover = .add(indent: 0)
             } label: {
                Image(systemName: "square.and.pencil")
+            }
+         }
+         ToolbarSpacer( .fixed, placement: .bottomBar)
+         ToolbarItem(placement: .bottomBar) {
+            Button(role: .close) {
+            } label:{
+               Image(systemName: "ellipsis")
             }
          }
       }
