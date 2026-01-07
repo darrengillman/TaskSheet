@@ -5,7 +5,9 @@
       "Bash(xcodebuild:*)",
       "Bash(open:*)",
       "Bash(swift:*)",
-      "Bash(xcrun simctl install:*)"
+      "Bash(xcrun simctl install:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

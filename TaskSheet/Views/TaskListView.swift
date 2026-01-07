@@ -1,3 +1,4 @@
+import OSLog
 import SwiftUI
 
 struct TaskListView: View {
@@ -9,7 +10,11 @@ struct TaskListView: View {
    @State var subViewIsEditing: Bool = false
    @State fileprivate var filterState  = FilterState()
    @State var searchText: String = ""
+   @State private var debouncedSearchText: String = ""
+   @State private var searchTask: Task<Void, Never>? = nil
    @State private var editTextBuffer: String = ""
+   
+   let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TaskSheet", category: "TaskLostView")
    
    private var showQuickAddButton: Bool {
       !subViewIsEditing && isShowingTextEntryPopover == nil
@@ -52,6 +57,7 @@ struct TaskListView: View {
                         isEditing: $subViewIsEditing)
             .listRowInsets(EdgeInsets())
          }
+         .onMove(perform: move)
       }
       .listStyle(.plain)
       .searchable(text: $searchText)
@@ -102,8 +108,30 @@ struct TaskListView: View {
          .presentationDetents([.fraction(0.35), .medium, .large])
       }
       .navigationTitle(document.fileName)
+//      .onChange(of: searchText){ _,text in
+//         searchTask?.cancel()
+//         searchTask = Task {
+//            try? await Task.sleep(for: .seconds(0.3))
+//            if !Task.isCancelled {
+//               debouncedSearchText = text
+//            }
+//         }
+//      }
    }
    
+   func move(indexSet: IndexSet, to: Int) {
+      guard indexSet.isEmpty == false else {return}
+      let moving = filteredItemsBinding[indexSet.first!].wrappedValue
+      let droppedOn = filteredItemsBinding[to].wrappedValue
+      do {
+         try withAnimation {
+            try document.moveHierarchy(for: moving, onto: droppedOn)
+         }
+      } catch {
+         logger.error("tried to perform invalid drag/drop")
+      }
+   }
+ 
    func resetInput() {
       editTextBuffer = ""
       subViewIsEditing = false

@@ -147,4 +147,32 @@ class TaskPaperDocument: ObservableObject {
       guard let moveDef = moveUpDestination(for: item) else {return}
       items.move(fromOffsets: moveDef.moving, toOffset: moveDef.insertAt)
    }
+   
+   func hierarchy(for item: TaskPaperItem) -> IndexSet? {
+      guard let itemIndex = items.firstIndex(of: item) else {return nil}
+      let blockEndIndex = items.enumerated().first(where: {$0 > itemIndex && $1.indentLevel <= item.indentLevel})?.offset.advanced(by: -1) ?? items.endIndex
+
+      return IndexSet(itemIndex...blockEndIndex)
+   }
+   
+   func moveHierarchy(for item: TaskPaperItem, onto destination : TaskPaperItem ) throws {
+      guard let moving = hierarchy(for: item), moving.isEmpty == false
+      else {throw DocumentError.itemsNotFound}
+      guard let insertion = items.firstIndex(of: destination)
+      else { throw DocumentError.noValidDestination}
+      
+      let extraIndent = destination.indentLevel - item.indentLevel
+      if extraIndent > 0 {
+         for index in moving {
+            items[index].indentLevel += extraIndent
+         }
+      }
+      
+      items.move(fromOffsets: moving, toOffset: insertion)
+   }
+   
+   enum DocumentError: Error {
+      case itemsNotFound, noValidDestination
+   }
+   
 }

@@ -3,43 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1A0001001234567890123456 /* TaskSheetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000FF1234567890123456 /* TaskSheetApp.swift */; };
-		1A0001021234567890123456 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001011234567890123456 /* RootView.swift */; };
 		1A0001041234567890123456 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A0001031234567890123456 /* Assets.xcassets */; };
-		1A0001071234567890123456 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A0001061234567890123456 /* Preview Assets.xcassets */; };
-		1A0001101234567890123456 /* TaskPaperItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00010F1234567890123456 /* TaskPaperItem.swift */; };
-		1A0001121234567890123456 /* TaskPaperParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001111234567890123456 /* TaskPaperParser.swift */; };
-		1A0001141234567890123456 /* TaskPaperDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001131234567890123456 /* TaskPaperDocument.swift */; };
-		1A0001161234567890123456 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001151234567890123456 /* TaskListView.swift */; };
-		1A0001181234567890123456 /* ItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001171234567890123456 /* ItemRowView.swift */; };
-		1A00011A1234567890123456 /* TaskPaperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0001191234567890123456 /* TaskPaperManager.swift */; };
 		DE0B7B402E7B87FA00C32575 /* SampleContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */; };
-		DE0B7B422E7DE93D00C32575 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B412E7DE93D00C32575 /* Tag.swift */; };
-		DE0B7B442E7DE95100C32575 /* ItemType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B432E7DE95100C32575 /* ItemType.swift */; };
-		DE0B7B482E828C0C00C32575 /* TagSchemaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B472E828C0C00C32575 /* TagSchemaManager.swift */; };
-		DE0B7B4A2E82A03100C32575 /* TagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B492E82A03100C32575 /* TagsView.swift */; };
-		DE0B7B4C2E82A04B00C32575 /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B7B4B2E82A04B00C32575 /* TagView.swift */; };
 		DE1C94A02E775AEA00353202 /* TaskSheetTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */; };
 		DE1C94B02E82A12300353202 /* TaskPaperDocumentMovementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */; };
-		DE45C3DE2E967B05000DFF7E /* FilterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3DD2E967B05000DFF7E /* FilterButton.swift */; };
-		DE45C3E02E967B64000DFF7E /* FilterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3DF2E967B64000DFF7E /* FilterState.swift */; };
-		DE45C3E22E96CB09000DFF7E /* IDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E12E96CB09000DFF7E /* IDs.swift */; };
-		DE45C3E42E99DA14000DFF7E /* ItemEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E32E99DA0B000DFF7E /* ItemEditorSheet.swift */; };
-		DE45C3E62E9D0E54000DFF7E /* TaskPaperItem.Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */; };
-		DE45C3E82E9DC907000DFF7E /* TextEntryRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E72E9DC8FF000DFF7E /* TextEntryRole.swift */; };
-		DE45C3EA2E9ECB13000DFF7E /* StringProtocol+extn.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3E92E9ECAF5000DFF7E /* StringProtocol+extn.swift */; };
-		DE45C3EC2E9FBA1C000DFF7E /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3EB2E9FBA1C000DFF7E /* FlowLayout.swift */; };
-		DE45C3EE2EA02386000DFF7E /* Int+extn.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE45C3ED2EA02386000DFF7E /* Int+extn.swift */; };
-		DE9C1D2B2E92FC6400D660AA /* AddTagPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */; };
-		DE9C1D2D2E934AE600D660AA /* AddItemPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */; };
-		DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */; };
-		DEC18D7E2E79DC14000E2BAF /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC18D7D2E79DC0F000E2BAF /* LoadingView.swift */; };
-		DEE939C32E785122002A976E /* String+extn.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE939C22E78511C002A976E /* String+extn.swift */; };
-		DEE93ABB2E79BD03002A976E /* DocumentHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEE93ABA2E79BD03002A976E /* DocumentHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,40 +27,21 @@
 /* Begin PBXFileReference section */
 		1A0000FC1234567890123456 /* TaskSheet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskSheet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A0000FF1234567890123456 /* TaskSheetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSheetApp.swift; sourceTree = "<group>"; };
-		1A0001011234567890123456 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		1A0001031234567890123456 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1A0001061234567890123456 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		1A00010F1234567890123456 /* TaskPaperItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperItem.swift; sourceTree = "<group>"; };
-		1A0001111234567890123456 /* TaskPaperParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperParser.swift; sourceTree = "<group>"; };
-		1A0001131234567890123456 /* TaskPaperDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDocument.swift; sourceTree = "<group>"; };
-		1A0001151234567890123456 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
-		1A0001171234567890123456 /* ItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRowView.swift; sourceTree = "<group>"; };
-		1A0001191234567890123456 /* TaskPaperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperManager.swift; sourceTree = "<group>"; };
 		DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleContent.swift; sourceTree = "<group>"; };
-		DE0B7B412E7DE93D00C32575 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
-		DE0B7B432E7DE95100C32575 /* ItemType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemType.swift; sourceTree = "<group>"; };
-		DE0B7B472E828C0C00C32575 /* TagSchemaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSchemaManager.swift; sourceTree = "<group>"; };
-		DE0B7B492E82A03100C32575 /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
-		DE0B7B4B2E82A04B00C32575 /* TagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagView.swift; sourceTree = "<group>"; };
 		DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSheetTagTests.swift; sourceTree = "<group>"; };
 		DE1C949F2E775AEA00353202 /* TaskSheetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskSheetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDocumentMovementTests.swift; sourceTree = "<group>"; };
-		DE45C3DD2E967B05000DFF7E /* FilterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButton.swift; sourceTree = "<group>"; };
-		DE45C3DF2E967B64000DFF7E /* FilterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterState.swift; sourceTree = "<group>"; };
-		DE45C3E12E96CB09000DFF7E /* IDs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDs.swift; sourceTree = "<group>"; };
-		DE45C3E32E99DA0B000DFF7E /* ItemEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemEditorSheet.swift; sourceTree = "<group>"; };
-		DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperItem.Icon.swift; sourceTree = "<group>"; };
-		DE45C3E72E9DC8FF000DFF7E /* TextEntryRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryRole.swift; sourceTree = "<group>"; };
-		DE45C3E92E9ECAF5000DFF7E /* StringProtocol+extn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringProtocol+extn.swift"; sourceTree = "<group>"; };
-		DE45C3EB2E9FBA1C000DFF7E /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
-		DE45C3ED2EA02386000DFF7E /* Int+extn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+extn.swift"; sourceTree = "<group>"; };
-		DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagPopOver.swift; sourceTree = "<group>"; };
-		DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemPopOver.swift; sourceTree = "<group>"; };
-		DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
-		DEC18D7D2E79DC0F000E2BAF /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
-		DEE939C22E78511C002A976E /* String+extn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+extn.swift"; sourceTree = "<group>"; };
-		DEE93ABA2E79BD03002A976E /* DocumentHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentHeader.swift; sourceTree = "<group>"; };
+		DE45C52E2EA3D355000DFF7E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		DE45C4F62EA3BF77000DFF7E /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
+		DE45C5042EA3C017000DFF7E /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
+		DE45C5142EA3C021000DFF7E /* Managers */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Managers; sourceTree = "<group>"; };
+		DE45C5212EA3C028000DFF7E /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
+		DE45C5302EA3FD6D000DFF7E /* Preview Content */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Preview Content"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		1A0000F91234567890123456 /* Frameworks */ = {
@@ -129,71 +82,17 @@
 		1A0000FE1234567890123456 /* TaskSheet */ = {
 			isa = PBXGroup;
 			children = (
+				DE45C52E2EA3D355000DFF7E /* Info.plist */,
 				1A0000FF1234567890123456 /* TaskSheetApp.swift */,
-				1A00010E1234567890123456 /* Models */,
-				1A00011B1234567890123456 /* Views */,
-				1A00011C1234567890123456 /* Managers */,
+				DE45C5212EA3C028000DFF7E /* Models */,
+				DE45C5042EA3C017000DFF7E /* Views */,
+				DE45C5142EA3C021000DFF7E /* Managers */,
 				DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */,
-				DE45C3E92E9ECAF5000DFF7E /* StringProtocol+extn.swift */,
-				DE45C3ED2EA02386000DFF7E /* Int+extn.swift */,
+				DE45C4F62EA3BF77000DFF7E /* Extensions */,
 				1A0001031234567890123456 /* Assets.xcassets */,
-				1A0001051234567890123456 /* Preview Content */,
+				DE45C5302EA3FD6D000DFF7E /* Preview Content */,
 			);
 			path = TaskSheet;
-			sourceTree = "<group>";
-		};
-		1A0001051234567890123456 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				1A0001061234567890123456 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		1A00010E1234567890123456 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				DE45C3E72E9DC8FF000DFF7E /* TextEntryRole.swift */,
-				DE45C3E12E96CB09000DFF7E /* IDs.swift */,
-				DE45C3DF2E967B64000DFF7E /* FilterState.swift */,
-				DE0B7B432E7DE95100C32575 /* ItemType.swift */,
-				DE0B7B412E7DE93D00C32575 /* Tag.swift */,
-				DEE939C22E78511C002A976E /* String+extn.swift */,
-				1A00010F1234567890123456 /* TaskPaperItem.swift */,
-				DE45C3E52E9D0E45000DFF7E /* TaskPaperItem.Icon.swift */,
-				1A0001111234567890123456 /* TaskPaperParser.swift */,
-				1A0001131234567890123456 /* TaskPaperDocument.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		1A00011B1234567890123456 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				DE45C3E32E99DA0B000DFF7E /* ItemEditorSheet.swift */,
-				DE45C3EB2E9FBA1C000DFF7E /* FlowLayout.swift */,
-				DE9C1D2C2E934AE600D660AA /* AddItemPopOver.swift */,
-				DE9C1D2A2E92FC5D00D660AA /* AddTagPopOver.swift */,
-				DE0B7B4B2E82A04B00C32575 /* TagView.swift */,
-				DE0B7B492E82A03100C32575 /* TagsView.swift */,
-				DEC18D7D2E79DC0F000E2BAF /* LoadingView.swift */,
-				DEC18D7B2E79C8EC000E2BAF /* ErrorView.swift */,
-				DE45C3DD2E967B05000DFF7E /* FilterButton.swift */,
-				1A0001011234567890123456 /* RootView.swift */,
-				DEE93ABA2E79BD03002A976E /* DocumentHeader.swift */,
-				1A0001151234567890123456 /* TaskListView.swift */,
-				1A0001171234567890123456 /* ItemRowView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		1A00011C1234567890123456 /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				DE0B7B472E828C0C00C32575 /* TagSchemaManager.swift */,
-				1A0001191234567890123456 /* TaskPaperManager.swift */,
-			);
-			path = Managers;
 			sourceTree = "<group>";
 		};
 		DE1C94992E7757D800353202 /* TaskSheetTests */ = {
@@ -219,6 +118,13 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DE45C4F62EA3BF77000DFF7E /* Extensions */,
+				DE45C5042EA3C017000DFF7E /* Views */,
+				DE45C5142EA3C021000DFF7E /* Managers */,
+				DE45C5212EA3C028000DFF7E /* Models */,
+				DE45C5302EA3FD6D000DFF7E /* Preview Content */,
 			);
 			name = TaskSheet;
 			productName = TaskSheet;
@@ -288,7 +194,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A0001071234567890123456 /* Preview Assets.xcassets in Resources */,
 				1A0001041234567890123456 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,35 +212,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A0001021234567890123456 /* RootView.swift in Sources */,
-				1A0001161234567890123456 /* TaskListView.swift in Sources */,
-				DE0B7B442E7DE95100C32575 /* ItemType.swift in Sources */,
-				1A0001181234567890123456 /* ItemRowView.swift in Sources */,
-				1A0001121234567890123456 /* TaskPaperParser.swift in Sources */,
-				DE45C3EE2EA02386000DFF7E /* Int+extn.swift in Sources */,
-				DE45C3EC2E9FBA1C000DFF7E /* FlowLayout.swift in Sources */,
-				1A00011A1234567890123456 /* TaskPaperManager.swift in Sources */,
-				DE9C1D2D2E934AE600D660AA /* AddItemPopOver.swift in Sources */,
-				DE0B7B4A2E82A03100C32575 /* TagsView.swift in Sources */,
-				DE45C3E42E99DA14000DFF7E /* ItemEditorSheet.swift in Sources */,
-				DEC18D7E2E79DC14000E2BAF /* LoadingView.swift in Sources */,
-				DEE93ABB2E79BD03002A976E /* DocumentHeader.swift in Sources */,
 				1A0001001234567890123456 /* TaskSheetApp.swift in Sources */,
-				1A0001141234567890123456 /* TaskPaperDocument.swift in Sources */,
 				DE0B7B402E7B87FA00C32575 /* SampleContent.swift in Sources */,
-				DE9C1D2B2E92FC6400D660AA /* AddTagPopOver.swift in Sources */,
-				DE0B7B422E7DE93D00C32575 /* Tag.swift in Sources */,
-				DE45C3E22E96CB09000DFF7E /* IDs.swift in Sources */,
-				1A0001101234567890123456 /* TaskPaperItem.swift in Sources */,
-				DEE939C32E785122002A976E /* String+extn.swift in Sources */,
-				DE45C3E82E9DC907000DFF7E /* TextEntryRole.swift in Sources */,
-				DE0B7B482E828C0C00C32575 /* TagSchemaManager.swift in Sources */,
-				DE45C3DE2E967B05000DFF7E /* FilterButton.swift in Sources */,
-				DE45C3E02E967B64000DFF7E /* FilterState.swift in Sources */,
-				DEC18D7C2E79C8EC000E2BAF /* ErrorView.swift in Sources */,
-				DE45C3E62E9D0E54000DFF7E /* TaskPaperItem.Icon.swift in Sources */,
-				DE0B7B4C2E82A04B00C32575 /* TagView.swift in Sources */,
-				DE45C3EA2E9ECB13000DFF7E /* StringProtocol+extn.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,6 +367,7 @@
 				DEVELOPMENT_TEAM = 26JHZ4TWCT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TaskSheet/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TaskSheet;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -525,6 +404,7 @@
 				DEVELOPMENT_TEAM = 26JHZ4TWCT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TaskSheet/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TaskSheet;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

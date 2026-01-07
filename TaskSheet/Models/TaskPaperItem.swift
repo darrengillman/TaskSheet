@@ -1,3 +1,4 @@
+import CoreTransferable
 import Foundation
 import RegexBuilder
 
@@ -222,5 +223,11 @@ private extension String {
          .replacing(tagRegexWithWhiteSpace, with: " ")
          .replacing(tagRegex, with: "")
          .trimmingCharacters(in: .whitespaces)
+   }
+}
+
+extension TaskPaperItem: Transferable {
+   static var transferRepresentation: some TransferRepresentation {
+      CodableRepresentation(for: TaskPaperItem.self, contentType: .taskPaperItem)
    }
 }
