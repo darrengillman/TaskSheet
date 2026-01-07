@@ -14,7 +14,6 @@ struct TaskDocumentView: View {
     var body: some View {
         NavigationStack {
             TaskListView(document: document)
-                .navigationTitle(document.fileName)
         }
     }
 }
