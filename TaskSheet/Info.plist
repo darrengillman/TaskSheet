@@ -6,13 +6,25 @@
 	<array>
 		<dict>
 			<key>UTTypeDescription</key>
-			<string>TaskSheet Item</string>
+			<string>TaskPaper Document</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
 			<key>UTTypeIdentifier</key>
-			<string>uk.co.hotpuffin.taskpaper.item</string>
+			<string>uk.co.hotpuffin.taskpaper</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.plain-text</string>
+				<string>public.text</string>
+			</array>
 			<key>UTTypeTagSpecification</key>
-			<dict/>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>taskpaper</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>text/plain</string>
+			</dict>
 		</dict>
 	</array>
 </dict>
