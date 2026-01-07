@@ -1,16 +1,48 @@
 import Foundation
+import SwiftUI
+import UniformTypeIdentifiers
 
-class TaskPaperDocument: ObservableObject {
+class TaskPaperDocument: ReferenceFileDocument {
+   // Required by ReferenceFileDocument
+   static var readableContentTypes: [UTType] { [.taskPaper] }
+   static var writableContentTypes: [UTType] { [.taskPaper] }
+
    @Published var items: [TaskPaperItem] = []
    @Published var fileName: String
-   
+
    var content: String {
       return items.taskPaperContent
    }
-   
+
+   // Required initializer for loading documents
+   required init(configuration: ReadConfiguration) throws {
+      guard let data = configuration.file.regularFileContents,
+            let content = String(data: data, encoding: .utf8)
+      else {
+         throw CocoaError(.fileReadCorruptFile)
+      }
+      self.fileName = configuration.file.filename ?? "Untitled"
+      self.items = TaskPaperParser.parse(content)
+   }
+
+   // Existing init for sample data and new documents
    init(content: String, fileName: String = "Untitled") {
       self.fileName = fileName
       self.items = TaskPaperParser.parse(content)
+   }
+
+   // Required method for saving - creates a snapshot of document data
+   func snapshot(contentType: UTType) throws -> Data {
+      let content = items.taskPaperContent
+      guard let data = content.data(using: .utf8) else {
+         throw CocoaError(.fileWriteUnknown)
+      }
+      return data
+   }
+
+   // Required method for writing snapshot to file
+   func fileWrapper(snapshot: Data, configuration: WriteConfiguration) throws -> FileWrapper {
+      return FileWrapper(regularFileWithContents: snapshot)
    }
    
    var projectCount: Int {
