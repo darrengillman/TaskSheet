@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 
-class TaskPaperDocument: ReferenceFileDocument {
+class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    // Required by ReferenceFileDocument
    static var readableContentTypes: [UTType] { [.taskPaper] }
    static var writableContentTypes: [UTType] { [.taskPaper] }
