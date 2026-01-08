@@ -36,6 +36,7 @@ struct TaskListView: View {
                      let index = document.items.firstIndex{$0.id == newValue.id}
                      document.items[index!] = newValue
                      document.items[index!].refreshTagCache()
+                     document.objectWillChange.send()  // Trigger autosave
                   }
                )
             } else {

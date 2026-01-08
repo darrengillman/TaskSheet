@@ -102,6 +102,7 @@ class TaskPaperDocument: ReferenceFileDocument {
    func toggleTaskCompletion(item: TaskPaperItem) {
       guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
       items[index].toggleCompletion()
+      objectWillChange.send()  // Trigger autosave
    }
    
    func indent(_ item: TaskPaperItem ) {
@@ -113,6 +114,7 @@ class TaskPaperDocument: ReferenceFileDocument {
          items[childIndex].indentLevel += 1
          childIndex += 1
       }
+      objectWillChange.send()  // Trigger autosave
    }
    
    func outdent(_ item: TaskPaperItem ) {
@@ -125,6 +127,7 @@ class TaskPaperDocument: ReferenceFileDocument {
          items[childIndex].indentLevel -= 1
          childIndex += 1
       }
+      objectWillChange.send()  // Trigger autosave
    }
    
    func isAtTop(_ item: TaskPaperItem) -> Bool {
@@ -192,15 +195,16 @@ class TaskPaperDocument: ReferenceFileDocument {
       else {throw DocumentError.itemsNotFound}
       guard let insertion = items.firstIndex(of: destination)
       else { throw DocumentError.noValidDestination}
-      
+
       let extraIndent = destination.indentLevel - item.indentLevel
       if extraIndent > 0 {
          for index in moving {
             items[index].indentLevel += extraIndent
          }
       }
-      
+
       items.move(fromOffsets: moving, toOffset: insertion)
+      objectWillChange.send()  // Trigger autosave
    }
    
    enum DocumentError: Error {
