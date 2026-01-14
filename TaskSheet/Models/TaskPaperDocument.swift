@@ -10,6 +10,8 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    @Published var items: [TaskPaperItem] = []
    @Published var fileName: String
 
+   var undoManager: UndoManager?
+
    var content: String {
       return items.taskPaperContent
    }
@@ -71,11 +73,17 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    
    func quickAdd(_ text: String, type: ItemType) {
       let newItem = TaskPaperItem(type: type, text: text, indentLevel: 1)
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.delete(newItem)
+      }
+
       if let inboxIndex = items.firstIndex(where: {$0.text.prefix(6) == "Inbox:" && $0.type == .project && $0.indentLevel == 0}) {
-         
-         
+
+
          let insertIndex = items[(inboxIndex+1)...].firstIndex(where: {$0.indentLevel == 0}) ?? inboxIndex + 1
-         
+
          items.insert(newItem, at: insertIndex)
       } else {
          let inboxProject = TaskPaperItem(type: .project, text: "Inbox", indentLevel: 0)
@@ -94,19 +102,37 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    
    func delete(_ item: TaskPaperItem) {
       guard let index = items.firstIndex(of: item) else { return }
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.items.insert(item, at: index)
+      }
+
       items.remove(at: index)
    }
    
       // MARK: - Task Completion
-   
+
    func toggleTaskCompletion(item: TaskPaperItem) {
       guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.toggleTaskCompletion(item: item)
+      }
+
       items[index].toggleCompletion()
    }
    
    func indent(_ item: TaskPaperItem ) {
       guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
       let originalIndent = items[index].indentLevel
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.outdent(item)
+      }
+
       items[index].indentLevel += 1
       var childIndex = index + 1
       while childIndex < items.endIndex && items[childIndex].indentLevel > originalIndent {
@@ -119,6 +145,12 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
       let originalIndent = items[index].indentLevel
       guard originalIndent > 0 else { return }
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.indent(item)
+      }
+
       items[index].indentLevel -= 1
       var childIndex = index + 1
       while childIndex < items.endIndex && items[childIndex].indentLevel > originalIndent {
@@ -154,6 +186,12 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
 
    func moveDown(_ item: TaskPaperItem) {
       guard let moveDef = moveDownDestination(for: item) else { return }
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.moveUp(item)
+      }
+
       items.move(fromOffsets: IndexSet(moveDef.moving), toOffset: moveDef.after + 1)
    }
    
@@ -177,6 +215,12 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
 
    func moveUp(_ item: TaskPaperItem) {
       guard let moveDef = moveUpDestination(for: item) else {return}
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.moveDown(item)
+      }
+
       items.move(fromOffsets: moveDef.moving, toOffset: moveDef.insertAt)
    }
    

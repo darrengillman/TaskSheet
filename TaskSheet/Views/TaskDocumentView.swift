@@ -16,6 +16,9 @@ struct TaskDocumentView: View {
             TaskListView(document: document)
                 .toolbar(.hidden, for: .navigationBar)
         }
+        .onAppear {
+            document.undoManager = undoManager
+        }
     }
 }
 

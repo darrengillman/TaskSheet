@@ -2,6 +2,7 @@ import OSLog
 import SwiftUI
 
 struct TaskListView: View {
+   @Environment(\.undoManager) private var undoManager
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
@@ -33,9 +34,17 @@ struct TaskListView: View {
                Binding(
                   get: {item},
                   set: { newValue in
-                     let index = document.items.firstIndex{$0.id == newValue.id}
-                     document.items[index!] = newValue
-                     document.items[index!].refreshTagCache()
+                     guard let index = document.items.firstIndex(where: {$0.id == newValue.id}) else { return }
+                     let oldValue = document.items[index]
+
+                     // Register undo for binding-based mutations (icon tap, tag edits, text edits)
+                     document.undoManager?.registerUndo(withTarget: document) { doc in
+                        doc.items[index] = oldValue
+                        doc.items[index].refreshTagCache()
+                     }
+
+                     document.items[index] = newValue
+                     document.items[index].refreshTagCache()
                   }
                )
             } else {
@@ -107,15 +116,13 @@ struct TaskListView: View {
          }
          .presentationDetents([.fraction(0.35), .medium, .large])
       }
-//      .onChange(of: searchText){ _,text in
-//         searchTask?.cancel()
-//         searchTask = Task {
-//            try? await Task.sleep(for: .seconds(0.3))
-//            if !Task.isCancelled {
-//               debouncedSearchText = text
-//            }
-//         }
-//      }
+   }
+   
+   private func setUndo(for item: TaskPaperItem, undoAction: @escaping (TaskPaperItem) -> Void) {
+      guard let undoManager else {return}
+      undoManager.registerUndo(withTarget: document) { target in
+         undoAction(item)
+      }
    }
    
    func move(indexSet: IndexSet, to: Int) {
@@ -123,6 +130,7 @@ struct TaskListView: View {
       let moving = filteredItemsBinding[indexSet.first!].wrappedValue
       let droppedOn = filteredItemsBinding[to].wrappedValue
       do {
+         setUndo(for: moving, undoAction: {_ in})
          try withAnimation {
             try document.moveHierarchy(for: moving, onto: droppedOn)
          }

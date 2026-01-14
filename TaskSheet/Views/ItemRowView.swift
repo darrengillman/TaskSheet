@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ItemRowView: View {
+   @Environment(\.undoManager) private var undoManager
    @Binding var item: TaskPaperItem
    @ObservedObject var tagSchemaManager: TagSchemaManager
    @ObservedObject var document: TaskPaperDocument
@@ -19,7 +20,6 @@ struct ItemRowView: View {
    
    var body: some View {
       HStack(alignment: .top, spacing: 8) {
-            // Indentation
          HStack(spacing: 0) {
             ForEach(0..<item.indentLevel, id: \.self) { _ in
                Rectangle()
@@ -90,9 +90,18 @@ struct ItemRowView: View {
       .sheet(item: $isShowingEditSheet) { role in
          ItemEditorSheet(text: $editTextBuffer, role: role) { text, type in
             if case .edit = role {
+               let currentText = item.text
+               undoManager?.registerUndo(withTarget: document) { _ in
+                  item.text = currentText
+               }
                item.update(with: text)
             } else {
                let newItem = TaskPaperItem(type: type, text: text, indentLevel: role.indent)
+               undoManager?.registerUndo(withTarget: document) { doc in
+                  if let item = doc.items.first(where: {$0 == newItem}) {
+                     doc.delete(item)
+                  }
+               }
                document.insert(newItem, after: item)
             }
             resetInput()
@@ -107,6 +116,13 @@ struct ItemRowView: View {
              message: {alertMessage == nil ? nil : Text(alertMessage!)}
       )
    }
+   
+//   private func setUndo(for item: TaskPaperItem, undoAction: @escaping (TaskPaperItem) -> Void) {
+//      guard let undoManager else {return}
+//      undoManager.registerUndo(withTarget: document) { target in
+//         undoAction(item)
+//      }
+//   }
    
    private func edit(_ item: TaskPaperItem) {
       editTextBuffer = item.text
