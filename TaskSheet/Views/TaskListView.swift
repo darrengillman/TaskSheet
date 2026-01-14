@@ -118,19 +118,11 @@ struct TaskListView: View {
       }
    }
    
-   private func setUndo(for item: TaskPaperItem, undoAction: @escaping (TaskPaperItem) -> Void) {
-      guard let undoManager else {return}
-      undoManager.registerUndo(withTarget: document) { target in
-         undoAction(item)
-      }
-   }
-   
    func move(indexSet: IndexSet, to: Int) {
       guard indexSet.isEmpty == false else {return}
       let moving = filteredItemsBinding[indexSet.first!].wrappedValue
       let droppedOn = filteredItemsBinding[to].wrappedValue
       do {
-         setUndo(for: moving, undoAction: {_ in})
          try withAnimation {
             try document.moveHierarchy(for: moving, onto: droppedOn)
          }
