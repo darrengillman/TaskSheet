@@ -93,10 +93,20 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    
    func insert(_ newItem: TaskPaperItem, after task: TaskPaperItem) {
       guard let currentIndex = items.firstIndex(of: task) else {
+         // Register undo for append
+         undoManager?.registerUndo(withTarget: self) { document in
+            document.delete(newItem)
+         }
          items.append(newItem)
          return
       }
       let nextIndex = items.index(after: currentIndex)
+
+      // Register undo for insert
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.delete(newItem)
+      }
+
       items.insert(newItem, at: nextIndex)
    }
    
@@ -236,14 +246,22 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       else {throw DocumentError.itemsNotFound}
       guard let insertion = items.firstIndex(of: destination)
       else { throw DocumentError.noValidDestination}
-      
+
+      // Capture state for undo
+      let oldItems = items
+
+      // Register undo
+      undoManager?.registerUndo(withTarget: self) { document in
+         document.items = oldItems
+      }
+
       let extraIndent = destination.indentLevel - item.indentLevel
       if extraIndent > 0 {
          for index in moving {
             items[index].indentLevel += extraIndent
          }
       }
-      
+
       items.move(fromOffsets: moving, toOffset: insertion)
    }
    
