@@ -88,7 +88,6 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
          case .task: text.hasPrefix(Self.taskPrefix) ? text : Self.taskPrefix + text
       }
    }
-
    
    mutating func refreshTagCache() {
       cachedTags = TaskPaperParser.extractTags(from: text)
@@ -229,5 +228,11 @@ private extension String {
 extension TaskPaperItem: Transferable {
    static var transferRepresentation: some TransferRepresentation {
       CodableRepresentation(for: TaskPaperItem.self, contentType: .taskPaperItem)
+   }
+}
+
+extension TaskPaperItem: CustomStringConvertible {
+   var description: String {
+      "\(text) [Indent: \(indentLevel)]"
    }
 }

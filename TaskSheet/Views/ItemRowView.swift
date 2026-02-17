@@ -117,13 +117,6 @@ struct ItemRowView: View {
       )
    }
    
-//   private func setUndo(for item: TaskPaperItem, undoAction: @escaping (TaskPaperItem) -> Void) {
-//      guard let undoManager else {return}
-//      undoManager.registerUndo(withTarget: document) { target in
-//         undoAction(item)
-//      }
-//   }
-   
    private func edit(_ item: TaskPaperItem) {
       editTextBuffer = item.text
       isEditing = true
