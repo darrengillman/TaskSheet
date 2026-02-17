@@ -302,7 +302,18 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       
       items.move(fromOffsets: moving, toOffset: destinationIndex)
    }
-   
+
+   func moveHierarchyToEnd(at firstItemId: UUID) throws {
+      guard let startIndex = items.firstIndex(where: { $0.id == firstItemId })
+      else { throw DocumentError.itemsNotFound }
+      let moving = try hierarchy(from: startIndex)
+      guard moving.isEmpty == false else { throw DocumentError.itemsNotFound }
+
+      let oldItems = items
+      undoManager?.registerUndo(withTarget: self) { doc in doc.items = oldItems }
+      items.move(fromOffsets: moving, toOffset: items.endIndex)
+   }
+
    
 //   func moveHierarchy(_ topLevel: IndexSet, to destination : Int ) throws {
 //      let moving = try hierarchy(for: topLevel)

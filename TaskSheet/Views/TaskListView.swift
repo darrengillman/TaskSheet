@@ -13,7 +13,7 @@ struct TaskListView: View {
    @State private var debouncedSearchText: String = ""
    @State private var searchTask: Task<Void, Never>? = nil
    @State private var editTextBuffer: String = ""
-   @State private var refreshId: UUID = UUID()
+   @State private var filteredIds: [UUID] = []
    
    let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TaskSheet", category: "TaskLostView")
    
@@ -21,37 +21,36 @@ struct TaskListView: View {
       !subViewIsEditing && isShowingTextEntryPopover == nil
    }
 
-   var filteredItemsBinding: [Binding<TaskPaperItem>] {
-      let filter = filterState.text.prefix(1) == "@" ? filterState.text.dropFirst().asString : filterState.text
-      return document
-         .items
-         .compactMap { item in
-            if (filterState.isFiltering == false
-                || filterState.text.isEmpty
-                || (item.cachedTags ?? []).contains(where: {$0.name == filter}) == (filterState.isNegated ? false : true)
-            ) && (
-               searchText.isEmpty || item.text.localizedCaseInsensitiveContains(searchText)
-            ) {
-               Binding(
-                  get: {item},
-                  set: { newValue in
-                     guard let index = document.items.firstIndex(where: {$0.id == newValue.id}) else { return }
-                     let oldValue = document.items[index]
-
-                     // Register undo for binding-based mutations (icon tap, tag edits, text edits)
-                     document.undoManager?.registerUndo(withTarget: document) { doc in
-                        doc.items[index] = oldValue
-                        doc.items[index].refreshTagCache()
-                     }
-
-                     document.items[index] = newValue
-                     document.items[index].refreshTagCache()
-                  }
-               )
-            } else {
-               nil
+   /// Produces a live Binding<TaskPaperItem> for a given item ID.
+   private func makeBinding(for id: UUID) -> Binding<TaskPaperItem>? {
+      guard let index = document.items.firstIndex(where: { $0.id == id }) else { return nil }
+      return Binding(
+         get: { document.items[index] },
+         set: { newValue in
+            let oldValue = document.items[index]
+            document.undoManager?.registerUndo(withTarget: document) { doc in
+               doc.items[index] = oldValue
+               doc.items[index].refreshTagCache()
             }
+            document.items[index] = newValue
+            document.items[index].refreshTagCache()
          }
+      )
+   }
+
+   /// Recomputes the stable ordered list of visible item IDs from the current filter and search state.
+   private func recomputeFilteredIds() {
+      let filter = filterState.text.prefix(1) == "@"
+         ? filterState.text.dropFirst().asString
+         : filterState.text
+      filteredIds = document.items.compactMap { item in
+         let passesFilter = !filterState.isFiltering
+            || filterState.text.isEmpty
+            || (item.cachedTags ?? []).contains(where: { $0.name == filter }) == (filterState.isNegated ? false : true)
+         let passesSearch = debouncedSearchText.isEmpty
+            || item.text.localizedCaseInsensitiveContains(debouncedSearchText)
+         return (passesFilter && passesSearch) ? item.id : nil
+      }
    }
    
    var body: some View {
@@ -59,19 +58,26 @@ struct TaskListView: View {
          DocumentHeader(document: document)
             .listRowInsets(.init())
             .listRowSeparator(.hidden)
-         ForEach(filteredItemsBinding) { item in
-            ItemRowView(item: item,
-                        tagSchemaManager: tagSchemeManager,
-                        document: document,
-                        isEditing: $subViewIsEditing)
-            .listRowInsets(EdgeInsets())
+         ForEach(filteredIds, id: \.self) { id in
+            if let binding = makeBinding(for: id) {
+               ItemRowView(item: binding,
+                           tagSchemaManager: tagSchemeManager,
+                           document: document,
+                           isEditing: $subViewIsEditing)
+               .listRowInsets(EdgeInsets())
+            }
          }
          .onMove(perform: move)
       }
-      .id(refreshId) //trigger a redraw after drag action as it doesn't update the list order. Something to do with basing it on a calc var and that not being triggered when underlying changes?
       .listStyle(.plain)
       .searchable(text: $searchText)
       .searchToolbarBehavior(.minimize)
+      .task { recomputeFilteredIds() }
+      .onChange(of: document.items) { recomputeFilteredIds() }
+      .onChange(of: filterState.isFiltering) { recomputeFilteredIds() }
+      .onChange(of: filterState.text) { recomputeFilteredIds() }
+      .onChange(of: filterState.isNegated) { recomputeFilteredIds() }
+      .onChange(of: debouncedSearchText) { recomputeFilteredIds() }
       .toolbar{
          ToolbarItem(placement: .bottomBar) {
             FilterButton(filterState: $filterState)
@@ -120,37 +126,35 @@ struct TaskListView: View {
       }
    }
    
-      /// Move an item on drag/drop
-      /// - Parameters:
-      ///   - indexSet: the rows being dragged. In this case should be a single row.  The first item in set is the index on screen of the row
-      ///   - destination: where the dragged row is being dropped.
-      ///   This is the index of the row the dropped item is being inserted before. On a drag to last place therefore it's `endIndex`, so trying to use it to access the underlying dataset will cause a crash if you;re dragging to the bottom.
+   /// Move an item on drag/drop.
+   ///
+   /// SwiftUI gives indices into the *filtered* list. We:
+   /// 1. Move within `filteredIds` immediately so the List animates correctly.
+   /// 2. Read the post-move `filteredIds` to find the destination ID.
+   /// 3. Propagate the move into `document.items` using stable IDs.
    func move(indexSet: IndexSet, to destination: Int) {
-      guard
-         indexSet.isEmpty == false,
-         let firstIndex = indexSet.first
-      else {return}
-      print("\(firstIndex) -> \(destination)")
-      let movingId = filteredItemsBinding[firstIndex].wrappedValue.id
-//      let destinationId = filteredItemsBinding[destination].wrappedValue.id
-      let destinationId = switch (destination == filteredItemsBinding.endIndex, destination == document.items.endIndex) {
-         case (false, ): filteredItemsBinding[destination].wrappedValue.id
-         case (true, false): document.items[document.items.firstIndex{$0.id == filteredItemsBinding[destination-1].w.id}.advanced(by: 1)].wrappedValue.id
-         case (true, true):
-            
-      }
+      guard let firstIndex = indexSet.first else { return }
+
+      let movingId = filteredIds[firstIndex]
+
+      // Move within filteredIds first — the List sees this immediately and animates.
+      filteredIds.move(fromOffsets: indexSet, toOffset: destination)
+
+      // Now propagate to the document model using the post-move filteredIds.
       do {
-         try withAnimation {
+         if destination < filteredIds.endIndex {
+            // The item now sitting at `destination` is the one we insert before.
+            let destinationId = filteredIds[destination]
             try document.moveHierarchy(at: movingId, to: destinationId)
-            triggerRefresh()
+         } else {
+            // Dropped at the end of the visible list.
+            try document.moveHierarchyToEnd(at: movingId)
          }
       } catch {
          logger.error("tried to perform invalid drag/drop")
+         // Recompute to restore consistent state if the document move failed.
+         recomputeFilteredIds()
       }
-   }
-   
-   private func triggerRefresh() {
-      refreshId = UUID()
    }
  
    func resetInput() {
@@ -164,4 +168,3 @@ struct TaskListView: View {
 #Preview {
    TaskListView(document: SampleContent.sampleDocument)
 }
-
