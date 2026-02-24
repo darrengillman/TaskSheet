@@ -1,8 +1,11 @@
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
+import OSLog
 
 class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
+   private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TaskSheet", category: "TaskPaperDocument")
+   
       // Required by ReferenceFileDocument
    static var readableContentTypes: [UTType] { [.taskPaper] }
    static var writableContentTypes: [UTType] { [.taskPaper] }
@@ -36,6 +39,9 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       // Required method for saving - creates a snapshot of document data
    func snapshot(contentType: UTType) throws -> Data {
       let content = items.taskPaperContent
+      
+      logger.info("snapshot: writing \(self.items.count) items to disk (\(content.count) bytes)")
+      
       guard let data = content.data(using: .utf8) else {
          throw CocoaError(.fileWriteUnknown)
       }
@@ -202,7 +208,9 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
          document.moveUp(item)
       }
       
-      items.move(fromOffsets: IndexSet(moveDef.moving), toOffset: moveDef.after + 1)
+      var copy = items
+      copy.move(fromOffsets: IndexSet(moveDef.moving), toOffset: moveDef.after + 1)
+      items = copy
    }
    
    func moveUpDestination(for item: TaskPaperItem) -> (moving: IndexSet, insertAt: Int)? {
@@ -231,57 +239,16 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
          document.moveDown(item)
       }
       
-      items.move(fromOffsets: moveDef.moving, toOffset: moveDef.insertAt)
+      var copy = items
+      copy.move(fromOffsets: moveDef.moving, toOffset: moveDef.insertAt)
+      items = copy
    }
    
-   //THIS ONE (?)
-   private func hierarchy(from startIndex: Int) throws -> IndexSet {
-      let topLevelIndent = items[startIndex].indentLevel
-      let enumerated = items.enumerated()
-      let firstEndIndex = enumerated.first(where: {$0 > startIndex && $1.indentLevel <= topLevelIndent })
-      let endIndex = (firstEndIndex?.offset ?? items.endIndex)
-      let blockEndIndex = endIndex.advanced(by: -1)
-      let hierarchy = IndexSet(startIndex...blockEndIndex)
-      return hierarchy
-   }
-   
-      // would expect the indexset to be a single item, but checking to be safe±!
-//   private func hierarchy(for topLevelIndexSet: IndexSet) throws -> IndexSet {
-//      guard topLevelIndexSet.count ==  1, let itemIndex = topLevelIndexSet.first
-//      else { throw DocumentError.itemsNotFound }
-//      print("Moving from index: \(itemIndex)")
-//      
-//      let topLevelIndent = items[itemIndex].indentLevel
-//      
-//      let enumerated = items.enumerated()
-//      
-//      let firstEndIndex = enumerated.first(where: {$0 > itemIndex && $1.indentLevel <= topLevelIndent })
-//      print("EndIndex \(firstEndIndex, default: "nil")")
-//      
-//      let endIndex = (firstEndIndex?.offset ?? items.endIndex)
-//      print("InterimIndex \(endIndex)")
-//      
-//      let blockEndIndex = endIndex.advanced(by: -1)
-//      print( "BlockEndIndex \(blockEndIndex)")
-//      
-//      let hierarchy = IndexSet(itemIndex...blockEndIndex)
-//      print("Hierarchy \(hierarchy.debugDescription)")
-//      print("--------------------")
-//      return hierarchy
-//   }
-   
-      //should be obsolete
-      //   func hierarchy(for item: TaskPaperItem) -> IndexSet? {
-      //      guard let itemIndex = items.firstIndex(of: item) else {return nil}
-      //      let blockEndIndex = items.enumerated().first(where: {$0 > itemIndex && $1.indentLevel <= item.indentLevel})?.offset.advanced(by: -1) ?? items.endIndex
-      //
-      //      return IndexSet(itemIndex...blockEndIndex)
-      //   }
    
    func moveHierarchy(at firstItemId: UUID, to destinationId: UUID) throws {
       guard let startIndex = items.firstIndex(where:{$0.id == firstItemId })
       else {throw DocumentError.itemsNotFound}
-      let moving = try hierarchy(from: startIndex)
+      let moving = items.hierarchyIndexes(from: startIndex)
       guard moving.isEmpty == false else {throw DocumentError.itemsNotFound}
       guard let destinationIndex = items.firstIndex(where: {$0.id == destinationId}) else {throw DocumentError.noValidDestination}
       
@@ -290,74 +257,43 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       undoManager?.registerUndo(withTarget: self) { document in
          document.items = oldItems
       }
-      //match indent to destination level
-      if destinationIndex < items.endIndex {
-         let extraIndent = items[destinationIndex].indentLevel - items[startIndex].indentLevel
+      
+      logger.info("moveHierarchy: registered undo, moving \(moving.count) items from index \(startIndex) to \(destinationIndex)")
+      
+      // Match indent to destination level, then move — all on a copy so @Published fires once.
+      var copy = items
+      if destinationIndex < copy.endIndex {
+         let extraIndent = copy[destinationIndex].indentLevel - copy[startIndex].indentLevel
          if extraIndent > 0 {
             for index in moving {
-               items[index].indentLevel += extraIndent
+               copy[index].indentLevel += extraIndent
             }
          }
       }
+      copy.move(fromOffsets: moving, toOffset: destinationIndex)
+      items = copy
       
-      items.move(fromOffsets: moving, toOffset: destinationIndex)
+      logger.info("moveHierarchy: items assigned, objectWillChange should have fired")
    }
 
    func moveHierarchyToEnd(at firstItemId: UUID) throws {
       guard let startIndex = items.firstIndex(where: { $0.id == firstItemId })
       else { throw DocumentError.itemsNotFound }
-      let moving = try hierarchy(from: startIndex)
+      let moving = items.hierarchyIndexes(from: startIndex)
       guard moving.isEmpty == false else { throw DocumentError.itemsNotFound }
 
       let oldItems = items
       undoManager?.registerUndo(withTarget: self) { doc in doc.items = oldItems }
-      items.move(fromOffsets: moving, toOffset: items.endIndex)
+      
+      logger.info("moveHierarchyToEnd: registered undo, moving \(moving.count) items from index \(startIndex) to end")
+      
+      var copy = items
+      copy.move(fromOffsets: moving, toOffset: copy.endIndex)
+      items = copy
+      
+      logger.info("moveHierarchyToEnd: items assigned, objectWillChange should have fired")
    }
 
-   
-//   func moveHierarchy(_ topLevel: IndexSet, to destination : Int ) throws {
-//      let moving = try hierarchy(for: topLevel)
-//      guard moving.isEmpty == false else {throw DocumentError.itemsNotFound}
-//      // register  undo
-//      let oldItems = items
-//      undoManager?.registerUndo(withTarget: self) { document in
-//         document.items = oldItems
-//      }
-//      
-//      if destination < items.endIndex {
-//         let extraIndent = items[destination].indentLevel - items[topLevel.first!].indentLevel
-//         if extraIndent > 0 {
-//            for index in moving {
-//               items[index].indentLevel += extraIndent
-//            }
-//         }
-//      }
-//      items.move(fromOffsets: moving, toOffset: destination)
-//   }
-
-      //should be obsolete
-//   func moveHierarchy(for item: TaskPaperItem, onto destination : TaskPaperItem ) throws {
-//      guard let moving = hierarchy(for: item), moving.isEmpty == false
-//      else {throw DocumentError.itemsNotFound}
-//      guard let insertion = items.firstIndex(of: destination)
-//      else { throw DocumentError.noValidDestination}
-//
-//      // register  undo
-//      let oldItems = items
-//      undoManager?.registerUndo(withTarget: self) { document in
-//         document.items = oldItems
-//      }
-//
-//      let extraIndent = destination.indentLevel - item.indentLevel
-//      if extraIndent > 0 {
-//         for index in moving {
-//            items[index].indentLevel += extraIndent
-//         }
-//      }
-//
-//      items.move(fromOffsets: moving, toOffset: insertion)  //  check for last point and append not insert?
-//   }
-   
    enum DocumentError: Error {
       case itemsNotFound, noValidDestination
    }

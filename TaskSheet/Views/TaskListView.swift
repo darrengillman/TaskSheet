@@ -129,30 +129,39 @@ struct TaskListView: View {
    /// Move an item on drag/drop.
    ///
    /// SwiftUI gives indices into the *filtered* list. We:
-   /// 1. Move within `filteredIds` immediately so the List animates correctly.
-   /// 2. Read the post-move `filteredIds` to find the destination ID.
-   /// 3. Propagate the move into `document.items` using stable IDs.
+   /// 1. Capture the destination ID BEFORE mutating filteredIds (indices become invalid after)
+   /// 2. Determine the full hierarchy (parent + children) being moved
+   /// 3. Count how many hierarchy items are visible in filteredIds
+   /// 4. Move that many consecutive items in filteredIds (preserves view order)
+   /// 5. Propagate the move to document.items using the captured destination ID
    func move(indexSet: IndexSet, to destination: Int) {
       guard let firstIndex = indexSet.first else { return }
-
       let movingId = filteredIds[firstIndex]
 
-      // Move within filteredIds first — the List sees this immediately and animates.
-      filteredIds.move(fromOffsets: indexSet, toOffset: destination)
+      // Capture destination ID BEFORE mutating filteredIds
+      let destinationId: UUID? = destination < filteredIds.endIndex ? filteredIds[destination] : nil
 
-      // Now propagate to the document model using the post-move filteredIds.
+      // Get full hierarchy from document
+      guard let docIndex = document.items.firstIndex(where: { $0.id == movingId }) else { return }
+      let hierarchyIndexes = document.items.hierarchyIndexes(from: docIndex)
+      let hierarchyIds = hierarchyIndexes.map { document.items[$0].id }
+
+      // Count how many hierarchy items are visible in filteredIds
+      let visibleCount = hierarchyIds.filter { filteredIds.contains($0) }.count
+
+      // Move that many consecutive items starting at firstIndex
+      let indicesToMove = IndexSet(firstIndex..<(firstIndex + visibleCount))
+      filteredIds.move(fromOffsets: indicesToMove, toOffset: destination)
+
+      // Propagate to document using the captured ID
       do {
-         if destination < filteredIds.endIndex {
-            // The item now sitting at `destination` is the one we insert before.
-            let destinationId = filteredIds[destination]
-            try document.moveHierarchy(at: movingId, to: destinationId)
+         if let destId = destinationId {
+            try document.moveHierarchy(at: movingId, to: destId)
          } else {
-            // Dropped at the end of the visible list.
             try document.moveHierarchyToEnd(at: movingId)
          }
       } catch {
          logger.error("tried to perform invalid drag/drop")
-         // Recompute to restore consistent state if the document move failed.
          recomputeFilteredIds()
       }
    }
@@ -168,3 +177,4 @@ struct TaskListView: View {
 #Preview {
    TaskListView(document: SampleContent.sampleDocument)
 }
+

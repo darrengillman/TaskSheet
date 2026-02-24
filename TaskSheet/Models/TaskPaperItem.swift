@@ -199,6 +199,15 @@ extension Array where Element == TaskPaperItem {
     var taskPaperContent: String {
         return self.map { $0.taskPaperLine }.joined(separator: "\n")
     }
+
+    /// Returns the IndexSet of the item at `startIndex` and all its descendants
+    /// (consecutive items with a greater indentLevel that follow it).
+    func hierarchyIndexes(from startIndex: Int) -> IndexSet {
+        let topLevelIndent = self[startIndex].indentLevel
+        let firstEndIndex = self.enumerated().first(where: { $0.offset > startIndex && $0.element.indentLevel <= topLevelIndent })
+        let endIndex = firstEndIndex?.offset ?? self.endIndex
+        return IndexSet(startIndex...endIndex.advanced(by: -1))
+    }
 }
 
 private extension String {
