@@ -299,7 +299,7 @@ final class TaskSheetTagTests: XCTestCase {
     // MARK: - Tag Insertion Position Tests
 
     func testTagInsertionAtSpecificIndex() {
-        var item = TaskPaperItem(type: .task, text: "- Buy groceries", lineNumber: 1)
+        var item = TaskPaperItem(type: .task, text: "- Buy groceries", indentLevel: 0)
 
         // Insert tag at index 5 (after "- Buy")
         let insertIndex = item.text.index(item.text.startIndex, offsetBy: 5)
@@ -309,7 +309,7 @@ final class TaskSheetTagTests: XCTestCase {
     }
 
     func testTagInsertionAfterSpecificIndex() {
-        var item = TaskPaperItem(type: .task, text: "- Buy groceries", lineNumber: 1)
+        var item = TaskPaperItem(type: .task, text: "- Buy groceries", indentLevel: 0)
 
         // Insert tag after index 4 (after "- Bu")
         let afterIndex = item.text.index(item.text.startIndex, offsetBy: 4)
@@ -319,7 +319,7 @@ final class TaskSheetTagTests: XCTestCase {
     }
 
     func testTagInsertionAfterTextWithManualIndex() {
-        var item = TaskPaperItem(type: .task, text: "- Buy buy groceries", lineNumber: 1)
+        var item = TaskPaperItem(type: .task, text: "- Buy buy groceries", indentLevel: 0)
 
         // Insert after first occurrence of "buy" using manual index calculation
         if let range = item.text.range(of: "buy") {
@@ -330,7 +330,7 @@ final class TaskSheetTagTests: XCTestCase {
         }
 
         // Reset and test second occurrence
-        item = TaskPaperItem(type: .task, text: "- buy buy groceries", lineNumber: 1)
+        item = TaskPaperItem(type: .task, text: "- buy buy groceries", indentLevel: 0)
         if let firstRange = item.text.range(of: "buy"),
            let secondRange = item.text.range(of: "buy", range: firstRange.upperBound..<item.text.endIndex) {
             item.addTag(Tag(name: "urgent"), at: .after(secondRange.upperBound))
@@ -341,7 +341,7 @@ final class TaskSheetTagTests: XCTestCase {
     }
 
     func testTagInsertionAfterTextCaseSensitive() {
-        var item = TaskPaperItem(type: .task, text: "- Buy buy groceries", lineNumber: 1)
+        var item = TaskPaperItem(type: .task, text: "- Buy buy groceries", indentLevel: 0)
 
         // Insert after "Buy" (capital B) using manual index calculation
         if let range = item.text.range(of: "Buy") {
@@ -353,7 +353,7 @@ final class TaskSheetTagTests: XCTestCase {
     }
 
     func testTagInsertionFallbackToEnd() {
-        var item = TaskPaperItem(type: .task, text: "- Buy groceries", lineNumber: 1)
+        var item = TaskPaperItem(type: .task, text: "- Buy groceries", indentLevel: 0)
 
         // Test invalid index fallback (manually create an invalid index)
        let invalidIndex = (item.text + "****").endIndex
@@ -361,13 +361,13 @@ final class TaskSheetTagTests: XCTestCase {
         XCTAssertEqual(item.text, "- Buy groceries @urgent", "Should fallback to end for invalid index")
 
         // Reset and test adding tag at end (simplified test since .afterText was removed)
-        item = TaskPaperItem(type: .task, text: "- Buy groceries", lineNumber: 1)
+        item = TaskPaperItem(type: .task, text: "- Buy groceries", indentLevel: 0)
         item.addTag(Tag(name: "urgent"), at: .end)
         XCTAssertEqual(item.text, "- Buy groceries @urgent", "Should add tag at end")
     }
 
     func testComplexTagInsertionScenario() {
-        var item = TaskPaperItem(type: .task, text: "- review review document", lineNumber: 1)
+        var item = TaskPaperItem(type: .task, text: "- review review document", indentLevel: 0)
 
         // Insert after second occurrence of "review" using manual index calculation
         if let firstRange = item.text.range(of: "review"),
@@ -384,7 +384,7 @@ final class TaskSheetTagTests: XCTestCase {
     }
 
     func testTagInsertionWithExistingTags() {
-        var item = TaskPaperItem(type: .task, text: "- Buy groceries @next", lineNumber: 1)
+        var item = TaskPaperItem(type: .task, text: "- Buy groceries @next", indentLevel: 0)
 
         // Insert tag before existing tag
         let nextTagIndex = item.text.range(of: "@next")!.lowerBound

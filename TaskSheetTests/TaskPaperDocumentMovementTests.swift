@@ -190,7 +190,7 @@ final class TaskPaperDocumentMovementTests: XCTestCase {
 
     func testMoveUpDestination_EmptyDocument() {
         let document = TaskPaperDocument(content: "", fileName: "Empty")
-        let item = TaskPaperItem(type: .task, text: "- Nonexistent", lineNumber: 1)
+        let item = TaskPaperItem(type: .task, text: "- Nonexistent", indentLevel: 0)
 
         let destination = document.moveUpDestination(for: item)
 
@@ -199,7 +199,7 @@ final class TaskPaperDocumentMovementTests: XCTestCase {
 
     func testMoveDownDestination_EmptyDocument() {
         let document = TaskPaperDocument(content: "", fileName: "Empty")
-        let item = TaskPaperItem(type: .task, text: "- Nonexistent", lineNumber: 1)
+        let item = TaskPaperItem(type: .task, text: "- Nonexistent", indentLevel: 0)
 
         let destination = document.moveDownDestination(for: item)
 
