@@ -132,8 +132,10 @@ struct TaskPaperDragDropTests {
             
             try document.moveHierarchy(at: movingId, to: destinationId)
             
-            #expect(document.items[6].displayText == "Project C")
-            #expect(document.items[7].displayText == "Task C1")
+            // After moving Project C (was at 8-9) to before Project B (was at 4),
+            // Project C should now be at index 4, followed by Task C1 at index 5
+            #expect(document.items[4].displayText == "Project C:")
+            #expect(document.items[5].displayText == "Task C1")
         }
         
         @Test("Move to end places items at final position")
@@ -192,8 +194,11 @@ struct TaskPaperDragDropTests {
             }
             filteredIds = updatedWorkItems.map { $0.id }
             
-            let taskA1Index = filteredIds.firstIndex(of: movingId)!
-            let projectCIndex = filteredIds.firstIndex(of: destinationId)!
+            guard let taskA1Index = filteredIds.firstIndex(of: movingId),
+                  let projectCIndex = filteredIds.firstIndex(of: destinationId) else {
+                Issue.record("Task A1 or Project C not found in filtered view after move")
+                return
+            }
             #expect(taskA1Index < projectCIndex)
         }
         
@@ -215,8 +220,11 @@ struct TaskPaperDragDropTests {
             try document.moveHierarchy(at: movingId, to: destinationId)
             
             // In document.items, Task A2 @personal should have moved with Project A
-            let taskA2Index = document.items.firstIndex { $0.displayText == "Task A2" }!
-            let projectCIndex = document.items.firstIndex { $0.displayText == "Project C" }!
+            guard let taskA2Index = document.items.firstIndex(where: { $0.displayText == "Task A2" }),
+                  let projectCIndex = document.items.firstIndex(where: { $0.displayText == "Project C:" }) else {
+                Issue.record("Task A2 or Project C not found after move")
+                return
+            }
             #expect(taskA2Index < projectCIndex)
         }
         
@@ -267,7 +275,10 @@ struct TaskPaperDragDropTests {
             
             try document.moveHierarchy(at: movingId, to: destinationId)
             
-            let movedTaskIndex = document.items.firstIndex { $0.id == movingId }!
+            guard let movedTaskIndex = document.items.firstIndex(where: { $0.id == movingId }) else {
+                Issue.record("Task A1 not found after move")
+                return
+            }
             let movedSubtaskIndex = movedTaskIndex + 1
             
             #expect(document.items[movedTaskIndex].indentLevel == taskA1OriginalIndent)
