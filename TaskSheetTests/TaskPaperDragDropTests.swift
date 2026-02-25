@@ -134,7 +134,7 @@ struct TaskPaperDragDropTests {
             
             // After moving Project C (was at 8-9) to before Project B (was at 4),
             // Project C should now be at index 4, followed by Task C1 at index 5
-            #expect(document.items[4].displayText == "Project C:")
+            #expect(document.items[4].displayText == "Project C")
             #expect(document.items[5].displayText == "Task C1")
         }
         
@@ -221,7 +221,7 @@ struct TaskPaperDragDropTests {
             
             // In document.items, Task A2 @personal should have moved with Project A
             guard let taskA2Index = document.items.firstIndex(where: { $0.displayText == "Task A2" }),
-                  let projectCIndex = document.items.firstIndex(where: { $0.displayText == "Project C:" }) else {
+                  let projectCIndex = document.items.firstIndex(where: { $0.displayText == "Project C" }) else {
                 Issue.record("Task A2 or Project C not found after move")
                 return
             }

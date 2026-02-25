@@ -26,7 +26,12 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
     init(type: ItemType, text: String, indentLevel: Int) {
        let rawText = switch type {
           case .note: text
-          case .project: text.hasSuffix(Self.projectSuffix) ? text : text + Self.projectSuffix
+          case .project:
+             if text.removingTagNames().hasSuffix(Self.projectSuffix) {
+                text
+             } else {
+                (text[..<text.index(before: text.firstIndex(of: "@") ?? text.endIndex)] + Self.projectSuffix + text[text.index(before: text.firstIndex(of: "@") ?? text.endIndex)...]).asString
+             }
           case .task: text.hasPrefix(Self.taskPrefix) ? text : Self.taskPrefix + text
        }
         self.id = UUID()
@@ -210,29 +215,7 @@ extension Array where Element == TaskPaperItem {
     }
 }
 
-private extension String {
-   func removingTag(_ tagName: String) -> String {
-         // Swift regex literal: matches @tagName or @tagName(value) with specific tag name
-      let tagRegex = try! Regex("@\(tagName)(?:\\([^)]+\\))?")
-      
-      let updatedText = self.replacing(tagRegex, with: "")
-         .replacingOccurrences(of: "  ", with: " ") // Clean up double spaces
-         .trimmingCharacters(in: .whitespaces)
-      
-      return updatedText
-   }
 
-   func removingTagNames() -> String {
-         // Swift regex: matches @tagname or @tagname(value)
-      let tagRegexWithWhiteSpace = /\s@\w+(?:\([^)]+\))?\s/
-      let tagRegex = /@\w+(?:\([^)]+\))?/
-      
-      return self
-         .replacing(tagRegexWithWhiteSpace, with: " ")
-         .replacing(tagRegex, with: "")
-         .trimmingCharacters(in: .whitespaces)
-   }
-}
 
 extension TaskPaperItem: Transferable {
    static var transferRepresentation: some TransferRepresentation {

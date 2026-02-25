@@ -20,13 +20,14 @@ class TaskPaperParser {
         let indentLevel = countLeadingTabs(line)
         let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        // Tags are now extracted on-demand from the raw text
-        // _ = extractTags(from: trimmedLine) // Keep for validation during parsing
+        // Remove tags to accurately determine item type
+        // Projects like "MyProject: @next" should be detected as projects, not notes
+        let lineWithoutTags = trimmedLine.removingTagNames()
 
         let type: ItemType
-       if trimmedLine.hasSuffix(TaskPaperItem.projectSuffix) {
+        if lineWithoutTags.hasSuffix(TaskPaperItem.projectSuffix) {
             type = .project
-       } else if trimmedLine.hasPrefix(TaskPaperItem.taskPrefix) {
+        } else if trimmedLine.hasPrefix(TaskPaperItem.taskPrefix) {
             type = .task
         } else {
             type = .note
@@ -54,11 +55,13 @@ class TaskPaperParser {
     static func extractTags(from text: String) -> [Tag] {
         var tags: [Tag] = []
 
-        // Swift regex literal with capture groups: @(tagname) and optional (value)
-        let tagRegex = /@(\w+)(?:\(([^)]+)\))?/
+        // Swift regex literal with capture groups: space + @(tagname) and optional (value)
+        // Tags require a leading space to distinguish from emails, etc.
+        let tagRegex = /\s@(\w+)(?:\(([^)]+)\))?/
 
         /* Regex builder version (kept for reference):
         let tagRegex = Regex {
+            /\s/
             "@"
             Capture {
                 OneOrMore(.word)

@@ -90,6 +90,33 @@ final class TaskSheetTagTests: XCTestCase {
         }
     }
 
+    func testProjectWithTrailingTags() {
+        // Test that projects with trailing tags are correctly identified as projects
+        let testCases = [
+            ("MyProject:", ItemType.project, "MyProject"),
+            ("MyProject: @next", ItemType.project, "MyProject"),
+            ("Work Project: @urgent @active", ItemType.project, "Work Project"),
+            ("Archive: @done(2025-12-31)", ItemType.project, "Archive"),
+            ("\tSubproject: @next", ItemType.project, "Subproject"),
+            ("\t\tDeep Project: @tag1 @tag2(value)", ItemType.project, "Deep Project")
+        ]
+
+        for (input, expectedType, expectedDisplayText) in testCases {
+            let items = TaskPaperParser.parse(input)
+            XCTAssertEqual(items.count, 1, "Should parse one item for: \(input)")
+
+            let item = items[0]
+            XCTAssertEqual(item.type, expectedType, "Type detection failed for: \(input)")
+            XCTAssertEqual(item.displayText, expectedDisplayText, "Display text mismatch for: \(input)")
+            
+            // Verify tags are still present in the raw text
+            XCTAssertTrue(item.text.contains(":"), "Project should retain colon in text: \(input)")
+            if input.contains("@") {
+                XCTAssertTrue(item.tags.count > 0, "Tags should be preserved for: \(input)")
+            }
+        }
+    }
+
     func testIndentationLevel() {
         let testCases = [
             ("Top level", 0),
