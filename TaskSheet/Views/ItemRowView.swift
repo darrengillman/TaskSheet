@@ -1,4 +1,5 @@
 import SwiftUI
+import TelemetryDeck
 
 struct ItemRowView: View {
    @Environment(\.undoManager) private var undoManager
@@ -148,6 +149,7 @@ extension ItemRowView {
    @ViewBuilder
    private var completionMenu: some View {
       Button {
+         TelemetryDeck.signal("ItemRowView.MainContextMenu.ToggleComplete.tap")
          document.toggleTaskCompletion(item: item)
       } label: {
          Label( item.isCompleted ? "Mark as Incomplete" : "Mark as Complete",
@@ -157,6 +159,7 @@ extension ItemRowView {
    
    private var deleteMenu: some View {
       Button {
+         TelemetryDeck.signal("ItemRowView.MainContextMenu.Delete.tap")
          document.delete(item)
       } label: {
          Label( "Delete", systemImage: "minus.circle")
@@ -166,6 +169,7 @@ extension ItemRowView {
    @ViewBuilder
    private var focusMenu: some View {
       Button {
+         TelemetryDeck.signal("ItemRowView.MainContextMenu.FocusMenu.tap")
          alertMessage = "Focus not implemented"
          isShowingAlert = true
       } label: {
@@ -177,6 +181,7 @@ extension ItemRowView {
    private var addMenu: some View {
       if item.isCompleted {
          Button {
+            TelemetryDeck.signal("ItemRowView.MainContextMenu.IsCompleted.AddMenu.tap")
             isShowingNewItemPopover = .add(indent: item.indentLevel)
          } label: {
             Label( "Add item", systemImage: "plus.circle")
@@ -184,6 +189,7 @@ extension ItemRowView {
       } else {
          Menu {
             Button {
+               TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.AddMenu.AddItem.tap")
                isEditing = true
                isShowingNewItemPopover = .add(indent: item.indentLevel)
             } label: {
@@ -191,6 +197,7 @@ extension ItemRowView {
             }
             
             Button {
+               TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.AddMenu.AddChild.tap")
                isEditing = true
                isShowingNewItemPopover = .add(indent: item.indentLevel + 1)
             } label: {
@@ -199,6 +206,7 @@ extension ItemRowView {
             
             Menu {
                Button {
+                  TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.Tags.NewTag.tap")
                   withAnimation {
                      isEditing = true
                      isShowingAddTagPopover = true
@@ -209,6 +217,7 @@ extension ItemRowView {
                Divider()
                ForEach(document.allTags.filter{$0.name  != "done"}, id: \.displayText) { tag in
                   Button{
+                     TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.Tags.AddExistingTag")
                      item.addTag(tag, at: .end)
                   } label: {
                      HStack {
@@ -230,12 +239,14 @@ extension ItemRowView {
    private var foldingMenu: some View {
       if folded {
          Button {
+            TelemetryDeck.signal("ItemRowView.MainContextMenu.Folding.Unfold.tap")
             folded = false
          } label: {
             Label( "Expand", systemImage: "rectangle.expand.vertical")
          }
       } else {
          Button {
+            TelemetryDeck.signal("ItemRowView.MainContextMenu.Folding.Fold.tap")
             folded = true
          } label: {
             Label( "Compress", systemImage: "rectangle.compress.vertical")
@@ -258,6 +269,7 @@ extension ItemRowView {
    private var moveActions: some View {
       if !document.isAtTop(item) {
          Button {
+            TelemetryDeck.signal("ItemRowView.MainContextMenu.Move.Up.tap")
             withAnimation{
                document.moveUp(item)
             }
@@ -268,6 +280,7 @@ extension ItemRowView {
       
       Button {
          withAnimation {
+            TelemetryDeck.signal("ItemRowView.MainContextMenu.Move.Indent.tap")
             document.indent(item)
          }
       } label: {
@@ -276,6 +289,7 @@ extension ItemRowView {
       
       if item.indentLevel > 0 {
          Button {
+            TelemetryDeck.signal("ItemRowView.MainContextMenu.Move.Outdent.tap")
             withAnimation{
                document.outdent(item)
             }
@@ -286,6 +300,7 @@ extension ItemRowView {
       
       if !document.isAtBottom(item) {
          Button {
+            TelemetryDeck.signal("ItemRowView.MainContextMenu.Move.Down.tap")
             withAnimation{
                document.moveDown(item)
             }

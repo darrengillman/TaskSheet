@@ -1,4 +1,5 @@
 import OSLog
+import TelemetryDeck
 import SwiftUI
 
 struct TaskListView: View {
@@ -10,7 +11,7 @@ struct TaskListView: View {
    @State var subViewIsEditing: Bool = false
    @State fileprivate var filterState  = FilterState()
    @State var searchText: String = ""
-   @State private var debouncedSearchText: String = ""
+//   @State private var debouncedSearchText: String = ""
    @State private var searchTask: Task<Void, Never>? = nil
    @State private var editTextBuffer: String = ""
    @State private var filteredIds: [UUID] = []
@@ -62,8 +63,8 @@ struct TaskListView: View {
          let passesFilter = !filterState.isFiltering
          || filterState.text.isEmpty
          || (item.cachedTags ?? []).contains(where: { $0.name == filter }) == (filterState.isNegated ? false : true)
-         let passesSearch = debouncedSearchText.isEmpty
-         || item.text.localizedCaseInsensitiveContains(debouncedSearchText)
+         let passesSearch = searchText.isEmpty
+         || item.text.localizedCaseInsensitiveContains(searchText)
          return (passesFilter && passesSearch) ? item.id : nil
       }
    }
@@ -90,7 +91,7 @@ struct TaskListView: View {
       .task { recomputeFilteredIds() }
       .onChange(of: document.items) { recomputeFilteredIds() }
       .onChange(of: filterState) { recomputeFilteredIds() }
-      .onChange(of: debouncedSearchText) { recomputeFilteredIds() }
+      .onChange(of: searchText) { recomputeFilteredIds() }
       .toolbar{
          ToolbarItem(placement: .bottomBar) {
             FilterButton(filterState: $filterState)
@@ -100,6 +101,7 @@ struct TaskListView: View {
          ToolbarSpacer( .fixed, placement: .bottomBar)
          ToolbarItem(placement: .bottomBar) {
             Button {
+               TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
                isShowingTextEntryPopover = .add(indent: 0)
             } label: {
                Image(systemName: "square.and.pencil")
@@ -107,7 +109,8 @@ struct TaskListView: View {
          }
          ToolbarSpacer( .fixed, placement: .bottomBar)
          ToolbarItem(placement: .bottomBar) {
-            Button(role: .close) {
+            Button {
+               TelemetryDeck.signal("ItemRowView.EllipsisButton.tap")
             } label:{
                Image(systemName: "ellipsis")
             }
@@ -121,6 +124,7 @@ struct TaskListView: View {
             text: $editTextBuffer,
             role: role
          ) { text, type in
+            TelemetryDeck.signal("TaskListView.quickAddButton.tap")
             document.quickAdd(text, type: type)
             resetInput()
          } onCancel: {

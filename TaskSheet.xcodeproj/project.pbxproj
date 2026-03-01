@@ -13,6 +13,7 @@
 		DE1C94A02E775AEA00353202 /* TaskSheetTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */; };
 		DE1C94B02E82A12300353202 /* TaskPaperDocumentMovementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */; };
 		DE2608172F4E78E200857E60 /* TaskPaperDragDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2608162F4E78E200857E60 /* TaskPaperDragDropTests.swift */; };
+		DE26089B2F54D36700857E60 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = DE26089A2F54D36700857E60 /* TelemetryDeck */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE26089B2F54D36700857E60 /* TelemetryDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +184,9 @@
 				Base,
 			);
 			mainGroup = 1A0000F31234567890123456;
+			packageReferences = (
+				DE2608992F54D36700857E60 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
+			);
 			productRefGroup = 1A0000FD1234567890123456 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -519,6 +524,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DE2608992F54D36700857E60 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DE26089A2F54D36700857E60 /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DE2608992F54D36700857E60 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A0000F41234567890123456 /* Project object */;
 }

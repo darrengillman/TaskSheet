@@ -5,6 +5,7 @@
 //  Created by Darren Gillman on 08/10/2025.
 //
 import SwiftUI
+import TelemetryDeck
 
 struct FilterButton: View {
    @Binding var filterState: FilterState
@@ -12,6 +13,7 @@ struct FilterButton: View {
    @FocusState private var isTextFieldFocused: Bool
    var body: some View {
       Button{
+         TelemetryDeck.signal("FilterButton.button.toggle")
          filterState.isFiltering.toggle()
       } label: {
          if filterState.isFiltering == false {
