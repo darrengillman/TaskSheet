@@ -6,7 +6,7 @@
 //
 
 
-struct FilterState {
+struct FilterState: Equatable {
    var isFiltering: Bool = false
    var text: String = "" {
       didSet {

@@ -219,57 +219,7 @@ final class TaskSheetTagTests: XCTestCase {
     }
 
 
-    // TODO: Uncomment when setTaskCompletion method is implemented
-    /*
-    func testSetTaskCompletionWithCustomDate() {
-        let testContent = "- Task to complete @next"
-
-        let document = TaskPaperDocument(content: testContent, fileName: "Test")
-        let task = document.items.first { $0.type == .task }!
-
-        // Set completion with custom date
-        let customDate = Calendar.current.date(from: DateComponents(year: 2024, month: 12, day: 25))!
-        document.setTaskCompletion(item: task, completed: true, date: customDate)
-
-        // Verify completion with custom date
-        let updatedTask = document.items.first { $0.type == .task }!
-        XCTAssertTrue(updatedTask.isCompleted, "Task should be completed")
-
-        let doneTag = updatedTask.tags.first { $0.name == "done" }
-        XCTAssertNotNil(doneTag, "Should have @done tag")
-        XCTAssertEqual(doneTag?.value, "2024-12-25", "Should have custom date")
-    }
-    */
-
-    // TODO: Uncomment when setTaskCompletion method is implemented
-    /*
-    func testCompletionTagRemovalRegex() {
-        let testCases = [
-            ("- Task @done", "- Task"),
-            ("- Task @done(2025-06-23)", "- Task"),
-            ("- Task @next @done @urgent", "- Task @next @urgent"),
-            ("- Task @done(today) @other", "- Task @other"),
-            ("- Multiple @done tags @done(2025-01-01)", "- Multiple tags"),
-            ("- No done tags @next @urgent", "- No done tags @next @urgent")
-        ]
-
-        for (input, expectedAfterRemoval) in testCases {
-            let document = TaskPaperDocument(content: input, fileName: "Test")
-            let task = document.items.first { $0.type == .task }!
-
-            // If task is completed, remove completion
-            if task.isCompleted {
-                document.setTaskCompletion(item: task, completed: false)
-
-                // Check the resulting content
-                let lines = document.content.components(separatedBy: .newlines)
-                let taskLine = lines.first { !$0.trimmingCharacters(in: .whitespaces).isEmpty }!
-                XCTAssertEqual(taskLine.trimmingCharacters(in: .whitespaces), expectedAfterRemoval.trimmingCharacters(in: .whitespaces),
-                              "Done tag removal failed for: \(input)")
-            }
-        }
-    }
-    */
+ 
 
     func testCompletionPreservesIndentation() {
         let testContent = """
@@ -418,5 +368,91 @@ final class TaskSheetTagTests: XCTestCase {
         item.addTag(Tag(name: "urgent"), at: .at(nextTagIndex))
 
         XCTAssertEqual(item.text, "- Buy groceries @urgent @next", "Should insert before existing tag")
+    }
+
+    // MARK: - DisplayText Comprehensive Tests
+
+    func testDisplayTextForProjects() {
+        let testCases: [(input: String, expected: String, description: String)] = [
+            // Standard projects with ":" suffix
+            ("Simple Project:", "Simple Project", "Simple project with colon"),
+            ("Project With Spaces:", "Project With Spaces", "Project with spaces and colon"),
+            ("Project: @tag1", "Project", "Project with trailing tag"),
+            ("Project With Spaces: @tag1", "Project With Spaces", "Project with spaces and trailing tag"),
+            ("Project: @tag1(value)", "Project", "Project with trailing tag with value"),
+            ("Project With Spaces: @tag1(value)", "Project With Spaces", "Project with spaces and trailing tag with value"),
+            ("Project @embedded Text: @tag1", "Project Text", "Project with embedded tag and trailing tag"),
+            ("Start @tag1 Middle @tag2 End:", "Start Middle End", "Project with multiple embedded tags"),
+            
+            // Projects without ":" suffix (auto-added by initializer)
+            ("Project Without Colon", "Project Without Colon", "Project without colon"),
+            ("Project Without Colon @tag1", "Project Without Colon", "Project without colon with trailing tag"),
+            ("Project @embedded Text", "Project Text", "Project with embedded tag, no colon"),
+            ("Project @tag1 Without @tag2 Colon", "Project Without Colon", "Project with multiple embedded tags, no colon")
+        ]
+
+        for (input, expected, description) in testCases {
+            let item = TaskPaperItem(type: .project, text: input, indentLevel: 0)
+            XCTAssertEqual(item.displayText, expected, "Failed: \(description) - input: '\(input)'")
+        }
+    }
+
+    func testDisplayTextForTasks() {
+        let testCases: [(input: String, expected: String, description: String)] = [
+            // Standard tasks with "- " prefix
+            ("- Simple Task", "Simple Task", "Simple task with prefix"),
+            ("- Task With Spaces", "Task With Spaces", "Task with spaces and prefix"),
+            ("- Task @tag1", "Task", "Task with trailing tag"),
+            ("- Task With Spaces @tag1", "Task With Spaces", "Task with spaces and trailing tag"),
+            ("- Task @tag1(value)", "Task", "Task with trailing tag with value"),
+            ("- Task With Spaces @tag1(value)", "Task With Spaces", "Task with spaces and trailing tag with value"),
+            ("- Task @embedded Text @tag1", "Task Text", "Task with embedded tag and trailing tag"),
+            ("- Start @tag1 Middle @tag2 End", "Start Middle End", "Task with multiple embedded tags"),
+            
+            // Tasks without "- " prefix (auto-added by initializer)
+            ("Task Without Prefix", "Task Without Prefix", "Task without prefix"),
+            ("Task Without Prefix @tag1", "Task Without Prefix", "Task without prefix with trailing tag"),
+            ("Task @embedded Text", "Task Text", "Task with embedded tag, no prefix"),
+            ("Task @tag1 Without @tag2 Prefix", "Task Without Prefix", "Task with multiple embedded tags, no prefix")
+        ]
+
+        for (input, expected, description) in testCases {
+            let item = TaskPaperItem(type: .task, text: input, indentLevel: 0)
+            XCTAssertEqual(item.displayText, expected, "Failed: \(description) - input: '\(input)'")
+        }
+    }
+
+    func testDisplayTextForNotes() {
+        let testCases: [(input: String, expected: String, description: String)] = [
+            // Notes (no prefix/suffix)
+            ("Simple Note", "Simple Note", "Simple note"),
+            ("Note With Spaces", "Note With Spaces", "Note with spaces"),
+            ("Note @tag1", "Note", "Note with trailing tag"),
+            ("Note With Spaces @tag1", "Note With Spaces", "Note with spaces and trailing tag"),
+            ("Note @tag1(value)", "Note", "Note with trailing tag with value"),
+            ("Note With Spaces @tag1(value)", "Note With Spaces", "Note with spaces and trailing tag with value"),
+            ("Note @embedded Text @tag1", "Note Text", "Note with embedded tag and trailing tag"),
+            ("Start @tag1 Middle @tag2 End", "Start Middle End", "Note with multiple embedded tags")
+        ]
+
+        for (input, expected, description) in testCases {
+            let item = TaskPaperItem(type: .note, text: input, indentLevel: 0)
+            XCTAssertEqual(item.displayText, expected, "Failed: \(description) - input: '\(input)'")
+        }
+    }
+
+    func testDisplayTextEdgeCasesWithNonTagAtSymbols() {
+        let testCases: [(type: ItemType, input: String, expected: String, description: String)] = [
+            // Edge cases: @ characters without leading spaces are NOT tags
+            (.note, "email@example.com is not a tag", "email@example.com is not a tag", "Email address preserved in note"),
+            (.task, "- Task with email@example.com @done", "Task with email@example.com", "Email preserved, valid tag removed in task"),
+            (.project, "Project: with@embedded@characters @tag1", "Project: with@embedded@characters", "@ without spaces preserved in project"),
+            (.note, "Text@NoSpace but @valid tag", "Text@NoSpace but tag", "Only space-prefixed tag removed")
+        ]
+
+        for (type, input, expected, description) in testCases {
+            let item = TaskPaperItem(type: type, text: input, indentLevel: 0)
+            XCTAssertEqual(item.displayText, expected, "Failed: \(description) - input: '\(input)'")
+        }
     }
 }

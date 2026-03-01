@@ -28,7 +28,7 @@ extension String {
    /// Removes all tags from the string
    /// - Returns: String with all @tag and @tag(value) patterns removed
    /// - Note: Tags MUST have a leading space to avoid matching emails, URLs, etc.
-   func removingTagNames() -> String {
+   func removingTagNamesAndWhitespace() -> String {
       // Swift regex: matches space + @tagname or space + @tagname(value)
       // Tags require a leading space to distinguish from emails, etc.
       let tagWithLeadingSpace = /\s@\w+(?:\([^)]+\))?/

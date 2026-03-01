@@ -22,7 +22,7 @@ class TaskPaperParser {
 
         // Remove tags to accurately determine item type
         // Projects like "MyProject: @next" should be detected as projects, not notes
-        let lineWithoutTags = trimmedLine.removingTagNames()
+        let lineWithoutTags = trimmedLine.removingTagNamesAndWhitespace()
 
         let type: ItemType
         if lineWithoutTags.hasSuffix(TaskPaperItem.projectSuffix) {

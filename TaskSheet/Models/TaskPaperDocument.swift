@@ -86,10 +86,7 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       }
       
       if let inboxIndex = items.firstIndex(where: {$0.text.prefix(6) == "Inbox:" && $0.type == .project && $0.indentLevel == 0}) {
-         
-         
          let insertIndex = items[(inboxIndex+1)...].firstIndex(where: {$0.indentLevel == 0}) ?? inboxIndex + 1
-         
          items.insert(newItem, at: insertIndex)
       } else {
          let inboxProject = TaskPaperItem(type: .project, text: "Inbox", indentLevel: 0)

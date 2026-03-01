@@ -24,21 +24,32 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
     var cachedTags: [Tag]?
 
     init(type: ItemType, text: String, indentLevel: Int) {
-       let rawText = switch type {
-          case .note: text
+       self.id = UUID()
+       self.type = type
+       self.indentLevel = indentLevel
+       self.cachedTags = TaskPaperParser.extractTags(from: text)
+       
+       switch type {
+          case .note: self.text = text
           case .project:
-             if text.removingTagNames().hasSuffix(Self.projectSuffix) {
-                text
+             let cleanText = text.removingTagNamesAndWhitespace()
+             
+             if cleanText.hasSuffix(Self.projectSuffix) {
+                self.text = text
              } else {
-                (text[..<text.index(before: text.firstIndex(of: "@") ?? text.endIndex)] + Self.projectSuffix + text[text.index(before: text.firstIndex(of: "@") ?? text.endIndex)...]).asString
+                let words = cleanText.split(separator: " ")
+                if let lastWord = words.last,
+                   let lastWordRange = text.range(of: String(lastWord), options: .backwards) {
+                   let insertionPoint = lastWordRange.upperBound
+                   let preInsertionText = text[..<insertionPoint]
+                   let postInsertionText = text[insertionPoint...]
+                   self.text = preInsertionText + Self.projectSuffix + postInsertionText
+                } else {
+                   self.text = "Project" + Self.projectSuffix + text
+                }
              }
-          case .task: text.hasPrefix(Self.taskPrefix) ? text : Self.taskPrefix + text
+          case .task: self.text = text.hasPrefix(Self.taskPrefix) ? text : Self.taskPrefix + text
        }
-        self.id = UUID()
-        self.type = type
-        self.text = rawText
-        self.indentLevel = indentLevel
-        self.cachedTags = TaskPaperParser.extractTags(from: text)
     }
 
     // Legacy initializer for backward compatibility during transition
@@ -57,7 +68,6 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
         self.cachedTags = tags
     }
 
-
     // Non-cached tags for read-only access from computed props
     var tags: [Tag] {
         return cachedTags ?? TaskPaperParser.extractTags(from: text)
@@ -69,7 +79,7 @@ struct TaskPaperItem: Identifiable, Codable, Equatable {
 
     var displayText: String {
         let cleanText = text
-          .removingTagNames()
+          .removingTagNamesAndWhitespace()
           .trimmingCharacters(in: .whitespacesAndNewlines)
 
        return switch type {
@@ -214,8 +224,6 @@ extension Array where Element == TaskPaperItem {
         return IndexSet(startIndex...endIndex.advanced(by: -1))
     }
 }
-
-
 
 extension TaskPaperItem: Transferable {
    static var transferRepresentation: some TransferRepresentation {

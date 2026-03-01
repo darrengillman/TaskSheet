@@ -23,14 +23,29 @@ struct TaskListView: View {
 
    /// Produces a live Binding<TaskPaperItem> for a given item ID.
    private func makeBinding(for id: UUID) -> Binding<TaskPaperItem>? {
-      guard let index = document.items.firstIndex(where: { $0.id == id }) else { return nil }
+      guard let initialIndex = document.items.firstIndex(where: { $0.id == id }) else { return nil }
+      
+      // Cache the item to use as fallback if it referenced during view lifecycle while deletion is taking place
+      let cachedItem = document.items[initialIndex]
+      
       return Binding(
-         get: { document.items[index] },
+         get: {
+            guard let index = document.items.firstIndex(where: { $0.id == id }) else {
+               logger.info("Item '\(cachedItem.displayText)' not found during get - using cached version during teardown")
+               return cachedItem
+            }
+            return document.items[index]
+         },
          set: { newValue in
+            guard let index = document.items.firstIndex(where: { $0.id == id }) else {
+               logger.warning("Item with id \(id) not found during set - item may have been deleted")
+               return
+            }
             let oldValue = document.items[index]
             document.undoManager?.registerUndo(withTarget: document) { doc in
-               doc.items[index] = oldValue
-               doc.items[index].refreshTagCache()
+               guard let undoIndex = doc.items.firstIndex(where: { $0.id == id }) else { return }
+               doc.items[undoIndex] = oldValue
+               doc.items[undoIndex].refreshTagCache()
             }
             document.items[index] = newValue
             document.items[index].refreshTagCache()
@@ -41,14 +56,14 @@ struct TaskListView: View {
    /// Recomputes the stable ordered list of visible item IDs from the current filter and search state.
    private func recomputeFilteredIds() {
       let filter = filterState.text.prefix(1) == "@"
-         ? filterState.text.dropFirst().asString
-         : filterState.text
+      ? filterState.text.dropFirst().asString
+      : filterState.text
       filteredIds = document.items.compactMap { item in
          let passesFilter = !filterState.isFiltering
-            || filterState.text.isEmpty
-            || (item.cachedTags ?? []).contains(where: { $0.name == filter }) == (filterState.isNegated ? false : true)
+         || filterState.text.isEmpty
+         || (item.cachedTags ?? []).contains(where: { $0.name == filter }) == (filterState.isNegated ? false : true)
          let passesSearch = debouncedSearchText.isEmpty
-            || item.text.localizedCaseInsensitiveContains(debouncedSearchText)
+         || item.text.localizedCaseInsensitiveContains(debouncedSearchText)
          return (passesFilter && passesSearch) ? item.id : nil
       }
    }
@@ -74,9 +89,7 @@ struct TaskListView: View {
       .searchToolbarBehavior(.minimize)
       .task { recomputeFilteredIds() }
       .onChange(of: document.items) { recomputeFilteredIds() }
-      .onChange(of: filterState.isFiltering) { recomputeFilteredIds() }
-      .onChange(of: filterState.text) { recomputeFilteredIds() }
-      .onChange(of: filterState.isNegated) { recomputeFilteredIds() }
+      .onChange(of: filterState) { recomputeFilteredIds() }
       .onChange(of: debouncedSearchText) { recomputeFilteredIds() }
       .toolbar{
          ToolbarItem(placement: .bottomBar) {
