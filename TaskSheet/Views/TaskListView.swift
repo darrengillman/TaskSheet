@@ -10,9 +10,6 @@ struct TaskListView: View {
    @State private var isShowingTextEntrySheet: TextEntryRole? = nil
    @State var subViewIsEditing: Bool = false
    @State fileprivate var filterState  = FilterState()
-   @State var searchText: String = ""
-//   @State private var debouncedSearchText: String = ""
-   @State private var searchTask: Task<Void, Never>? = nil
    @State private var editTextBuffer: String = ""
    @State private var filteredIds: [UUID] = []
    
@@ -63,8 +60,8 @@ struct TaskListView: View {
          let passesFilter = !filterState.isFiltering
          || filterState.text.isEmpty
          || (item.cachedTags ?? []).contains(where: { $0.name == filter }) == (filterState.isNegated ? false : true)
-         let passesSearch = searchText.isEmpty
-         || item.text.localizedCaseInsensitiveContains(searchText)
+         let passesSearch = filterState.searchText.isEmpty
+         || item.text.localizedCaseInsensitiveContains(filterState.searchText)
          return (passesFilter && passesSearch) ? item.id : nil
       }
    }
@@ -86,12 +83,11 @@ struct TaskListView: View {
          .onMove(perform: move)
       }
       .listStyle(.plain)
-      .searchable(text: $searchText)
+      .searchable(text: $filterState.searchText)
       .searchToolbarBehavior(.minimize)
       .task { recomputeFilteredIds() }
       .onChange(of: document.items) { recomputeFilteredIds() }
       .onChange(of: filterState) { recomputeFilteredIds() }
-      .onChange(of: searchText) { recomputeFilteredIds() }
       .toolbar{
          ToolbarItem(placement: .bottomBar) {
             FilterButton(filterState: $filterState)

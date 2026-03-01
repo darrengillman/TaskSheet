@@ -15,5 +15,10 @@ struct FilterState: Equatable {
    }
    var isShowingFilterBuilder: Bool = false
    var isNegated: Bool = false
+   var searchText: String = "" {
+      didSet {
+         searchText = searchText.trimmingCharacters(in: .whitespaces)
+      }
+   }
 }
 
