@@ -13,14 +13,14 @@ struct ItemEditorSheet: View {
    @Binding var text: String
    @State private var itemType: ItemType = .task
    
-   var role: TextEntryRole
+   var addOrEdit: TextEntryRole
    var onSave: (String, ItemType) -> Void
    var onCancel: ( () -> Void )?
 
    var body: some View {
       NavigationView {
          VStack(spacing: 0) {
-            if case .add(_) = role {
+            if case .add = addOrEdit {
                Picker("Type", selection: $itemType) {
                   ForEach(ItemType.allCases, id: \.self) { type in
                      Label(type.rawValue.capitalized, systemImage: type.baseIcon)
@@ -57,10 +57,10 @@ struct ItemEditorSheet: View {
                }
             }
             ToolbarItem(placement: .principal) {
-               Text("\(role.titleString) \(role.itemType?.rawValue.capitalized ?? itemType.rawValue.capitalized)")
+               Text("\(addOrEdit.editorTitleString) \(addOrEdit.itemType.rawValue.capitalized)")
             }
             ToolbarItem(placement: .confirmationAction) {
-               Button(role.commitString) {
+               Button(addOrEdit.commitButtonString) {
                   onSave(text, itemType)
                   dismiss()
                }
@@ -80,5 +80,5 @@ struct ItemEditorSheet: View {
 #Preview {
    @Previewable @State var text = ""
    @Previewable @State var role: TextEntryRole  = .edit(type: .task, indent: 1)
-   ItemEditorSheet(text: $text, role: role) {_, _ in }
+   ItemEditorSheet(text: $text, addOrEdit: role) {_, _ in }
 }

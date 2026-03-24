@@ -98,7 +98,7 @@ struct TaskListView: View {
          ToolbarItem(placement: .bottomBar) {
             Button {
                TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
-               isShowingTextEntryPopover = .add(indent: 0)
+               isShowingTextEntryPopover = .add(type: .task, indent: 0)
             } label: {
                Image(systemName: "square.and.pencil")
             }
@@ -129,7 +129,7 @@ struct TaskListView: View {
          .presentationCompactAdaptation(.popover)
       }
       .sheet(item: $isShowingTextEntrySheet) { role in
-         ItemEditorSheet(text: $editTextBuffer, role: role) { text, type in
+         ItemEditorSheet(text: $editTextBuffer, addOrEdit: role) { text, type in
             document.quickAdd(text, type: type)
             resetInput()
          } onCancel: {

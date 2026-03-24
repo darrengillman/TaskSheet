@@ -15,16 +15,16 @@ struct AddItemPopOver: View {
    @Binding var showSheet: TextEntryRole?
    @Binding var text: String
    @State private var itemType: ItemType = .task
-   var role: TextEntryRole
-   var onSave: (String, ItemType) -> Void
-   var onCancel: (() -> Void )?
+   let role: TextEntryRole
+   let onSave: (String, ItemType) -> Void
+   let onCancel: (() -> Void )?
 
    var body: some View {
       VStack(spacing: 16) {
          HStack {
             if case .add = role {
                HStack {
-                  Text(role.titleString)
+                  Text(role.popOverTitleString)
                      .font(.headline)
                   Picker("Type", selection: $itemType) {
                      ForEach(ItemType.allCases, id: \.self) {
@@ -35,17 +35,22 @@ struct AddItemPopOver: View {
                }
                .frame(maxWidth: .infinity, alignment: .leading)
             } else {
-               Text("\(role.titleString) \(role.itemType?.rawValue.capitalized ?? "")")
+               Text("\(role.popOverTitleString) \(role.itemType.rawValue.capitalized)")
                   .frame(maxWidth: .infinity, alignment: .leading)
             }
             
             Button{
                withAnimation {
-                  let role = showPopover
+                  let newRole: TextEntryRole = switch role {
+                     case .add:
+                           .add(type: itemType, indent: role.indent)
+                     case .edit:
+                           .edit(type: itemType, indent: role.indent)
+                  }
                   showPopover = nil
                   Task {
                      try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
-                     showSheet = role
+                     showSheet = newRole
                   }
                }
             } label: {
@@ -102,7 +107,7 @@ struct AddItemPopOver: View {
    @Previewable @State var text = ""
    @Previewable @State var role = TextEntryRole.edit(type: .task, indent: 0)
    AddItemPopOver(showPopover: $showPopover, showSheet: $showSheet, text: $text, role: role) { text, type in
-       }
+   } onCancel: {}
 }
 
 private struct EditView: View {

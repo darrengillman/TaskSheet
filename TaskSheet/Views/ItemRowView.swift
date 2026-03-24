@@ -74,41 +74,54 @@ struct ItemRowView: View {
             showPopover: $isShowingNewItemPopover,
             showSheet: $isShowingEditSheet,
             text: $editTextBuffer,
-            role: role
-         ) { text, type in
-            if case .edit = role {
-               item.update(with: text)
-            } else {
-               let newItem = TaskPaperItem(type: type, text: text, indentLevel: role.indent)
-               document.insert(newItem, after: item)
-            }
-            resetInput()
-         } onCancel: {
+            role: role ) { text, type in
+               if case .edit = role {
+                  let currentText = item.text
+                  undoManager?.registerUndo(withTarget: document) { _ in
+                     item.text = currentText
+                  }
+                  item.update(with: text)
+               } else {
+                  let newItem = TaskPaperItem(type: type, text: text, indentLevel: role.indent)
+                  undoManager?.registerUndo(withTarget: document) { doc in
+                     if let item = doc.items.first(where: {$0 == newItem}) {
+                        doc.delete(item)
+                     }
+                  }
+                  document.insert(newItem, after: item)
+               }
+               resetInput()
+            } onCancel: {
             resetInput()
          }
          .presentationCompactAdaptation(.popover)
       }
-      .sheet(item: $isShowingEditSheet) { role in
-         ItemEditorSheet(text: $editTextBuffer, role: role) { text, type in
-            if case .edit = role {
-               let currentText = item.text
-               undoManager?.registerUndo(withTarget: document) { _ in
-                  item.text = currentText
-               }
-               item.update(with: text)
-            } else {
-               let newItem = TaskPaperItem(type: type, text: text, indentLevel: role.indent)
-               undoManager?.registerUndo(withTarget: document) { doc in
-                  if let item = doc.items.first(where: {$0 == newItem}) {
-                     doc.delete(item)
+      .sheet(item: $isShowingEditSheet) { addOrEditRole in
+         ItemEditorSheet(
+            text: $editTextBuffer,
+            addOrEdit: addOrEditRole,
+            onSave: { text, itemType in
+               if case .edit = addOrEditRole {
+                  let currentText = item.text
+                  undoManager?.registerUndo(withTarget: document) { _ in
+                     item.text = currentText
                   }
+                  item.update(with: text)
+               } else {
+                  let newItem = TaskPaperItem(type: itemType, text: text, indentLevel: addOrEditRole.indent)
+                  undoManager?.registerUndo(withTarget: document) { doc in
+                     if let item = doc.items.first(where: {$0 == newItem}) {
+                        doc.delete(item)
+                     }
+                  }
+                  document.insert(newItem, after: item)
                }
-               document.insert(newItem, after: item)
+               resetInput()
+            },
+            onCancel: {
+               resetInput()
             }
-            resetInput()
-         } onCancel: {
-            resetInput()
-         }
+         )
          .presentationDetents([.fraction(0.35), .medium, .large])
       }
       .alert(alertTitle,
@@ -182,7 +195,7 @@ extension ItemRowView {
       if item.isCompleted {
          Button {
             TelemetryDeck.signal("ItemRowView.MainContextMenu.IsCompleted.AddMenu.tap")
-            isShowingNewItemPopover = .add(indent: item.indentLevel)
+            isShowingNewItemPopover = .add(type: .task, indent: item.indentLevel)
          } label: {
             Label( "Add item", systemImage: "plus.circle")
          }
@@ -191,7 +204,7 @@ extension ItemRowView {
             Button {
                TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.AddMenu.AddItem.tap")
                isEditing = true
-               isShowingNewItemPopover = .add(indent: item.indentLevel)
+               isShowingNewItemPopover = .add(type: .task, indent: item.indentLevel)
             } label: {
                Label( "Add item", systemImage: "plus.circle")
             }
@@ -199,7 +212,7 @@ extension ItemRowView {
             Button {
                TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.AddMenu.AddChild.tap")
                isEditing = true
-               isShowingNewItemPopover = .add(indent: item.indentLevel + 1)
+               isShowingNewItemPopover = .add(type: .task, indent: item.indentLevel + 1)
             } label: {
                Label( "Add child", systemImage: "circle.badge.plus")
             }

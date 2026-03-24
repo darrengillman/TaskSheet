@@ -15,31 +15,38 @@ enum TextEntryRole: Identifiable {
       }
    }
    
-   case add (indent: Int)
+   case add (type: ItemType, indent: Int)
    case edit(type: ItemType, indent: Int)
    
    var indent: Int {
       switch self {
-         case let .add( i): i
+         case let .add( _, i): i
          case let .edit( _,  i): i
       }
    }
    
-   var itemType: ItemType? {
+   var itemType: ItemType {
       switch self {
          case let .edit( t, _): t
-         default: nil
+         case let .add( t, _): t
       }
    }
    
-   var titleString: String {
+   var popOverTitleString: String {
       switch self {
          case .add:  "Quick Add"
          case .edit: "Edit"
       }
    }
    
-   var commitString: String {
+   var editorTitleString: String {
+      switch self {
+         case .add:  "Add"
+         case .edit: "Edit"
+      }
+   }
+   
+   var commitButtonString: String {
       switch self {
          case .add:  "Add"
          case .edit: "Save"
