@@ -14,6 +14,7 @@
 		DE1C94B02E82A12300353202 /* TaskPaperDocumentMovementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */; };
 		DE2608172F4E78E200857E60 /* TaskPaperDragDropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2608162F4E78E200857E60 /* TaskPaperDragDropTests.swift */; };
 		DE26089B2F54D36700857E60 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = DE26089A2F54D36700857E60 /* TelemetryDeck */; };
+		DEB0FF772F730E50004456BC /* TaskSheetIcon 0.1.icon in Resources */ = {isa = PBXBuildFile; fileRef = DEB0FF762F730E50004456BC /* TaskSheetIcon 0.1.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDocumentMovementTests.swift; sourceTree = "<group>"; };
 		DE2608162F4E78E200857E60 /* TaskPaperDragDropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDragDropTests.swift; sourceTree = "<group>"; };
 		DE45C52E2EA3D355000DFF7E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DEB0FF762F730E50004456BC /* TaskSheetIcon 0.1.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "TaskSheetIcon 0.1.icon"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -94,6 +96,7 @@
 				DE0B7B3F2E7B87F400C32575 /* SampleContent.swift */,
 				DE45C4F62EA3BF77000DFF7E /* Extensions */,
 				1A0001031234567890123456 /* Assets.xcassets */,
+				DEB0FF762F730E50004456BC /* TaskSheetIcon 0.1.icon */,
 				DE45C5302EA3FD6D000DFF7E /* Preview Content */,
 			);
 			path = TaskSheet;
@@ -202,6 +205,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DEB0FF772F730E50004456BC /* TaskSheetIcon 0.1.icon in Resources */,
 				1A0001041234567890123456 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -372,8 +376,9 @@
 		1A00010B1234567890123456 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "TaskSheetIcon 0.1";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"TaskSheet/Preview Content\"";
@@ -387,13 +392,14 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = uk.co.hotpuffin.TaskSheet;
+				PRODUCT_BUNDLE_IDENTIFIER = I;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -408,8 +414,9 @@
 		1A00010C1234567890123456 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "TaskSheetIcon 0.1";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"TaskSheet/Preview Content\"";
@@ -423,13 +430,14 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = uk.co.hotpuffin.TaskSheet;
+				PRODUCT_BUNDLE_IDENTIFIER = I;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

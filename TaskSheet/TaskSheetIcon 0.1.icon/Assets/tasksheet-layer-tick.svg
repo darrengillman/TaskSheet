@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Transparent background - this is a foreground layer -->
+
+  <!-- Circular background for the tick -->
+  <circle cx="512" cy="588" r="124" fill="#ffffff"/>
+
+  <!-- Tick / checkmark -->
+  <polyline points="444,588 492,638 580,536"
+    fill="none"
+    stroke="#e8531a"
+    stroke-width="44"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+</svg>

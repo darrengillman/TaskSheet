@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Transparent background - this is a foreground layer -->
+
+  <!-- iPhone body silhouette -->
+  <rect x="282" y="148" width="460" height="740" rx="72" fill="#ffffff"/>
+
+  <!-- Screen cutout (darker to suggest the screen area) -->
+  <rect x="310" y="176" width="404" height="684" rx="52" fill="#e8531a"/>
+
+  <!-- Dynamic Island -->
+  <rect x="436" y="198" width="152" height="36" rx="18" fill="#ffffff"/>
+
+  <!-- Home indicator -->
+  <rect x="412" y="838" width="200" height="10" rx="5" fill="#ffffff"/>
+</svg>
