@@ -8,6 +8,7 @@ struct TaskListView: View {
    @ObservedObject var document: TaskPaperDocument
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
    @State private var isShowingTextEntrySheet: TextEntryRole? = nil
+   @State private var isShowingSettings = false
    @State var subViewIsEditing: Bool = false
    @State fileprivate var filterState  = FilterState()
    @State private var editTextBuffer: String = ""
@@ -105,10 +106,14 @@ struct TaskListView: View {
          }
          ToolbarSpacer( .fixed, placement: .bottomBar)
          ToolbarItem(placement: .bottomBar) {
-            Button {
-               TelemetryDeck.signal("ItemRowView.EllipsisButton.tap")
-            } label:{
+            Menu {
+               Button("Settings", systemImage: "gearshape") {
+                  TelemetryDeck.signal("TaskListView.SettingsButton.tap")
+                  isShowingSettings = true
+               }
+            } label: {
                Image(systemName: "ellipsis")
+                  .accessibilityLabel("More")
             }
          }
       }
@@ -127,6 +132,9 @@ struct TaskListView: View {
             resetInput()
          }
          .presentationCompactAdaptation(.popover)
+      }
+      .sheet(isPresented: $isShowingSettings) {
+         SettingsView()
       }
       .sheet(item: $isShowingTextEntrySheet) { role in
          ItemEditorSheet(text: $editTextBuffer, addOrEdit: role) { text, type in

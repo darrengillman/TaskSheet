@@ -7,8 +7,8 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TaskSheet", category: "TaskPaperDocument")
    
       // Required by ReferenceFileDocument
-   static var readableContentTypes: [UTType] { [.taskPaper] }
-   static var writableContentTypes: [UTType] { [.taskPaper] }
+   static var readableContentTypes: [UTType] { FileTypeRegistry.enabledTypes }
+   static var writableContentTypes: [UTType] { FileTypeRegistry.enabledTypes }
    
    @Published var items: [TaskPaperItem] = []
    @Published var fileName: String

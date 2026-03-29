@@ -6,6 +6,7 @@ struct ItemRowView: View {
    @Binding var item: TaskPaperItem
    @ObservedObject var tagSchemaManager: TagSchemaManager
    @ObservedObject var document: TaskPaperDocument
+   @AppStorage("display.noteIcon") private var showNoteIcons = true
    // Editing
    @Binding var isEditing: Bool
    @State private var isShowingAddTagPopover = false
@@ -29,10 +30,12 @@ struct ItemRowView: View {
             }
          }
          
-         item.icon
-            .onTapGesture {
-               item.toggleCompletion()
-            }
+         if item.type != .note || showNoteIcons {
+            item.icon
+               .onTapGesture {
+                  item.toggleCompletion()
+               }
+         }
          
          VStack(alignment: .leading, spacing: 4) {
             Text(item.displayText)

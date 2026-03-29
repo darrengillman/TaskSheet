@@ -12,4 +12,10 @@ extension UTType {
 
     // UTType for TaskPaper documents (used for DocumentGroup file type)
     static let taskPaper = UTType(exportedAs: "uk.co.hotpuffin.taskpaper")
+
+    // UTType for Markdown documents (system UTI, but not surfaced as a static member on iOS)
+    static let markdown = UTType(importedAs: "net.daringfireball.markdown")
+
+    // UTType for OPML documents (imported — not a system-defined UTI)
+    static let opml = UTType(importedAs: "org.opml.opml")
 }
