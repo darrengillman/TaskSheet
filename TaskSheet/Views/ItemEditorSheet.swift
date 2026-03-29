@@ -42,6 +42,7 @@ struct ItemEditorSheet: View {
                .focused($isTextEditorFocused)
                .padding()
          }
+         .navigationBarBackButtonHidden()
          .onAppear {
             Task {
                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
