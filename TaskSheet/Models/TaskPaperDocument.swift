@@ -78,15 +78,46 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    }
    
    func quickAdd(_ text: String, type: ItemType) {
-      let newItem = TaskPaperItem(type: type, text: text, indentLevel: 1)
+      let projectsCount = items.filter{ $0.type == .project }.count
+      let itemsCount = items.count
+      let commonIndentLevel = items.allSatisfy({ $0.indentLevel == items[0].indentLevel })
+      let allInSingleProject = projectsCount == 1
+      && items.first?.type == .project
+      && itemsCount > 1
+      && items[1...].allSatisfy({$0.indentLevel >= items[1].indentLevel})
+      
+      let newItemIndentLevel = switch items.count {
+         case 0 : 0
+         case 1... where commonIndentLevel: items[0].indentLevel
+         case 1... where allInSingleProject: items[itemsCount-1].indentLevel
+         default: 1
+      }
+      
+      let newItem = TaskPaperItem(type: type, text: text, indentLevel: newItemIndentLevel)
       
          // Register undo
       undoManager?.registerUndo(withTarget: self) { document in
          document.delete(newItem)
+         if let firstItem = self.items.first,
+            firstItem.type == .project,
+            firstItem.displayText == "Inbox",
+            self.items.count > 1,
+            self.items[1].indentLevel <= firstItem.indentLevel
+         {
+            self.items.remove(at: 0)
+         }
       }
       
+      if items.isEmpty || commonIndentLevel || allInSingleProject {
+         items.append(newItem)
+      } else {
+         addToInbox(newItem)
+      }
+   }
+   
+   private func addToInbox(_ newItem: TaskPaperItem) {
       if let inboxIndex = items.firstIndex(where: {$0.text.prefix(6) == "Inbox:" && $0.type == .project && $0.indentLevel == 0}) {
-         let insertIndex = items[(inboxIndex+1)...].firstIndex(where: {$0.indentLevel == 0}) ?? inboxIndex + 1
+         let insertIndex = items[(inboxIndex+1)...].firstIndex(where: {$0.indentLevel <= items[inboxIndex].indentLevel}) ?? inboxIndex + 1
          items.insert(newItem, at: insertIndex)
       } else {
          let inboxProject = TaskPaperItem(type: .project, text: "Inbox", indentLevel: 0)

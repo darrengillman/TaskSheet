@@ -16,6 +16,7 @@
 		DE26089B2F54D36700857E60 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = DE26089A2F54D36700857E60 /* TelemetryDeck */; };
 		DEB0FF772F730E50004456BC /* TaskSheetIcon 0.1.icon in Resources */ = {isa = PBXBuildFile; fileRef = DEB0FF762F730E50004456BC /* TaskSheetIcon 0.1.icon */; };
 		DEB0FF792F731F9A004456BC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DEB0FF782F731F9A004456BC /* PrivacyInfo.xcprivacy */; };
+		DEB0FF812F7A804B004456BC /* TaskPaperDocumentQuickAddTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB0FF802F7A804B004456BC /* TaskPaperDocumentQuickAddTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		DE45C52E2EA3D355000DFF7E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DEB0FF762F730E50004456BC /* TaskSheetIcon 0.1.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "TaskSheetIcon 0.1.icon"; sourceTree = "<group>"; };
 		DEB0FF782F731F9A004456BC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DEB0FF802F7A804B004456BC /* TaskPaperDocumentQuickAddTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPaperDocumentQuickAddTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -111,6 +113,7 @@
 				DE1C94982E7757D800353202 /* TaskSheetTagTests.swift */,
 				DE1C94AF2E82A12300353202 /* TaskPaperDocumentMovementTests.swift */,
 				DE2608162F4E78E200857E60 /* TaskPaperDragDropTests.swift */,
+				DEB0FF802F7A804B004456BC /* TaskPaperDocumentQuickAddTests.swift */,
 			);
 			path = TaskSheetTests;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 			files = (
 				DE1C94A02E775AEA00353202 /* TaskSheetTagTests.swift in Sources */,
 				DE2608172F4E78E200857E60 /* TaskPaperDragDropTests.swift in Sources */,
+				DEB0FF812F7A804B004456BC /* TaskPaperDocumentQuickAddTests.swift in Sources */,
 				DE1C94B02E82A12300353202 /* TaskPaperDocumentMovementTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
