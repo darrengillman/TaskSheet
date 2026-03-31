@@ -9,7 +9,8 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       // Required by ReferenceFileDocument
    static var readableContentTypes: [UTType] { FileTypeRegistry.enabledTypes }
    static var writableContentTypes: [UTType] { FileTypeRegistry.enabledTypes }
-   
+   @AppStorage("editor.showWelcomeTextInNewDocument") private var showWelcomeTextInNewDocument = true
+
    @Published var items: [TaskPaperItem] = []
    @Published var fileName: String
    
@@ -33,7 +34,11 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       // Existing init for sample data and new documents
    init(content: String, fileName: String = "Untitled") {
       self.fileName = fileName
-      self.items = TaskPaperParser.parse(content)
+      if content.isEmpty && showWelcomeTextInNewDocument {
+         self.items = TaskPaperParser.parse(Self.welcomeText)
+      } else {
+         self.items = TaskPaperParser.parse(content)
+      }
    }
    
       // Required method for saving - creates a snapshot of document data
@@ -325,5 +330,37 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    enum DocumentError: Error {
       case itemsNotFound, noValidDestination
    }
-   
+}
+
+extension TaskPaperDocument {
+   static let welcomeText = """
+      Welcome:
+      \tIntroduction:
+      \t\t- Welcome to TaskSheet; a logical way to manage your tasks
+      \t\t- TaskSheet knows about projects, tasks, notes, and tags.
+      \t\t- It stores all its data in a text file that is easily edited or managed by AI
+      \t\t- The files are compatible with TaskPaper on the Mac
+      \t\t- Delete this text when you are ready. Long-press Welcome above and choose Delete
+      \t\t- You can turn the Welcome text off in Settings
+
+      \tTo Create Items:
+      \t\t- Use the Quick Add button on the bottom toolbar
+      \t\t\tSelect the item type and enter your text
+      \t\t\tFor a larger editing window click the down chevron
+      \t\t- Or long press an item to use the Context menu...
+      \t\tContext Menu Options:
+      \t\t\t- Click Add to create a context-sensitive new item (coming soon)
+      \t\t\t- For full control of new items, use the Add... menu
+      \t\t\t- Use the Tags option to choose or create tags
+      \t\t\t\tYou can also add tags directly when entering text
+      \tTo Manage Items:
+      \t\t- To mark a task done click it's icon, or use the Context Menu command.
+      \t\t- Long press and drag an item to move it, and any children, up or down.
+      \t\t\t- Click Move on the Context Menu to promote, demote, indent or outdent
+      \t\tTo Fold, Focus, and Filter Items:
+      \t\t- Collapse/expand multi-line items with the Contex Menu option
+      \t\t- Use the Focus option on the Context Menuto focus on a single project (coming soon)
+      \t\t- To filter the list to a specific tag, use the filter button on the bottom tool bar.  Click on the "not" option to exclude that tag.
+      \t\t- Use the Search button to filter lines by text
+      """
 }
