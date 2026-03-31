@@ -6,7 +6,7 @@ struct ItemRowView: View {
    @Binding var item: TaskPaperItem
    @ObservedObject var tagSchemaManager: TagSchemaManager
    @ObservedObject var document: TaskPaperDocument
-   @AppStorage("display.noteIcon") private var showNoteIcons = true
+   @AppStorage(AppStorageKeys.Display.noteIcon) private var showNoteIcons = true
    // Editing
    @Binding var isEditing: Bool
    @State private var isShowingAddTagPopover = false

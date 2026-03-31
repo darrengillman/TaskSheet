@@ -9,11 +9,11 @@ private enum SettingsRoute: Hashable {
 struct SettingsView: View {
    @Environment(\.dismiss) private var dismiss
    @State private var enabledFileTypeCount = FileTypeRegistry.enabledTypes.count
-   @AppStorage("display.noteIcon") private var showNoteIcons = true
-   @AppStorage("editor.deleteRemovesChildren") private var deleteRemovesChildren = true
-   @AppStorage("editor.includeDateWhenMarkingDone") private var includeDateWhenMarkingDone = true
-   @AppStorage("editor.showWelcomeTextInNewDocument") private var showWelcomeTextInNewDocument = true
-   @AppStorage("editor.alwaysUseMainEditingSheet") private var alwaysUseMainEditingSheet = false
+   @AppStorage(AppStorageKeys.Display.noteIcon) private var showNoteIcons = true
+   @AppStorage(AppStorageKeys.Editor.deleteRemovesChildren) private var deleteRemovesChildren = true
+   @AppStorage(AppStorageKeys.Editor.includeDateWhenMarkingDone) private var includeDateWhenMarkingDone = true
+   @AppStorage(AppStorageKeys.Editor.showWelcomeTextInNewDocument) private var showWelcomeTextInNewDocument = true
+   @AppStorage(AppStorageKeys.Editor.alwaysUseMainEditingSheet) private var alwaysUseMainEditingSheet = false
    
       // Alert state for under-development features
    @State private var isShowingAlert = false

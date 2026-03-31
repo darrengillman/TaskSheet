@@ -10,21 +10,13 @@ struct FileTypeDefinition: Identifiable {
 
 enum FileTypeRegistry {
 
-    // MARK: - UserDefaults keys
-
-    enum Keys {
-        static let plainText = "fileTypes.plainText"
-        static let markdown  = "fileTypes.markdown"
-        static let opml      = "fileTypes.opml"
-    }
-
     // MARK: - Type catalogue
 
     /// All user-configurable file types, in display order.
     static let configurableTypes: [FileTypeDefinition] = [
-        .init(id: "public.plain-text",           displayName: "Plain Text", fileExtension: "txt",  utType: .plainText, defaultsKey: Keys.plainText),
-        .init(id: "net.daringfireball.markdown", displayName: "Markdown",   fileExtension: "md",   utType: .markdown,  defaultsKey: Keys.markdown),
-        .init(id: "org.opml.opml",               displayName: "OPML",       fileExtension: "opml", utType: .opml,      defaultsKey: Keys.opml),
+        .init(id: "public.plain-text",           displayName: "Plain Text", fileExtension: "txt",  utType: .plainText, defaultsKey: AppStorageKeys.FileTypes.plainText),
+        .init(id: "net.daringfireball.markdown", displayName: "Markdown",   fileExtension: "md",   utType: .markdown,  defaultsKey: AppStorageKeys.FileTypes.markdown),
+        .init(id: "org.opml.opml",               displayName: "OPML",       fileExtension: "opml", utType: .opml,      defaultsKey: AppStorageKeys.FileTypes.opml),
     ]
 
     // MARK: - Enabled types

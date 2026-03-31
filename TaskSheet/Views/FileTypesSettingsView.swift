@@ -3,9 +3,9 @@ import SwiftUI
 import TelemetryDeck
 
 struct FileTypesSettingsView: View {
-   @AppStorage(FileTypeRegistry.Keys.plainText) private var plainTextEnabled = false
-   @AppStorage(FileTypeRegistry.Keys.markdown)  private var markdownEnabled  = false
-   @AppStorage(FileTypeRegistry.Keys.opml)      private var opmlEnabled      = false
+   @AppStorage(AppStorageKeys.FileTypes.plainText) private var plainTextEnabled = false
+   @AppStorage(AppStorageKeys.FileTypes.markdown)  private var markdownEnabled  = false
+   @AppStorage(AppStorageKeys.FileTypes.opml)      private var opmlEnabled      = false
 
    @State private var restartRequired = false
 
@@ -13,10 +13,10 @@ struct FileTypesSettingsView: View {
 
    private func binding(for definition: FileTypeDefinition) -> Binding<Bool> {
       switch definition.defaultsKey {
-         case FileTypeRegistry.Keys.plainText: return $plainTextEnabled
-         case FileTypeRegistry.Keys.markdown:  return $markdownEnabled
-         case FileTypeRegistry.Keys.opml:      return $opmlEnabled
-         default:                              return .constant(false)
+         case AppStorageKeys.FileTypes.plainText: return $plainTextEnabled
+         case AppStorageKeys.FileTypes.markdown:  return $markdownEnabled
+         case AppStorageKeys.FileTypes.opml:      return $opmlEnabled
+         default:                                 return .constant(false)
       }
    }
 
@@ -25,7 +25,9 @@ struct FileTypesSettingsView: View {
       logger.info("File type '\(definition.id)' \(state)")
       TelemetryDeck.signal("FileTypesSettingsView.Toggle.change",
                            parameters: ["typeId": definition.id, "enabled": "\(newValue)"])
-      restartRequired = true
+      withAnimation {
+         restartRequired = true
+      }
    }
 
     var body: some View {

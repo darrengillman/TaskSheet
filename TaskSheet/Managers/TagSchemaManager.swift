@@ -7,7 +7,7 @@
 import SwiftUI
 
 class TagSchemaManager: ObservableObject {
-   @AppStorage("customTagColors") private var customTagColorsData: Data = Data()
+   @AppStorage(AppStorageKeys.Tags.customTagColors) private var customTagColorsData: Data = Data()
 
    struct ColorOption: Hashable, Identifiable {
       var id: String { name }
