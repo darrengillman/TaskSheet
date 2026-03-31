@@ -79,6 +79,7 @@ struct TaskListView: View {
                            document: document,
                            isEditing: $subViewIsEditing)
                .listRowInsets(EdgeInsets())
+               .listRowSeparator(.hidden)
             }
          }
          .onMove(perform: move)
