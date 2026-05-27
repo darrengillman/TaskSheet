@@ -58,7 +58,9 @@ struct ItemEditorSheet: View {
                }
             }
             ToolbarItem(placement: .principal) {
-               Text("\(addOrEdit.editorTitleString) \(addOrEdit.itemType.rawValue.capitalized)")
+               Text(
+                  "\(addOrEdit.editorTitleString) \(addOrEdit.itemType.rawValue.capitalized)"
+               )
             }
             ToolbarItem(placement: .confirmationAction) {
                Button(addOrEdit.commitButtonString) {

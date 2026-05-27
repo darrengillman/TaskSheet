@@ -152,14 +152,33 @@ extension ItemRowView {
    @ViewBuilder
    private var MainContextMenu: some View {
       completionMenu
+      quickAddMenu
       deleteMenu
       foldingMenu
       if !item.isCompleted {
          focusMenu
-         Divider()
       }
+      Divider()
       addMenu
       moveMenu
+   }
+
+   @ViewBuilder
+   private var quickAddMenu: some View {
+      Button {
+         TelemetryDeck.signal("ItemRowView.MainContextMenu.QuickAdd.tap")
+         isEditing = true
+         switch item.type {
+         case .project:
+            isShowingNewItemPopover = .add(type: .task, indent: item.indentLevel + 1)
+         case .task:
+            isShowingNewItemPopover = .add(type: .task, indent: item.indentLevel)
+         case .note:
+            isShowingNewItemPopover = .add(type: .note, indent: item.indentLevel)
+         }
+      } label: {
+         Label("Quick Add", systemImage: "plus.circle.fill")
+      }
    }
    
    @ViewBuilder

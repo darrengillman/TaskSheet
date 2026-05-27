@@ -14,10 +14,27 @@ struct AddItemPopOver: View {
    @Binding var showPopover: TextEntryRole?
    @Binding var showSheet: TextEntryRole?
    @Binding var text: String
-   @State private var itemType: ItemType = .task
+   @State private var itemType: ItemType
    let role: TextEntryRole
    let onSave: (String, ItemType) -> Void
-   let onCancel: (() -> Void )?
+   let onCancel: (() -> Void)?
+
+   init(
+      showPopover: Binding<TextEntryRole?>,
+      showSheet: Binding<TextEntryRole?>,
+      text: Binding<String>,
+      role: TextEntryRole,
+      onSave: @escaping (String, ItemType) -> Void,
+      onCancel: (() -> Void)?
+   ) {
+      self._showPopover = showPopover
+      self._showSheet = showSheet
+      self._text = text
+      self.role = role
+      self.onSave = onSave
+      self.onCancel = onCancel
+      self._itemType = State(initialValue: role.itemType)
+   }
 
    var body: some View {
       VStack(spacing: 16) {
