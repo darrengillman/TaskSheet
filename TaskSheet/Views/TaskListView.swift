@@ -105,7 +105,7 @@ struct TaskListView: View {
                TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
                isShowingTextEntryPopover = .add(type: .task, indent: 0)
             } label: {
-               Image(systemName: "square.and.pencil")
+               Image(systemName: "plus")
             }
          }
          ToolbarSpacer( .fixed, placement: .bottomBar)
