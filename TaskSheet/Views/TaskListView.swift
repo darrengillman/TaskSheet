@@ -13,6 +13,7 @@ struct TaskListView: View {
    @State fileprivate var filterState  = FilterState()
    @State private var editTextBuffer: String = ""
    @State private var filteredIds: [UUID] = []
+   @ScaledMetric(relativeTo: .body) private var rowSpacing: CGFloat = 10
    
    let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TaskSheet", category: "TaskLostView")
    
@@ -85,6 +86,8 @@ struct TaskListView: View {
          .onMove(perform: move)
       }
       .listStyle(.plain)
+      .listRowSpacing(rowSpacing)
+      .environment(\.defaultMinListRowHeight, 0)
       .searchable(text: $filterState.searchText)
       .searchToolbarBehavior(.minimize)
       .task { recomputeFilteredIds() }

@@ -10,16 +10,22 @@ struct DocumentHeader: View {
    @ObservedObject var document: TaskPaperDocument
 
    var body: some View {
-      HStack {
+      ViewThatFits{
          HStack(spacing: 12) {
             StatItem(icon: "folder", count: document.projectCount, label: "Projects")
-            StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: "Tasks")
+            StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: "Open")
             StatItem(icon: "checkmark.circle", count: document.completedTaskCount, label: "Done")
             StatItem(icon: "doc.text", count: document.noteCount, label: "Notes")
          }
-         .frame(maxWidth: .infinity, alignment: .leading)
-         
+         HStack(spacing: 12) {
+            StatItem(icon: "folder", count: document.projectCount, label: nil)
+            StatItem(icon: "circle", count: document.taskCount - document.completedTaskCount, label: nil)
+            StatItem(icon: "checkmark.circle", count: document.completedTaskCount, label: nil)
+            StatItem(icon: "doc.text", count: document.noteCount, label: nil)
+         }
+
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.vertical)
       .padding(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -31,7 +37,7 @@ fileprivate
 struct StatItem: View {
    let icon: String
    let count: Int
-   let label: String
+   let label: String?
    
    var body: some View {
          HStack(spacing: 4) {
@@ -42,10 +48,13 @@ struct StatItem: View {
             Text("\(count)")
                .fontWeight(.medium)
                .font(.caption)
-            
-            Text(label)
-               .foregroundColor(.secondary)
-               .font(.caption)
+            if let label {
+               Text(label)
+                  .foregroundColor(.secondary)
+                  .font(.caption)
+                  .lineLimit(1)
+                  
+            }
          }
    }
 }

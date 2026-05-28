@@ -11,37 +11,37 @@ extension TaskPaperItem {
    var icon: some View {
       switch (type, isCompleted, isFolded) {
          case (.project, true , true):
-            Image(systemName: type.completedFoldedIcon)
+            Text(Image(systemName: type.completedFoldedIcon))
                .foregroundColor(.blue)
-               .font(.system(size: 16, weight: .medium))
-            
+               .font(.headline.weight(.medium))
+
          case (.project, true, false):
-            Image(systemName: type.completedIcon)
+            Text(Image(systemName: type.completedIcon))
                .foregroundColor(.blue)
-               .font(.system(size: 16, weight: .medium))
-         
+               .font(.headline.weight(.medium))
+
          case (.project, false, false):
-            Image(systemName: type.baseIcon)
+            Text(Image(systemName: type.baseIcon))
                .foregroundColor(.blue)
-               .font(.system(size: 16, weight: .medium))
-         
+               .font(.headline.weight(.medium))
+
          case (.project, false, true):
-            Image(systemName: type.foldedIcon)
+            Text(Image(systemName: type.foldedIcon))
                .foregroundColor(.blue)
-               .font(.system(size: 16, weight: .medium))
-            
+               .font(.headline.weight(.medium))
+
          case (.task, true, _):
-            Image(systemName:type.completedIcon)
+            Text(Image(systemName: type.completedIcon))
                .foregroundColor(isCompleted ? .green : .secondary)
-               .font(.system(size: 16))
+               .font(.body)
          case (.task, false, _):
-            Image(systemName: type.baseIcon)
+            Text(Image(systemName: type.baseIcon))
                .foregroundColor(isCompleted ? .green : .secondary)
-               .font(.system(size: 16))
+               .font(.body)
          case (.note, _ , _):
-            Image(systemName: type.baseIcon)
+            Text(Image(systemName: type.baseIcon))
                .foregroundColor(isCompleted ? .secondary: .gray)
-               .font(.system(size: 14))
+               .font(.footnote)
       }
    }
 }

@@ -21,15 +21,7 @@ struct ItemRowView: View {
    @State private var folded = false
    
    var body: some View {
-      HStack(alignment: .top, spacing: 8) {
-         HStack(spacing: 0) {
-            ForEach(0..<item.indentLevel, id: \.self) { _ in
-               Rectangle()
-                  .fill(Color.clear)
-                  .frame(width: 20)
-            }
-         }
-         
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
          if item.type != .note || showNoteIcons {
             item.icon
                .onTapGesture {
@@ -63,8 +55,8 @@ struct ItemRowView: View {
          }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.vertical, 4)
       .padding(.horizontal)
+      .padding(.leading, CGFloat(item.indentLevel) * 20)
       .popover(isPresented: $isShowingAddTagPopover) {
          AddTagPopOver() { text in
             item.addTag(.init(name: text), at: .end)
