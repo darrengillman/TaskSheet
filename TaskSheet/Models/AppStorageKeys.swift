@@ -25,6 +25,9 @@ enum AppStorageKeys {
         
         /// Whether to always use the main editing sheet instead of inline editing
         static let alwaysUseMainEditingSheet = "editor.alwaysUseMainEditingSheet"
+       
+       /// Whether to show the large floating plus
+       static let showFloatingAdd = "editor.showFloatingAdd"
     }
     
     // MARK: - Display Settings

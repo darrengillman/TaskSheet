@@ -4,6 +4,7 @@ import SwiftUI
 
 struct TaskListView: View {
    @Environment(\.undoManager) private var undoManager
+   @AppStorage(AppStorageKeys.Editor.showFloatingAdd) private var showFloatingAdd = false
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
@@ -100,12 +101,14 @@ struct TaskListView: View {
          ToolbarSpacer(.flexible, placement: .bottomBar)
          DefaultToolbarItem(kind: .search, placement: .bottomBar)
          ToolbarSpacer( .fixed, placement: .bottomBar)
-         ToolbarItem(placement: .bottomBar) {
-            Button {
-               TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
-               isShowingTextEntryPopover = .add(type: .task, indent: 0)
-            } label: {
-               Image(systemName: "plus")
+         if !showFloatingAdd {
+            ToolbarItem(placement: .bottomBar) {
+               Button {
+                  TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
+                  isShowingTextEntryPopover = .add(type: .task, indent: 0)
+               } label: {
+                  Image(systemName: "plus")
+               }
             }
          }
          ToolbarSpacer( .fixed, placement: .bottomBar)
@@ -122,6 +125,25 @@ struct TaskListView: View {
          }
       }
       .toolbarVisibility( showQuickAddButton ? .visible : .hidden, for: .bottomBar)
+      .animation(.smooth, value: showQuickAddButton)
+      .overlay(alignment: .bottomTrailing) {
+         if showFloatingAdd && showQuickAddButton {
+            Button {
+               TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
+               isShowingTextEntryPopover = .add(type: .task, indent: 0)
+            } label: {
+               Image(systemName: "plus")
+                  .font(.title2)
+                  .fontWeight(.semibold)
+                  .frame(width: 80, height: 80)
+                  .glassEffect(.regular.interactive(), in: Circle())
+            }
+            .padding(.trailing, 32)
+            .padding(.bottom, 16)
+            .transition(.scale.combined(with: .opacity))
+         }
+      }
+      .animation(.smooth, value: showFloatingAdd)
       .popover(item: $isShowingTextEntryPopover, attachmentAnchor: .point(.init(x: -30, y: -30))) { role in
          AddItemPopOver(
             showPopover: $isShowingTextEntryPopover,

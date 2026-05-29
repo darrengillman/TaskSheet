@@ -14,6 +14,7 @@ struct SettingsView: View {
    @AppStorage(AppStorageKeys.Editor.includeDateWhenMarkingDone) private var includeDateWhenMarkingDone = true
    @AppStorage(AppStorageKeys.Editor.showWelcomeTextInNewDocument) private var showWelcomeTextInNewDocument = true
    @AppStorage(AppStorageKeys.Editor.alwaysUseMainEditingSheet) private var alwaysUseMainEditingSheet = false
+   @AppStorage(AppStorageKeys.Editor.showFloatingAdd) private var showFloatingAdd = false
    
       // Alert state for under-development features
    @State private var isShowingAlert = false
@@ -33,6 +34,14 @@ struct SettingsView: View {
                      TelemetryDeck.signal("SettingsView.Display.NoteIcon.toggle",
                                           parameters: ["enabled": "\(newValue)"])
                   }
+               Toggle("Use floating Quick Add button", isOn: $showFloatingAdd)
+                  .onChange(of: showFloatingAdd, initial: false) { _, showing in
+                     let state = showing ? "enabled" : "disabled"
+                     logger.info("Floating add button \(state)")
+                     TelemetryDeck.signal("SettingsView.Display.NoteIcon.toggle",
+                                          parameters: ["enabled": "\(showing)"])
+                  }
+
             }
             
             Section("Documents") {
