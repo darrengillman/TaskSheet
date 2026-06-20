@@ -55,7 +55,7 @@ struct AddItemPopOver: View {
                Text("\(role.popOverTitleString) \(role.itemType.rawValue.capitalized)")
                   .frame(maxWidth: .infinity, alignment: .leading)
             }
-            
+
             Button{
                withAnimation {
                   let newRole: TextEntryRole = switch role {
@@ -75,7 +75,7 @@ struct AddItemPopOver: View {
                   .padding(.horizontal, 6)
             }
             .foregroundColor(.secondary)
-            
+
             Button {
                cancel()
             } label: {
@@ -122,13 +122,13 @@ struct AddItemPopOver: View {
    @Previewable @State var showPopover: TextEntryRole? = nil
    @Previewable @State var showSheet: TextEntryRole? = nil
    @Previewable @State var text = ""
-   @Previewable @State var role = TextEntryRole.edit(type: .task, indent: 0)
+   @Previewable @State var role = TextEntryRole.add(type: .task, indent: 0)
    AddItemPopOver(showPopover: $showPopover, showSheet: $showSheet, text: $text, role: role) { text, type in
    } onCancel: {}
 }
 
-private struct EditView: View {
-   var body: some View {
-      Text("")
-   }
-}
+//private struct EditView: View {
+//   var body: some View {
+//      Text("")
+//   }
+//}

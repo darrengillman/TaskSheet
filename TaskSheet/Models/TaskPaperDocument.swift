@@ -84,18 +84,15 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    }
    
    func quickAdd(_ text: String, type: ItemType) {
-      let projectsCount = items.filter{ $0.type == .project }.count
-      let itemsCount = items.count
       let commonIndentLevel = items.allSatisfy({ $0.indentLevel == items[0].indentLevel })
-      let allInSingleProject = projectsCount == 1
-      && items.first?.type == .project
-      && itemsCount > 1
-      && items[1...].allSatisfy({$0.indentLevel >= items[1].indentLevel})
+      let allInSingleProject = items.count > 1
+         && items.first?.type == .project
+         && items[1...].allSatisfy({ $0.indentLevel > items[0].indentLevel })
       
       let newItemIndentLevel = switch items.count {
          case 0 : 0
-         case 1... where commonIndentLevel: items[0].indentLevel
-         case 1... where allInSingleProject: items[itemsCount-1].indentLevel
+         case 1... where commonIndentLevel: items.first!.indentLevel
+         case 1... where allInSingleProject: items.first!.indentLevel + 1
          default: 1
       }
       
@@ -123,7 +120,7 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    
    private func addToInbox(_ newItem: TaskPaperItem) {
       if let inboxIndex = items.firstIndex(where: {$0.text.prefix(6) == "Inbox:" && $0.type == .project && $0.indentLevel == 0}) {
-         let insertIndex = items[(inboxIndex+1)...].firstIndex(where: {$0.indentLevel <= items[inboxIndex].indentLevel}) ?? inboxIndex + 1
+         let insertIndex = items.hierarchyIndexes(from: inboxIndex).last.map { $0 + 1 } ?? items.endIndex
          items.insert(newItem, at: insertIndex)
       } else {
          let inboxProject = TaskPaperItem(type: .project, text: "Inbox", indentLevel: 0)
