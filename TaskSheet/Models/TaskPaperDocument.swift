@@ -149,13 +149,20 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    
    func delete(_ item: TaskPaperItem) {
       guard let index = items.firstIndex(of: item) else { return }
-      
-         // Register undo
-      undoManager?.registerUndo(withTarget: self) { document in
-         document.items.insert(item, at: index)
+
+      if deleteRemovesChildren {
+         let toDelete = items.hierarchyIndexes(from: index)
+         let removed = toDelete.map { items[$0] }
+         undoManager?.registerUndo(withTarget: self) { document in
+            document.items.insert(contentsOf: removed, at: index)
+         }
+         items.remove(atOffsets: toDelete)
+      } else {
+         undoManager?.registerUndo(withTarget: self) { document in
+            document.items.insert(item, at: index)
+         }
+         items.remove(at: index)
       }
-      
-      items.remove(at: index)
    }
    
       // MARK: - Task Completion
