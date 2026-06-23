@@ -286,29 +286,53 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    func moveHierarchy(at firstItemId: UUID, to destinationId: UUID) throws {
       guard let startIndex = items.firstIndex(where:{$0.id == firstItemId })
       else {throw DocumentError.itemsNotFound}
-      let moving = items.hierarchyIndexes(from: startIndex)
-      guard moving.isEmpty == false else {throw DocumentError.itemsNotFound}
+      let indexSetToMove = items.hierarchyIndexes(from: startIndex)
+      guard indexSetToMove.isEmpty == false else {throw DocumentError.itemsNotFound}
       guard let destinationIndex = items.firstIndex(where: {$0.id == destinationId}) else {throw DocumentError.noValidDestination}
-      
+      guard !indexSetToMove.contains(destinationIndex) else {throw DocumentError.noValidDestination}
+
       // register  undo
       let oldItems = items
       undoManager?.registerUndo(withTarget: self) { document in
          document.items = oldItems
       }
       
-      logger.info("moveHierarchy: registered undo, moving \(moving.count) items from index \(startIndex) to \(destinationIndex)")
+      logger.info("moveHierarchy: registered undo, moving \(indexSetToMove.count) items from index \(startIndex) to \(destinationIndex)")
       
-      // Match indent to destination level, then move — all on a copy so @Published fires once.
+      // Adjust indent to match the item that will sit above the drop position,
+      // then move — all on a copy so @Published fires once.
       var copy = items
-      if destinationIndex < copy.endIndex {
-         let extraIndent = copy[destinationIndex].indentLevel - copy[startIndex].indentLevel
-         if extraIndent > 0 {
-            for index in moving {
-               copy[index].indentLevel += extraIndent
-            }
+      let startMovingIndexSet = indexSetToMove.first!
+      let endMovingIndexSet = indexSetToMove.last!
+
+      let aboveIndex: Int?
+      if destinationIndex == 0 {
+         aboveIndex = nil
+      } else {
+         aboveIndex = (destinationIndex - 1 < startMovingIndexSet || destinationIndex - 1 > endMovingIndexSet)
+            ? destinationIndex - 1
+            : (startMovingIndexSet > 0 ? startMovingIndexSet - 1 : nil)
+      }
+
+      let targetIndent: Int
+      if copy[startIndex].type == .project,
+         copy[destinationIndex].type == .project,
+         copy[destinationIndex].indentLevel == copy[startIndex].indentLevel {
+         targetIndent = copy[destinationIndex].indentLevel
+      } else if let aboveIndex {
+         let aboveItem = copy[aboveIndex]
+         targetIndent = aboveItem.type == .project ? aboveItem.indentLevel + 1 : aboveItem.indentLevel
+      } else {
+         targetIndent = 0
+      }
+
+      let extraIndent = targetIndent - copy[startIndex].indentLevel
+      if extraIndent != 0 {
+         for index in indexSetToMove {
+            copy[index].indentLevel = max(0, copy[index].indentLevel + extraIndent)
          }
       }
-      copy.move(fromOffsets: moving, toOffset: destinationIndex)
+      copy.move(fromOffsets: indexSetToMove, toOffset: destinationIndex)
       items = copy
       
       logger.info("moveHierarchy: items assigned, objectWillChange should have fired")

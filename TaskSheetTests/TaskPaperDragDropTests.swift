@@ -136,6 +136,8 @@ struct TaskPaperDragDropTests {
             // Project C should now be at index 4, followed by Task C1 at index 5
             #expect(document.items[4].displayText == "Project C")
             #expect(document.items[5].displayText == "Task C1")
+            #expect(document.items[4].indentLevel == 0)
+            #expect(document.items[5].indentLevel == 1)
         }
         
         @Test("Move to end places items at final position")
@@ -322,12 +324,39 @@ struct TaskPaperDragDropTests {
             let document = createTaggedDocument()
             let movingId = document.items[0].id
             let invalidId = UUID()
-            
+
             #expect(throws: TaskPaperDocument.DocumentError.noValidDestination) {
                 try document.moveHierarchy(at: movingId, to: invalidId)
             }
         }
-        
+
+        @Test("Drag onto direct child throws noValidDestination")
+        func dragOntoDirectChild() {
+            let document = createTaggedDocument()
+            // Project A(0) → Task A1(1), its direct child
+            #expect(throws: TaskPaperDocument.DocumentError.noValidDestination) {
+                try document.moveHierarchy(at: document.items[0].id, to: document.items[1].id)
+            }
+        }
+
+        @Test("Drag onto grandchild throws noValidDestination")
+        func dragOntoGrandchild() {
+            let document = createTaggedDocument()
+            // Project A(0) → Subtask A1.1(2), a grandchild
+            #expect(throws: TaskPaperDocument.DocumentError.noValidDestination) {
+                try document.moveHierarchy(at: document.items[0].id, to: document.items[2].id)
+            }
+        }
+
+        @Test("Drag onto last child in hierarchy throws noValidDestination")
+        func dragOntoLastChild() {
+            let document = createTaggedDocument()
+            // Project A(0) → Task A2(3), the last direct child
+            #expect(throws: TaskPaperDocument.DocumentError.noValidDestination) {
+                try document.moveHierarchy(at: document.items[0].id, to: document.items[3].id)
+            }
+        }
+
         private func createTaggedDocument() -> TaskPaperDocument {
             let content = """
             Project A: @work
@@ -342,6 +371,210 @@ struct TaskPaperDragDropTests {
             \t- Task C1 @work
             """
             return TaskPaperDocument(content: content, fileName: "Tagged")
+        }
+    }
+
+    // MARK: - Indent Adjustment Tests
+
+    @Suite("Drag Indent Adjustment")
+    struct IndentAdjustmentTests {
+
+        // Document used in these tests:
+        //   0  Level0ProjectA:    indent 0  project
+        //   1    Level1SubProjA:  indent 1  project
+        //   2      - taskDeep     indent 2  task
+        //   3    - taskA          indent 1  task
+        //   4  Level0ProjectB:    indent 0  project
+        //   5    Level1SubProjB:  indent 1  project
+        //   6      - taskDeepB    indent 2  task
+        //   7    - taskB          indent 1  task
+        //   8  Level0ProjectC:    indent 0  project
+        //   9    - taskC          indent 1  task
+        private func makeDoc() -> TaskPaperDocument {
+            let content = """
+            Level0ProjectA:
+            \tLevel1SubProjA:
+            \t\t- taskDeep
+            \t- taskA
+            Level0ProjectB:
+            \tLevel1SubProjB:
+            \t\t- taskDeepB
+            \t- taskB
+            Level0ProjectC:
+            \t- taskC
+            """
+            return TaskPaperDocument(content: content, fileName: "IndentTest")
+        }
+
+        // Flat document — three peer projects, no children:
+        //   0  ProjectFlat1:  level 0
+        //   1  ProjectFlat2:  level 0
+        //   2  ProjectFlat3:  level 0
+        private func makeFlatDoc() -> TaskPaperDocument {
+            TaskPaperDocument(content: "ProjectFlat1:\nProjectFlat2:\nProjectFlat3:", fileName: "Flat")
+        }
+
+        private func index(of displayText: String, in doc: TaskPaperDocument) -> Int? {
+            doc.items.firstIndex(where: { $0.displayText == displayText })
+        }
+
+        // MARK: Drag Up — Project, peer project as destination
+
+        @Test("Project up: peer below, deep task above — peer rule prevents wrong indent")
+        func projectUp_peerBelow_deepTaskAbove() throws {
+            // ProjectC(8,L0) → before ProjectB(4,L0). Item above = taskA(3,L1).
+            // Without peer rule aboveItem(task,L1) → targetIndent=1. Peer rule → L0.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[8].id, to: doc.items[4].id)
+            let idx = try #require(index(of: "Level0ProjectC", in: doc))
+            #expect(doc.items[idx].indentLevel == 0)
+            #expect(doc.items[idx + 1].indentLevel == 1)
+        }
+
+        @Test("Project up: peer below, peer project above (flat) — peer rule overrides project+1")
+        func projectUp_peerBelow_peerProjectAbove() throws {
+            // ProjectFlat3(2,L0) → before ProjectFlat2(1,L0). Above = ProjectFlat1(0,L0,project).
+            // Without peer rule: project above → L0+1=1 (wrong). Peer rule → L0.
+            let doc = makeFlatDoc()
+            try doc.moveHierarchy(at: doc.items[2].id, to: doc.items[1].id)
+            let idx = try #require(index(of: "ProjectFlat3", in: doc))
+            #expect(doc.items[idx].indentLevel == 0)
+        }
+
+        @Test("Project up: peer below, no item above (drop at top) — stays level 0")
+        func projectUp_peerBelow_noItemAbove() throws {
+            // ProjectC(8,L0) → before Level0ProjectA(0). aboveIndex=nil → targetIndent=0.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[8].id, to: doc.items[0].id)
+            #expect(doc.items[0].displayText == "Level0ProjectC")
+            #expect(doc.items[0].indentLevel == 0)
+        }
+
+        @Test("Project up: deeper sub-project below, project above — adopts child-of-parent level")
+        func projectUp_deeperProjectBelow_projectAbove() throws {
+            // ProjectC(8,L0) → before SubProjA(1,L1). Above = Level0ProjectA(0,L0,project).
+            // Peer rule: L0≠L1 → no. aboveItem=project(L0) → targetIndent=L0+1=1.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[8].id, to: doc.items[1].id)
+            let idx = try #require(index(of: "Level0ProjectC", in: doc))
+            #expect(doc.items[idx].indentLevel == 1)
+            #expect(doc.items[idx + 1].indentLevel == 2)
+        }
+
+        @Test("Project up: shallower project below, task above — level stays with task context")
+        func projectUp_shallowerProjectBelow_taskAbove() throws {
+            // SubProjA(1,L1) → before Level0ProjectB(4,L0). Above = taskA(3,L1,task).
+            // Peer rule: L1≠L0 → no. aboveItem=task(L1) → targetIndent=1.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[1].id, to: doc.items[4].id)
+            let idx = try #require(index(of: "Level1SubProjA", in: doc))
+            #expect(doc.items[idx].indentLevel == 1)
+        }
+
+        @Test("Sub-project up: peer sub-project below, peer sub-project above — peer rule prevents over-indent")
+        func subProjectUp_peerBelow_peerProjectAbove() throws {
+            // SubC(3,L1) → before SubB(2,L1). Above=SubA(1,L1,project).
+            // Without peer rule: project above → L1+1=L2 (wrong). Peer rule → L1.
+            let content = """
+            ParentProject:
+            \tSubA:
+            \tSubB:
+            \tSubC:
+            """
+            let doc = TaskPaperDocument(content: content, fileName: "SubFlat")
+            try doc.moveHierarchy(at: doc.items[3].id, to: doc.items[2].id)
+            let idx = try #require(index(of: "SubC", in: doc))
+            #expect(doc.items[idx].indentLevel == 1)
+        }
+
+        // MARK: Drag Down — Project, peer project as destination
+
+        @Test("Project down: peer below, deep task above — peer rule prevents wrong indent")
+        func projectDown_peerBelow_deepTaskAbove() throws {
+            // ProjectA(0,L0) → before ProjectC(8,L0). moving={0..3}. Above = taskB(7,L1).
+            // Without peer rule aboveItem(task,L1) → targetIndent=1. Peer rule → L0.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[0].id, to: doc.items[8].id)
+            let idx = try #require(index(of: "Level0ProjectA", in: doc))
+            #expect(doc.items[idx].indentLevel == 0)
+            #expect(doc.items[idx + 1].indentLevel == 1)
+        }
+
+        @Test("Project down: peer below, peer project above (flat) — peer rule overrides project+1")
+        func projectDown_peerBelow_peerProjectAbove() throws {
+            // ProjectFlat1(0,L0) → before ProjectFlat3(2,L0). Above = ProjectFlat2(1,L0,project).
+            // Without peer rule: project above → L0+1=1. Peer rule → L0.
+            let doc = makeFlatDoc()
+            try doc.moveHierarchy(at: doc.items[0].id, to: doc.items[2].id)
+            let idx = try #require(index(of: "ProjectFlat1", in: doc))
+            #expect(doc.items[idx].indentLevel == 0)
+        }
+
+        @Test("Project down: deeper sub-project below, project above — adopts child-of-parent level")
+        func projectDown_deeperProjectBelow_projectAbove() throws {
+            // ProjectA(0,L0) → before SubProjB(5,L1). moving={0..3}. Above = Level0ProjectB(4,L0,project).
+            // Peer rule: L0≠L1 → no. aboveItem=project(L0) → targetIndent=L0+1=1.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[0].id, to: doc.items[5].id)
+            let idx = try #require(index(of: "Level0ProjectA", in: doc))
+            #expect(doc.items[idx].indentLevel == 1)
+        }
+
+        // MARK: Drag — Non-Project Items
+
+        @Test("Task up: to top of list — becomes level 0")
+        func taskUp_toTop() throws {
+            // taskC(9,L1) → before Level0ProjectA(0). aboveIndex=nil → targetIndent=0.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[9].id, to: doc.items[0].id)
+            let idx = try #require(doc.items.firstIndex(where: { $0.displayText == "taskC" }))
+            #expect(doc.items[idx].indentLevel == 0)
+        }
+
+        @Test("Task up: dropped right after project header — becomes direct child level")
+        func taskUp_rightAfterProjectHeader() throws {
+            // taskC(9,L1) → before SubProjA(1). Above = Level0ProjectA(0,project,L0) → targetIndent=1.
+            let doc = makeDoc()
+            try doc.moveHierarchy(at: doc.items[9].id, to: doc.items[1].id)
+            let idx = try #require(doc.items.firstIndex(where: { $0.displayText == "taskC" }))
+            #expect(doc.items[idx].indentLevel == 1)
+        }
+
+        @Test("Task: dragged between peer tasks at same level — level unchanged")
+        func taskBetweenPeerTasks() throws {
+            // task3(3,L1) → before task2(2,L1). Above = task1(1,L1,task) → targetIndent=1.
+            let content = """
+            Project:
+            \t- task1
+            \t- task2
+            \t- task3
+            """
+            let doc = TaskPaperDocument(content: content, fileName: "PeerTasks")
+            try doc.moveHierarchy(at: doc.items[3].id, to: doc.items[2].id)
+            let idx = try #require(doc.items.firstIndex(where: { $0.displayText == "task3" }))
+            #expect(doc.items[idx].indentLevel == 1)
+        }
+
+        // MARK: Hierarchy Integrity
+
+        @Test("Children shift by same delta as parent when indent increases")
+        func childrenShiftWithParent() throws {
+            // ProjectC(8,L0)+taskC(9,L1) → before SubProjA(1,L1). ProjectC→L1, taskC→L2.
+            let doc = makeDoc()
+            let taskCId = doc.items[9].id
+            try doc.moveHierarchy(at: doc.items[8].id, to: doc.items[1].id)
+            let idx = try #require(doc.items.firstIndex(where: { $0.id == taskCId }))
+            #expect(doc.items[idx].indentLevel == 2)
+        }
+
+        @Test("Children preserve relative indent when peer rule produces no delta")
+        func childrenPreserveRelativeIndent() throws {
+            // SubProjA(1,L1)+taskDeep(2,L2) → before SubProjB(5,L1). Peer rule → no delta. taskDeep stays L2.
+            let doc = makeDoc()
+            let taskDeepId = doc.items[2].id
+            try doc.moveHierarchy(at: doc.items[1].id, to: doc.items[5].id)
+            let idx = try #require(doc.items.firstIndex(where: { $0.id == taskDeepId }))
+            #expect(doc.items[idx].indentLevel == 2)
         }
     }
 }
