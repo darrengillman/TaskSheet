@@ -87,7 +87,7 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       let commonIndentLevel = items.allSatisfy({ $0.indentLevel == items[0].indentLevel })
       let allInSingleProject = items.count > 1
          && items.first?.type == .project
-         && items[1...].allSatisfy({ $0.indentLevel > items[0].indentLevel })
+         && items[1...].allSatisfy({ $0.indentLevel == items[0].indentLevel + 1 })
       
       let newItemIndentLevel = switch items.count {
          case 0 : 0

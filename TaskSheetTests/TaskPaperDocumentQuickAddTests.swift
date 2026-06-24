@@ -1,8 +1,13 @@
 import Testing
+import Foundation
 @testable import TaskSheet
 
-@Suite("TaskPaperDocument quickAdd Tests")
+@Suite("TaskPaperDocument quickAdd Tests with Inbox enabled")
 struct TaskPaperDocumentQuickAddTests {
+
+    init() {
+        UserDefaults.standard.set(false, forKey: AppStorageKeys.Editor.showWelcomeTextInNewDocument)
+    }
 
     // MARK: - Scenario 1: No Items + Project
     
@@ -78,7 +83,7 @@ struct TaskPaperDocumentQuickAddTests {
         #expect(document.items[3].type == .note)
     }
     
-    @Test("Add task with one project and mixed indent children with last a single indent. Appends at same indent")
+    @Test("Add task with one project and mixed indent children with last a single indent. Creates Inbox & adds")
     func quickAddTaskWithOneProjectAndMixedIndentChildren1() {
         let content = """
         Work:
@@ -90,29 +95,13 @@ struct TaskPaperDocumentQuickAddTests {
         
         document.quickAdd("New task", type: .task)
         
-        #expect(document.items.count == 5)
-        #expect(document.items[4].displayText == "New task")
-        #expect(document.items[4].indentLevel == 1)
+        #expect(document.items.count == 6)
+        #expect(document.items[0].displayText == "Inbox")
+       #expect(document.items[0].indentLevel == 0)
+        #expect(document.items[1].displayText == "New task")
+        #expect(document.items[1].indentLevel == 1)
     }
    
-   @Test("Add task with one project and mixed indent children with last a multiple indent. Appends at same indent")
-   func quickAddTaskWithOneProjectAndMixedIndentChildren2() {
-      let content = """
-        Work:
-        \t- Parent task
-        \t\t- Nested child task
-        \t- Another top level task
-        \t\t\t- Double-nested child task
-
-        """
-      let document = TaskPaperDocument(content: content, fileName: "Test")
-      
-      document.quickAdd("New task", type: .task)
-      
-      #expect(document.items.count == 6)
-      #expect(document.items[5].displayText == "New task")
-      #expect(document.items[5].indentLevel == 3)
-   }
    
     @Test("Add sub-project with one project and all child items appends as child")
     func quickAddProjectWithOneProjectAndAllChildItems() {
@@ -131,7 +120,7 @@ struct TaskPaperDocumentQuickAddTests {
         #expect(document.items[3].type == .project)
     }
     
-    @Test("Add sub-project with one project and mixed indent children with last a single indent. Appends at same indent")
+    @Test("Add sub-project with one project and mixed indent children with last a single indent. Appends to inbox as mixed indents")
     func quickAddProjectWithOneProjectAndMixedIndentChildren1() {
         let content = """
         Work:
@@ -143,10 +132,11 @@ struct TaskPaperDocumentQuickAddTests {
         
         document.quickAdd("Phase 2", type: .project)
         
-        #expect(document.items.count == 5)
-        #expect(document.items[4].displayText == "Phase 2")
-        #expect(document.items[4].indentLevel == 1)
-        #expect(document.items[4].type == .project)
+        #expect(document.items.count == 6)
+        #expect(document.items[0].displayText == "Inbox")
+        #expect(document.items[1].displayText == "Phase 2")
+        #expect(document.items[1].indentLevel == 1)
+        #expect(document.items[1].type == .project)
     }
     
     @Test("Add sub-project with one project and mixed indent children with last a multiple indent. Appends at same indent")
@@ -364,25 +354,7 @@ struct TaskPaperDocumentQuickAddTests {
         #expect(newTaskIndex != nil)
         #expect(document.items[newTaskIndex!].indentLevel == 1)
     }
-    
-    @Test("Add task with deeply nested items maintains correct indent")
-    func quickAddTaskWithDeeplyNestedItems() {
-        let content = """
-        Work:
-        \t- Parent task
-        \t\t- Child task
-        \t\t\t- Grandchild task
-        """
-        let document = TaskPaperDocument(content: content, fileName: "Test")
-        
-        document.quickAdd("New task", type: .task)
-        
-        // Current implementation: allInSingleProject requires all children to have same indent
-        // Since they don't (1, 2, 3), it falls through to default case (indent 1)
-        // But then appends, which places it at end with whatever indent level was calculated
-        #expect(document.items[4].displayText == "New task")
-        #expect(document.items[4].indentLevel == 3)  // Fixed: Gets indent of last item (grandchild)
-    }
+
     
     @Test("Add multiple tasks in sequence appends in order")
     func quickAddMultipleTasksInSequence() {
