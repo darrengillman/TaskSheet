@@ -10,10 +10,11 @@ struct TaskListView: View {
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
    @State private var isShowingTextEntrySheet: TextEntryRole? = nil
    @State private var isShowingSettings = false
-   @State var subViewIsEditing: Bool = false
+   @State private var isShowingNotImplementedAlert = false
    @State fileprivate var filterState  = FilterState()
    @State private var editTextBuffer: String = ""
    @State private var filteredIds: [UUID] = []
+   @State var subViewIsEditing: Bool = false
    @ScaledMetric(relativeTo: .body) private var rowSpacing: CGFloat = 10
    
    let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "TaskSheet", category: "TaskLostView")
@@ -118,6 +119,10 @@ struct TaskListView: View {
                   TelemetryDeck.signal("TaskListView.SettingsButton.tap")
                   isShowingSettings = true
                }
+               Button("Apply Template", systemImage: "doc.badge.plus") {
+                  TelemetryDeck.signal("TaskListView.ApplyTemplateButton.tap")
+                  isShowingNotImplementedAlert = true
+               }
             } label: {
                Image(systemName: "ellipsis")
                   .accessibilityLabel("More")
@@ -161,6 +166,11 @@ struct TaskListView: View {
       }
       .sheet(isPresented: $isShowingSettings) {
          SettingsView()
+      }
+      .alert("Not Implemented", isPresented: $isShowingNotImplementedAlert) {
+         Button("OK", role: .cancel) {}
+      } message: {
+         Text("This feature is not yet available.")
       }
       .sheet(item: $isShowingTextEntrySheet) { role in
          ItemEditorSheet(text: $editTextBuffer, addOrEdit: role) { text, type in

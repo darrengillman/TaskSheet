@@ -11,6 +11,8 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    static var writableContentTypes: [UTType] { FileTypeRegistry.enabledTypes }
    @AppStorage(AppStorageKeys.Editor.showWelcomeTextInNewDocument) private var showWelcomeTextInNewDocument = true
    @AppStorage(AppStorageKeys.Editor.deleteRemovesChildren) private var deleteRemovesChildren = true
+   @AppStorage(AppStorageKeys.QuickAdd.useInbox) private var useInbox = true
+   @AppStorage(AppStorageKeys.QuickAdd.applyInboxTag) private var tagWithInbox = false
 
    @Published var items: [TaskPaperItem] = []
    @Published var fileName: String
@@ -93,10 +95,11 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
          case 0 : 0
          case 1... where commonIndentLevel: items.first!.indentLevel
          case 1... where allInSingleProject: items.first!.indentLevel + 1
-         default: 1
+         default: useInbox ? 1 : 0
       }
       
-      let newItem = TaskPaperItem(type: type, text: text, indentLevel: newItemIndentLevel)
+      let itemText = "\(text)\(tagWithInbox ? " @inbox" :"")"
+      let newItem = TaskPaperItem(type: type, text: itemText, indentLevel: newItemIndentLevel)
       
          // Register undo
       undoManager?.registerUndo(withTarget: self) { document in
@@ -114,11 +117,15 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       if items.isEmpty || commonIndentLevel || allInSingleProject {
          items.append(newItem)
       } else {
-         addToInbox(newItem)
+         quickAdd(newItem)
       }
    }
    
-   private func addToInbox(_ newItem: TaskPaperItem) {
+   private func quickAdd(_ newItem: TaskPaperItem) {
+      guard useInbox else {
+         items.insert(newItem, at: 0)
+         return
+      }
       if let inboxIndex = items.firstIndex(where: {$0.text.prefix(6) == "Inbox:" && $0.type == .project && $0.indentLevel == 0}) {
          let insertIndex = items.hierarchyIndexes(from: inboxIndex).last.map { $0 + 1 } ?? items.endIndex
          items.insert(newItem, at: insertIndex)

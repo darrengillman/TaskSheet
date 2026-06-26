@@ -52,8 +52,19 @@ enum AppStorageKeys {
         static let opml = "fileTypes.opml"
     }
     
+    // MARK: - Quick Add Settings
+
+    /// Settings related to the Quick Add button behaviour
+    enum QuickAdd {
+        /// Whether quick-added items should be routed to an Inbox project
+        static let useInbox = "quickAdd.useInbox"
+
+        /// Whether quick-added items should be tagged with @inbox
+        static let applyInboxTag = "quickAdd.applyInboxTag"
+    }
+
     // MARK: - Tag Settings
-    
+
     /// Settings related to tag customization
     enum Tags {
         /// Serialized custom tag color mappings
