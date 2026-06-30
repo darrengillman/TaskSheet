@@ -43,12 +43,14 @@ struct AddItemPopOver: View {
                HStack {
                   Text(role.popOverTitleString)
                      .font(.headline)
+                     .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                   Picker("Type", selection: $itemType) {
                      ForEach(ItemType.allCases, id: \.self) {
                         Text($0.rawValue.capitalized)
                      }
                   }
                   .pickerStyle(.menu)
+                  .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                }
                .frame(maxWidth: .infinity, alignment: .leading)
             } else {
@@ -72,23 +74,26 @@ struct AddItemPopOver: View {
                }
             } label: {
                Image(systemName: "chevron.down")
+                  .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                   .padding(.horizontal, 6)
             }
             .foregroundColor(.secondary)
+            .accessibilityLabel(Text("Edit in larger edit window"))
 
             Button {
                cancel()
             } label: {
                Image(systemName: "xmark")
+                  .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                   .padding(.horizontal, 6)
             }
             .foregroundColor(.secondary)
-            .accessibilityLabel(Text("Edit in larger edit window"))
          }
          
          TextField("Description...", text: $text/*, axis: .vertical*/)
             .textFieldStyle(.roundedBorder)
             .focused($isTextFieldFocused)
+            .accessibilityLabel(Text("Placeholder text for item"))
             .submitLabel(.done)
             .onSubmit {
                if !text.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -100,7 +105,7 @@ struct AddItemPopOver: View {
       .background(Color(.systemBackground))
       .cornerRadius(12)
       .shadow(color: .primary.opacity(0.2), radius: 10, x: 0, y: 5)
-      .frame(width: 380)
+      .frame(minWidth: 352, maxWidth: 400)
       .onAppear {
          isTextFieldFocused = true
       }
@@ -127,8 +132,3 @@ struct AddItemPopOver: View {
    } onCancel: {}
 }
 
-//private struct EditView: View {
-//   var body: some View {
-//      Text("")
-//   }
-//}

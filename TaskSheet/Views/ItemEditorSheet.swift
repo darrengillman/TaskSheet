@@ -27,7 +27,7 @@ struct ItemEditorSheet: View {
                   }
                }
                .pickerStyle(.segmented)
-               .padding(.horizontal)
+               .padding([.horizontal, .top])
             }
 
             TextEditor(text: $text)

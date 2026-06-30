@@ -8,7 +8,7 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    
       // Required by ReferenceFileDocument
    static var readableContentTypes: [UTType] { FileTypeRegistry.enabledTypes }
-   static var writableContentTypes: [UTType] { FileTypeRegistry.enabledTypes }
+   static var writableContentTypes: [UTType] { [.taskPaper] }
    @AppStorage(AppStorageKeys.Editor.showWelcomeTextInNewDocument) private var showWelcomeTextInNewDocument = true
    @AppStorage(AppStorageKeys.Editor.deleteRemovesChildren) private var deleteRemovesChildren = true
    @AppStorage(AppStorageKeys.QuickAdd.useInbox) private var useInbox = true

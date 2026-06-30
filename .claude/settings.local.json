@@ -15,5 +15,11 @@
     "deny": [],
     "ask": []
   },
-  "outputStyle": "Explanatory"
+  "outputStyle": "Explanatory",
+  "skillOverrides": {
+    "cloudflare": "name-only",
+    "cloudflare-email-service": "name-only",
+    "workers-best-practices": "name-only",
+    "wrangler": "name-only"
+  }
 }
