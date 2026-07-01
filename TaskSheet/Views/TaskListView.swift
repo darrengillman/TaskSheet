@@ -5,6 +5,7 @@ import SwiftUI
 struct TaskListView: View {
    @Environment(\.undoManager) private var undoManager
    @AppStorage(AppStorageKeys.Editor.showFloatingAdd) private var showFloatingAdd = false
+   @AppStorage(AppStorageKeys.Editor.alwaysUseMainEditingSheet) private var alwaysUseMainEditingSheet = false
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
@@ -106,7 +107,7 @@ struct TaskListView: View {
             ToolbarItem(placement: .bottomBar) {
                Button {
                   TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
-                  isShowingTextEntryPopover = .add(type: .task, indent: 0)
+                  showTextEntry()
                } label: {
                   Image(systemName: "plus")
                }
@@ -135,7 +136,7 @@ struct TaskListView: View {
          if showFloatingAdd && showQuickAddButton {
             Button {
                TelemetryDeck.signal("ItemRowView.QuickAddButton.tap")
-               isShowingTextEntryPopover = .add(type: .task, indent: 0)
+               showTextEntry()
             } label: {
                Image(systemName: "plus")
                   .font(.title2)
@@ -223,6 +224,14 @@ struct TaskListView: View {
       }
    }
  
+   private func showTextEntry(_ role: TextEntryRole = .add(type: .task, indent: 0)) {
+      if alwaysUseMainEditingSheet {
+         isShowingTextEntrySheet = role
+      } else {
+         isShowingTextEntryPopover = role
+      }
+   }
+
    func resetInput() {
       editTextBuffer = ""
       subViewIsEditing = false

@@ -127,8 +127,6 @@ struct SettingsView: View {
                
                Toggle("Always use main editing sheet", isOn: $alwaysUseMainEditingSheet)
                   .onChange(of: alwaysUseMainEditingSheet, initial: false) { _, newValue in
-                     alertMessage = "Editing preference not yet implemented"
-                     isShowingAlert = true
                      TelemetryDeck.signal("SettingsView.Editor.AlwaysUseMainEditingSheet.toggle",
                                           parameters: ["enabled": "\(newValue)"])
                   }
