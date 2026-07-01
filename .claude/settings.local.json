@@ -10,16 +10,18 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git -C /Users/darrengillman/Dev/TaskSheet diff --stat)",
+      "Bash(git -C /Users/darrengillman/Dev/TaskSheet status)"
     ],
     "deny": [],
     "ask": []
   },
-  "outputStyle": "Explanatory",
   "skillOverrides": {
     "cloudflare": "name-only",
     "cloudflare-email-service": "name-only",
     "workers-best-practices": "name-only",
     "wrangler": "name-only"
-  }
+  },
+  "outputStyle": "Explanatory"
 }

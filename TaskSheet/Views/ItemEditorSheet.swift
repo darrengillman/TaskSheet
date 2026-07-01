@@ -11,11 +11,19 @@ struct ItemEditorSheet: View {
    @Environment(\.dismiss) private var dismiss
    @FocusState private var isTextEditorFocused: Bool
    @Binding var text: String
-   @State private var itemType: ItemType = .task
-   
+   @State private var itemType: ItemType
+
    var addOrEdit: TextEntryRole
    var onSave: (String, ItemType) -> Void
    var onCancel: ( () -> Void )?
+
+   init(text: Binding<String>, addOrEdit: TextEntryRole, onSave: @escaping (String, ItemType) -> Void, onCancel: (() -> Void)? = nil) {
+      self._text = text
+      self.addOrEdit = addOrEdit
+      self.onSave = onSave
+      self.onCancel = onCancel
+      self._itemType = State(initialValue: addOrEdit.itemType)
+   }
 
    var body: some View {
       NavigationView {
