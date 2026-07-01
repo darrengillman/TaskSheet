@@ -730,4 +730,65 @@ struct TaskPaperDocumentQuickAddTestSuite {
             }
         }
     }
+
+    // MARK: -
+
+    @Suite("String.sanitisedAsTagName")
+    struct SanitiseTagNameTests {
+
+        @Test("Plain word is unchanged")
+        func plainWord() {
+            #expect("inbox".sanitisedAsTagName() == "inbox")
+        }
+
+        @Test("Empty string returns inbox")
+        func emptyString() {
+            #expect("".sanitisedAsTagName() == "inbox")
+        }
+
+        @Test("Whitespace-only returns inbox")
+        func whitespaceOnly() {
+            #expect("   ".sanitisedAsTagName() == "inbox")
+        }
+
+        @Test("Single space becomes underscore")
+        func singleSpace() {
+            #expect("my inbox".sanitisedAsTagName() == "my_inbox")
+        }
+
+        @Test("Multiple spaces each become an underscore")
+        func multipleSpaces() {
+            #expect("one two three".sanitisedAsTagName() == "one_two_three")
+        }
+
+        @Test("Leading and trailing spaces are trimmed, not converted")
+        func leadingTrailingSpaces() {
+            #expect("  inbox  ".sanitisedAsTagName() == "inbox")
+        }
+
+        @Test("Apostrophe is removed")
+        func apostrophe() {
+            #expect("don't".sanitisedAsTagName() == "dont")
+        }
+
+        @Test("Hyphen is removed")
+        func hyphen() {
+            #expect("follow-up".sanitisedAsTagName() == "followup")
+        }
+
+        @Test("Mixed punctuation and spaces - original bug case")
+        func mixedPunctuationAndSpaces() {
+            #expect("Y9u're joking".sanitisedAsTagName() == "Y9ure_joking")
+        }
+
+        @Test("Digits and underscores are preserved")
+        func digitsAndUnderscores() {
+            #expect("tag_42".sanitisedAsTagName() == "tag_42")
+        }
+
+        @Test("All-punctuation string returns inbox")
+        func allPunctuation() {
+            #expect("!!!".sanitisedAsTagName() == "inbox")
+        }
+    }
 }

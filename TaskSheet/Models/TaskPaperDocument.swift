@@ -13,6 +13,7 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
    @AppStorage(AppStorageKeys.Editor.deleteRemovesChildren) private var deleteRemovesChildren = true
    @AppStorage(AppStorageKeys.QuickAdd.useInbox) private var useInbox = true
    @AppStorage(AppStorageKeys.QuickAdd.applyInboxTag) private var tagWithInbox = false
+   @AppStorage(AppStorageKeys.QuickAdd.tag) private var quickAddTag = "inbox"
 
    @Published var items: [TaskPaperItem] = []
    @Published var fileName: String
@@ -98,7 +99,8 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
          default: useInbox ? 1 : 0
       }
       
-      let itemText = "\(text)\(tagWithInbox ? " @inbox" :"")"
+      let tagName = quickAddTag.sanitisedAsTagName()
+      let itemText = "\(text)\(tagWithInbox ? " @\(tagName)" : "")"
       let newItem = TaskPaperItem(type: type, text: itemText, indentLevel: newItemIndentLevel)
       
          // Register undo

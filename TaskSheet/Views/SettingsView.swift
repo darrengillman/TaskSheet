@@ -17,6 +17,7 @@ struct SettingsView: View {
    @AppStorage(AppStorageKeys.Editor.showFloatingAdd) private var showFloatingAdd = false
    @AppStorage(AppStorageKeys.QuickAdd.useInbox) private var useInbox = true
    @AppStorage(AppStorageKeys.QuickAdd.applyInboxTag) private var applyInboxTag = false
+   @AppStorage(AppStorageKeys.QuickAdd.tag) private var quickAddTag = "inbox"
    
       // Alert state for under-development features
    @State private var isShowingAlert = false
@@ -63,15 +64,38 @@ struct SettingsView: View {
                      TelemetryDeck.signal("SettingsView.QuickAdd.UseInbox.toggle",
                                           parameters: ["enabled": "\(newValue)"])
                   }
-               Toggle("Tag with @inbox", isOn: $applyInboxTag)
-                  .onChange(of: applyInboxTag, initial: false) { _, newValue in
-                     TelemetryDeck.signal("SettingsView.QuickAdd.TagWithInbox.toggle",
-                                          parameters: ["enabled": "\(newValue)"])
+               Toggle("Tag new items", isOn: $applyInboxTag)
+               if applyInboxTag {
+                  LabeledContent("Tag with:") {
+                     VStack(alignment: .trailing, spacing: 2) {
+                        TextField(
+                           "Tag for inbox items",
+                           text: $quickAddTag,
+                           prompt: Text("Tag for new items")
+                        )
+                        .multilineTextAlignment(.trailing)
+                        .autocorrectionDisabled()
+                        .autocapitalization(.none)
+                        .onChange(of: quickAddTag) { _, newValue in
+                           let sanitised = newValue.sanitisedAsTagName()
+                           if sanitised != newValue { quickAddTag = sanitised }
+                        }
+                        if !quickAddTag.isEmpty {
+                           Text("@\(quickAddTag)")
+                              .font(.caption)
+                              .foregroundStyle(.secondary)
+                        }
+                     }
                   }
+               }
             } header: {
                Text("Quick Add")
             } footer: {
-               Text("When it's not possible to determine the location for new tasks, they'll be added to the top of the document, either directly or in an Inbox project")
+               Text("Items with no obvious placement will be added \(!useInbox ? "directly " : "")to the top of the document\(useInbox ? " in an Inbox project" : "").")
+            }
+            .onChange(of: applyInboxTag, initial: false) { _, newValue in
+               TelemetryDeck.signal("SettingsView.QuickAdd.TagWithInbox.toggle",
+                                    parameters: ["enabled": "\(newValue)"])
             }
 
             Section("Editor") {

@@ -25,6 +25,16 @@ extension String {
       return updatedText
    }
    
+   /// Sanitises a user-entered string for use as a TaskPaper tag name.
+   /// Spaces become underscores; any character not matched by \w (letters, digits, _) is removed.
+   /// Returns "inbox" if the result would be empty.
+   func sanitisedAsTagName() -> String {
+      let sanitised = self.trimmingCharacters(in: .whitespaces)
+         .components(separatedBy: .whitespaces).joined(separator: "_")
+         .filter { $0.isLetter || $0.isNumber || $0 == "_" }
+      return sanitised.isEmpty ? "inbox" : sanitised
+   }
+
    /// Removes all tags from the string
    /// - Returns: String with all @tag and @tag(value) patterns removed
    /// - Note: Tags MUST have a leading space to avoid matching emails, URLs, etc.
