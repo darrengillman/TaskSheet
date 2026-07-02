@@ -132,8 +132,8 @@ struct SettingsView: View {
                   }
             }
          }
-         .navigationTitle("Settings")
          .navigationBarTitleDisplayMode(.inline)
+         .navigationBarBackButtonHidden()
          .navigationDestination(for: SettingsRoute.self) { route in
             switch route {
                case .fileTypes:
@@ -142,8 +142,14 @@ struct SettingsView: View {
          }
          .onAppear { enabledFileTypeCount = FileTypeRegistry.enabledTypes.count }
          .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-               Button("Done") { dismiss() }
+            ToolbarItem(placement: .principal) {
+               Text("Settings")
+                  .font(.title)
+            }
+            ToolbarItem(placement: .confirmationAction) {
+               Button(role: .confirm) { dismiss() } label: {
+                  Image(systemName: "checkmark")
+               }
             }
          }
          .alert(alertTitle,
