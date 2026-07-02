@@ -26,61 +26,51 @@ struct ItemEditorSheet: View {
    }
 
    var body: some View {
-      NavigationView {
-         VStack(spacing: 0) {
-            if case .add = addOrEdit {
-               Picker("Type", selection: $itemType) {
-                  ForEach(ItemType.allCases, id: \.self) { type in
-                     Label(type.rawValue.capitalized, systemImage: type.baseIcon)
-                  }
+      VStack(spacing: 0) {
+         if case .add = addOrEdit {
+            Picker("Type", selection: $itemType) {
+               ForEach(ItemType.allCases, id: \.self) { type in
+                  Label(type.rawValue.capitalized, systemImage: type.baseIcon)
                }
-               .pickerStyle(.segmented)
-               .padding([.horizontal, .top])
             }
+            .pickerStyle(.segmented)
+            .padding([.horizontal, .top])
+         }
 
-            TextEditor(text: $text)
-               .frame(minHeight: 120)
-               .padding(12)
-               .background(.background)
-               .cornerRadius(12)
-               .overlay(
-                  RoundedRectangle(cornerRadius: 12)
-                     .stroke(Color(.systemGray4), lineWidth: 1)
-               )
-               .focused($isTextEditorFocused)
-               .padding()
-         }
-         .navigationBarBackButtonHidden()
-         .onAppear {
-            Task {
-               try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
-               isTextEditorFocused = true
-            }
-         }
-         .toolbar{
-            ToolbarItem(placement: .cancellationAction) {
-               Button(role: .cancel) {
-                  cancel()
-               } label: {
-                  Image(systemName: "xmark")
-               }
-            }
-            ToolbarItem(placement: .principal) {
-               Text(
-                  "\(addOrEdit.editorTitleString) \(addOrEdit.itemType.rawValue.capitalized)"
-               )
-            }
-            ToolbarItem(placement: .confirmationAction) {
-               Button(addOrEdit.commitButtonString) {
-                  onSave(text, itemType)
-                  dismiss()
-               }
-               .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
-               .fontWeight(.semibold)
-            }
-         }
-         .toolbarTitleDisplayMode(.inline)
+         TextEditor(text: $text)
+            .frame(minHeight: 120)
+            .padding(12)
+            .background(.background)
+            .cornerRadius(12)
+            .overlay(
+               RoundedRectangle(cornerRadius: 12)
+                  .stroke(Color(.systemGray4), lineWidth: 1)
+            )
+            .focused($isTextEditorFocused)
+            .padding()
       }
+      .navigationBarBackButtonHidden()
+      .onAppear {
+         Task {
+            try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+            isTextEditorFocused = true
+         }
+      }
+      .toolbar {
+         ToolbarItem(placement: .principal) {
+            Text("\(addOrEdit.editorTitleString) \(addOrEdit.itemType.rawValue.capitalized)")
+         }
+         ToolbarItem(placement: .confirmationAction) {
+            Button(role: .confirm) {
+               onSave(text, itemType)
+               dismiss()
+            } label: {
+               Image(systemName: "checkmark")
+            }
+            .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
+         }
+      }
+      .toolbarTitleDisplayMode(.inline)
    }
    
    private func cancel() {
