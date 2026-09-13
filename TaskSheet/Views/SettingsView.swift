@@ -12,8 +12,9 @@ struct SettingsView: View {
    @AppStorage(AppStorageKeys.Display.noteIcon) private var showNoteIcons = true
    @AppStorage(AppStorageKeys.Editor.deleteRemovesChildren) private var deleteRemovesChildren = true
    @AppStorage(AppStorageKeys.Editor.includeDateWhenMarkingDone) private var includeDateWhenMarkingDone = true
+   @AppStorage(AppStorageKeys.Editor.useRowToolbar) private var useRowToolbar = true
    @AppStorage(AppStorageKeys.Editor.showWelcomeTextInNewDocument) private var showWelcomeTextInNewDocument = true
-   @AppStorage(AppStorageKeys.Editor.alwaysUseMainEditingSheet) private var alwaysUseMainEditingSheet = false
+   @AppStorage(AppStorageKeys.Editor.editMethod) private var editMethod = EditMethod.inline
    @AppStorage(AppStorageKeys.Editor.showFloatingAdd) private var showFloatingAdd = false
    @AppStorage(AppStorageKeys.QuickAdd.useInbox) private var useInbox = true
    @AppStorage(AppStorageKeys.QuickAdd.applyInboxTag) private var applyInboxTag = false
@@ -29,6 +30,27 @@ struct SettingsView: View {
    var body: some View {
       NavigationStack {
          List {
+            Section("Beta Testing") {
+               
+               Picker("Edit items ", selection: $editMethod) {
+                  ForEach(EditMethod.allCases, id: \.self) {
+                     Text($0.rawValue)
+                  }
+               }
+               .pickerStyle(.menu)
+               .onChange(of: editMethod, initial: false) { _, newValue in
+                  TelemetryDeck.signal("SettingsView.Editor.AlwaysUseMainEditingSheet.toggle",
+                                       parameters: ["enabled": "\(newValue)"])
+               }
+               Toggle("Use Item toolbar", isOn: $useRowToolbar)
+                  .onChange(of: useRowToolbar, initial: false) { _, newValue in
+                     let state = newValue ? "enabled" : "disabled"
+                     logger.info("Show welcome text \(state)")
+                     TelemetryDeck.signal("SettingsView.Editor.ShowWelcomeText.toggle",
+                                          parameters: ["enabled": "\(newValue)"])
+                  }
+            }
+            
             Section("Display") {
                Toggle("Display icon for notes", isOn: $showNoteIcons)
                   .onChange(of: showNoteIcons, initial: false) { _, newValue in
@@ -122,12 +144,6 @@ struct SettingsView: View {
                      let state = newValue ? "enabled" : "disabled"
                      logger.info("Show welcome text \(state)")
                      TelemetryDeck.signal("SettingsView.Editor.ShowWelcomeText.toggle",
-                                          parameters: ["enabled": "\(newValue)"])
-                  }
-               
-               Toggle("Always use main editing sheet", isOn: $alwaysUseMainEditingSheet)
-                  .onChange(of: alwaysUseMainEditingSheet, initial: false) { _, newValue in
-                     TelemetryDeck.signal("SettingsView.Editor.AlwaysUseMainEditingSheet.toggle",
                                           parameters: ["enabled": "\(newValue)"])
                   }
             }

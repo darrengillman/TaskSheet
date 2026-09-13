@@ -24,10 +24,12 @@ enum AppStorageKeys {
       static let includeDateWhenMarkingDone = "editor.includeDateWhenMarkingDone"
       
          /// Whether to always use the main editing sheet instead of inline editing
-      static let alwaysUseMainEditingSheet = "editor.alwaysUseMainEditingSheet"
+      static let editMethod = "editor.editMethod"
       
          /// Whether to show the large floating plus
       static let showFloatingAdd = "editor.showFloatingAdd"
+      
+      static let useRowToolbar = "editor.useRowToolbar"
    }
    
       // MARK: - Display Settings

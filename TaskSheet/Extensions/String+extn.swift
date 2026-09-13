@@ -10,6 +10,8 @@ import RegexBuilder
 
 extension String {
    static let tab = "\t"
+   static private let tagWithLeadingSpaceRegex = /\s@\w+(?:\([^)]+\))?/
+
    
    /// Removes a specific tag by name from the string
    /// - Parameter tagName: The name of the tag to remove (without @ prefix)
@@ -21,7 +23,6 @@ extension String {
       let updatedText = self.replacing(tagRegex, with: "")
          .replacingOccurrences(of: "  ", with: " ") // Clean up double spaces
          .trimmingCharacters(in: .whitespaces)
-      
       return updatedText
    }
    
@@ -41,14 +42,10 @@ extension String {
    func removingTagNamesAndWhitespace() -> String {
       // Swift regex: matches space + @tagname or space + @tagname(value)
       // Tags require a leading space to distinguish from emails, etc.
-      let tagWithLeadingSpace = /\s@\w+(?:\([^)]+\))?/
       
       return self
-         .replacing(tagWithLeadingSpace, with: "")
+         .replacing(Self.tagWithLeadingSpaceRegex, with: "")
          .trimmingCharacters(in: .whitespaces)
    }
 }
 
-extension Character {
-   static let tab: Character = Character(String.tab)
-}

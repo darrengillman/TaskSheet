@@ -6,6 +6,9 @@
 //
 
 enum TextEntryRole: Identifiable {
+   case add (type: ItemType, indent: Int)
+   case edit(type: ItemType, indent: Int)
+
    var id: String {
       switch self {
          case .add:
@@ -15,8 +18,6 @@ enum TextEntryRole: Identifiable {
       }
    }
    
-   case add (type: ItemType, indent: Int)
-   case edit(type: ItemType, indent: Int)
    
    var indent: Int {
       switch self {
@@ -34,7 +35,7 @@ enum TextEntryRole: Identifiable {
    
    var popOverTitleString: String {
       switch self {
-         case .add:  "Quick Add"
+         case .add:  "Add"
          case .edit: "Edit"
       }
    }

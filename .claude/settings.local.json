@@ -12,7 +12,8 @@
       "Bash(git push:*)",
       "Bash(git checkout:*)",
       "Bash(git -C /Users/darrengillman/Dev/TaskSheet diff --stat)",
-      "Bash(git -C /Users/darrengillman/Dev/TaskSheet status)"
+      "Bash(git -C /Users/darrengillman/Dev/TaskSheet status)",
+      "Bash(grep \"\\\\.swift$\")"
     ],
     "deny": [],
     "ask": []

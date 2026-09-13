@@ -78,12 +78,12 @@ class TaskPaperDocument: ReferenceFileDocument, ObservableObject {
       items.filter { $0.type == .note }.count
    }
    
-   var allTags: [Tag] {
+   var allTags: [Tag] {  //var set = Set<Tag>(); for i in items {set.formUnion(i)... should be faster
       items
          .reduce(Set<Tag>()) { set, item in
             set.union(item.tags)
          }
-         .sorted(using: SortDescriptor(\.displayText))
+         .sorted {$0.displayText < $1.displayText}
    }
    
    func quickAdd(_ text: String, type: ItemType) {

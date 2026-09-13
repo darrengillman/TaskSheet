@@ -80,7 +80,7 @@ struct AddItemPopOver: View {
             .foregroundColor(.secondary)
             .accessibilityLabel(Text("Edit in larger edit window"))
 
-            Button {
+            Button(role: .cancel) {
                cancel()
             } label: {
                Image(systemName: "xmark")

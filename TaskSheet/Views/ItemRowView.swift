@@ -7,13 +7,15 @@ struct ItemRowView: View {
    @ObservedObject var tagSchemaManager: TagSchemaManager
    @ObservedObject var document: TaskPaperDocument
    @AppStorage(AppStorageKeys.Display.noteIcon) private var showNoteIcons = true
-   @AppStorage(AppStorageKeys.Editor.alwaysUseMainEditingSheet) private var alwaysUseMainEditingSheet = false
+   @AppStorage(AppStorageKeys.Editor.editMethod) private var editMethod: EditMethod = .inline
+   @AppStorage(AppStorageKeys.Editor.useRowToolbar) private var useRowToolbar = false
    // Editing
    @Binding var isEditing: Bool
    @State private var isShowingAddTagPopover = false
    @State private var isShowingNewItemPopover: TextEntryRole? = nil
    @State private var isShowingEditSheet: TextEntryRole? = nil
    @State private var editTextBuffer: String = ""
+   @State private var showingRowToolbar = false
    //Alerts
    @State private var isShowingAlert = false
    @State private var alertMessage: String? = nil
@@ -38,9 +40,16 @@ struct ItemRowView: View {
                .strikethrough(item.isCompleted)
                .foregroundColor(item.isCompleted ? .secondary : .primary)
                .onTapGesture {
-                  if item.isCompleted == false {
-                     edit(item)
-                  }
+//                  if useRowToolbar {
+//                     if showingRowToolbar {
+//                        edit(item)
+//                     } else {
+//                        showingRowToolbar.toggle()
+//                     }
+//                  } else if item.isCompleted == false {
+//                     edit(item)
+//                  }
+                  edit(item)
                }
                .contextMenu {
                   MainContextMenu
@@ -127,18 +136,45 @@ struct ItemRowView: View {
       )
    }
    
-   private func showTextEntry(_ role: TextEntryRole) {
+   private func openTextEditor(for role: TextEntryRole) {
       isEditing = true
-      if alwaysUseMainEditingSheet {
-         isShowingEditSheet = role
-      } else {
-         isShowingNewItemPopover = role
+      if useRowToolbar && !showingRowToolbar {
+         if case .edit = role {
+            showingRowToolbar = true
+         }
+      }
+      switch (role, editMethod) {
+         case(.add, .sheet):
+            isShowingEditSheet = role
+         case (.add, .inline), (.add, .popover):
+            isShowingNewItemPopover = role
+         case (.edit, .inline):
+            isShowingNewItemPopover = role;  #warning("TEMP! until inline editing is built")
+         case (.edit, .sheet):
+            isShowingEditSheet = role
+         case (.edit, .popover):
+            isShowingNewItemPopover = role
       }
    }
-
+   
    private func edit(_ item: TaskPaperItem) {
       editTextBuffer = item.text
-      showTextEntry(.edit(type: item.type, indent: item.indentLevel))
+      openTextEditor(for: .edit(type: item.type, indent: item.indentLevel))
+   }
+   
+   private func add(_ type: ItemType, indent: Int) {
+      openTextEditor(for: .add(type: type, indent: indent))
+   }
+   
+   func quickAdd(from parentType: ItemType, atIndent indent: Int) {
+      switch parentType {
+         case .project:
+            openTextEditor(for: .add(type: .task, indent: indent + 1))
+         case .task:
+            openTextEditor(for: .add(type: .task, indent: indent))
+         case .note:
+            openTextEditor(for: .add(type: .note, indent: indent))
+      }
    }
 
    func resetInput() {
@@ -168,14 +204,7 @@ extension ItemRowView {
    private var quickAddMenu: some View {
       Button {
          TelemetryDeck.signal("ItemRowView.MainContextMenu.QuickAdd.tap")
-         switch item.type {
-         case .project:
-            showTextEntry(.add(type: .task, indent: item.indentLevel + 1))
-         case .task:
-            showTextEntry(.add(type: .task, indent: item.indentLevel))
-         case .note:
-            showTextEntry(.add(type: .note, indent: item.indentLevel))
-         }
+         quickAdd(from: item.type, atIndent: item.indentLevel)
       } label: {
          Label("Quick Add", systemImage: "plus.circle.fill")
       }
@@ -217,7 +246,7 @@ extension ItemRowView {
       if item.isCompleted {
          Button {
             TelemetryDeck.signal("ItemRowView.MainContextMenu.IsCompleted.AddMenu.tap")
-            showTextEntry(.add(type: .task, indent: item.indentLevel))
+            add(.task, indent: item.indentLevel)
          } label: {
             Label( "Add item", systemImage: "plus.circle")
          }
@@ -225,14 +254,14 @@ extension ItemRowView {
          Menu {
             Button {
                TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.AddMenu.AddItem.tap")
-               showTextEntry(.add(type: .task, indent: item.indentLevel))
+               add(.task, indent: item.indentLevel)
             } label: {
                Label( "Add item", systemImage: "plus.circle")
             }
 
             Button {
                TelemetryDeck.signal("ItemRowView.MainContextMenu.NotIsCompleted.AddMenu.AddChild.tap")
-               showTextEntry(.add(type: .task, indent: item.indentLevel + 1))
+               add(.task, indent: item.indentLevel + 1)
             } label: {
                Label( "Add child", systemImage: "circle.badge.plus")
             }

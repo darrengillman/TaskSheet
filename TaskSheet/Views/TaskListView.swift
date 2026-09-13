@@ -5,7 +5,7 @@ import SwiftUI
 struct TaskListView: View {
    @Environment(\.undoManager) private var undoManager
    @AppStorage(AppStorageKeys.Editor.showFloatingAdd) private var showFloatingAdd = false
-   @AppStorage(AppStorageKeys.Editor.alwaysUseMainEditingSheet) private var alwaysUseMainEditingSheet = false
+   @AppStorage(AppStorageKeys.Editor.editMethod) private var editMethod = EditMethod.inline
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
@@ -225,7 +225,7 @@ struct TaskListView: View {
    }
  
    private func showTextEntry(_ role: TextEntryRole = .add(type: .task, indent: 0)) {
-      if alwaysUseMainEditingSheet {
+      if editMethod == .sheet {
          isShowingTextEntrySheet = role
       } else {
          isShowingTextEntryPopover = role
