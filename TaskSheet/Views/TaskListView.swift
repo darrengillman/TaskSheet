@@ -8,6 +8,7 @@ struct TaskListView: View {
    @AppStorage(AppStorageKeys.Editor.alwaysUseMainEditingSheet) private var alwaysUseMainEditingSheet = false
    @StateObject var tagSchemeManager = TagSchemaManager()
    @ObservedObject var document: TaskPaperDocument
+   let fileURL: URL?
    @State private var isShowingTextEntryPopover: TextEntryRole? = nil
    @State private var isShowingTextEntrySheet: TextEntryRole? = nil
    @State private var isShowingSettings = false
@@ -15,6 +16,7 @@ struct TaskListView: View {
    @State fileprivate var filterState  = FilterState()
    @State private var editTextBuffer: String = ""
    @State private var filteredIds: [UUID] = []
+   @State private var filterSaveTask: Task<Void, Never>? = nil
    @State var subViewIsEditing: Bool = false
    @ScaledMetric(relativeTo: .body) private var rowSpacing: CGFloat = 10
    
@@ -70,7 +72,20 @@ struct TaskListView: View {
          return (passesFilter && passesSearch) ? item.id : nil
       }
    }
-   
+
+   /// Debounces persistence of filterState: each call cancels any pending save and
+   /// schedules a new one, so only a quiet pause after the last change actually writes.
+   private func scheduleFilterSave() {
+      filterSaveTask?.cancel()
+      guard let fileURL else { return }
+      let snapshot = PersistedFilter(text: filterState.text, isNegated: filterState.isNegated, isFiltering: filterState.isFiltering)
+      filterSaveTask = Task {
+         try? await Task.sleep(for: .seconds(2))
+         guard !Task.isCancelled else { return }
+         FilterStore.setFilter(snapshot, forFileAt: fileURL)
+      }
+   }
+
    var body: some View {
       List {
          DocumentHeader(document: document)
@@ -93,9 +108,19 @@ struct TaskListView: View {
       .environment(\.defaultMinListRowHeight, 0)
       .searchable(text: $filterState.searchText)
       .searchToolbarBehavior(.minimize)
-      .task { recomputeFilteredIds() }
+      .task {
+         if let fileURL, let saved = FilterStore.filter(forFileAt: fileURL) {
+            filterState.text = saved.text
+            filterState.isNegated = saved.isNegated
+            filterState.isFiltering = saved.isFiltering
+         }
+         recomputeFilteredIds()
+      }
       .onChange(of: document.items) { recomputeFilteredIds() }
-      .onChange(of: filterState) { recomputeFilteredIds() }
+      .onChange(of: filterState) {
+         recomputeFilteredIds()
+         scheduleFilterSave()
+      }
       .toolbar{
          ToolbarItem(placement: .bottomBar) {
             FilterButton(filterState: $filterState)
@@ -241,6 +266,6 @@ struct TaskListView: View {
 }
 
 #Preview {
-   TaskListView(document: SampleContent.sampleDocument)
+   TaskListView(document: SampleContent.sampleDocument, fileURL: nil)
 }
 

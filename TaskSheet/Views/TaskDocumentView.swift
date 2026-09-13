@@ -9,11 +9,12 @@ import SwiftUI
 
 struct TaskDocumentView: View {
     @ObservedObject var document: TaskPaperDocument
+    let fileURL: URL?
     @Environment(\.undoManager) var undoManager
 
     var body: some View {
         NavigationStack {
-            TaskListView(document: document)
+            TaskListView(document: document, fileURL: fileURL)
                 .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear {
@@ -23,5 +24,5 @@ struct TaskDocumentView: View {
 }
 
 #Preview {
-    TaskDocumentView(document: SampleContent.sampleDocument)
+    TaskDocumentView(document: SampleContent.sampleDocument, fileURL: nil)
 }
