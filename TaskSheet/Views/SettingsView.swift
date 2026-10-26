@@ -125,7 +125,7 @@ struct SettingsView: View {
                                           parameters: ["enabled": "\(newValue)"])
                   }
                
-               Toggle("Always use main editing sheet", isOn: $alwaysUseMainEditingSheet)
+               Toggle("Always use full-screen editing", isOn: $alwaysUseMainEditingSheet)
                   .onChange(of: alwaysUseMainEditingSheet, initial: false) { _, newValue in
                      TelemetryDeck.signal("SettingsView.Editor.AlwaysUseMainEditingSheet.toggle",
                                           parameters: ["enabled": "\(newValue)"])

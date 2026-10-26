@@ -118,7 +118,6 @@ struct ItemRowView: View {
                resetInput()
             }
          )
-         .presentationDetents([.fraction(0.35), .medium, .large])
       }
       .alert(alertTitle,
              isPresented: $isShowingAlert,
@@ -187,7 +186,7 @@ extension ItemRowView {
          TelemetryDeck.signal("ItemRowView.MainContextMenu.ToggleComplete.tap")
          document.toggleTaskCompletion(item: item)
       } label: {
-         Label( item.isCompleted ? "Mark as Incomplete" : "Mark as Complete",
+         Label( item.isCompleted ? "Incomplete" : "Complete",
                 systemImage: item.isCompleted ?  "circle" : "checkmark.circle.fill")
       }
    }

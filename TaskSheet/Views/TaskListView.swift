@@ -205,7 +205,6 @@ struct TaskListView: View {
          } onCancel: {
             resetInput()
          }
-         .presentationDetents([.fraction(0.35), .medium, .large])
       }
    }
    
